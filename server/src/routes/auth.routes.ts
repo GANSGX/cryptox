@@ -7,7 +7,13 @@ import {
   isValidEmail,
   isValidPassword,
 } from '../utils/crypto.js'
-import type { RegisterRequest, RegisterResponse, ApiResponse } from '../types/api.types.js'
+import type { 
+  RegisterRequest, 
+  RegisterResponse, 
+  LoginRequest, 
+  LoginResponse, 
+  ApiResponse 
+} from '../types/api.types.js'
 
 export async function authRoutes(fastify: FastifyInstance) {
   
@@ -100,6 +106,80 @@ export async function authRoutes(fastify: FastifyInstance) {
           email: user.email,
           email_verified: user.email_verified,
           created_at: user.created_at.toISOString(),
+        },
+      },
+    })
+  })
+
+  /**
+   * POST /login
+   * Авторизация пользователя
+   */
+  fastify.post<{
+    Body: LoginRequest
+    Reply: ApiResponse<LoginResponse>
+  }>('/login', async (request, reply) => {
+    const { username, password } = request.body
+
+    // Валидация входных данных
+    if (!username || !password) {
+      return reply.code(400).send({
+        success: false,
+        error: 'Missing required fields',
+      })
+    }
+
+    // Получение пользователя из БД
+    const user = await UserService.getUserByUsername(username)
+
+    if (!user) {
+      return reply.code(401).send({
+        success: false,
+        error: 'Invalid username or password',
+      })
+    }
+
+    // Проверка пароля через CryptoService
+    const isPasswordValid = await CryptoService.verifyAuthToken(
+      password,
+      user.salt,
+      user.auth_token
+    )
+
+    if (!isPasswordValid) {
+      return reply.code(401).send({
+        success: false,
+        error: 'Invalid username or password',
+      })
+    }
+
+    // Проверка бана
+    if (user.is_banned) {
+      return reply.code(403).send({
+        success: false,
+        error: 'Account is banned',
+      })
+    }
+
+    // Обновление last_seen
+    await UserService.updateLastSeen(username)
+
+    // Генерация JWT токена
+    const token = JwtService.generate({
+      username: user.username,
+      email: user.email,
+    })
+
+    // Ответ
+    return reply.code(200).send({
+      success: true,
+      data: {
+        token,
+        user: {
+          username: user.username,
+          email: user.email,
+          email_verified: user.email_verified,
+          last_seen: user.last_seen.toISOString(),
         },
       },
     })
