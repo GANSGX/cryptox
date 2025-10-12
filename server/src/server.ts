@@ -7,11 +7,10 @@ import { authRoutes } from './routes/auth.routes.js'
 import { protectedRoutes } from './routes/protected.routes.js'
 import { usersRoutes } from './routes/users.routes.js'
 import { errorHandler, notFoundHandler } from './middleware/error.middleware.js'
+import { log } from './services/logger.service.js'
 
 const fastify = Fastify({
-  logger: {
-    level: env.NODE_ENV === 'development' ? 'info' : 'warn',
-  },
+  logger: false, // Отключаем встроенный logger, используем Winston
 })
 
 // Plugins
@@ -39,6 +38,20 @@ await fastify.register(rateLimit, {
       retryAfter: context.after,
     }
   },
+})
+
+// HTTP Request logging
+fastify.addHook('onRequest', async (request, reply) => {
+  log.http(`${request.method} ${request.url}`, {
+    ip: request.ip,
+    userAgent: request.headers['user-agent'],
+  })
+})
+
+fastify.addHook('onResponse', async (request, reply) => {
+  log.http(`${request.method} ${request.url} - ${reply.statusCode}`, {
+    responseTime: reply.elapsedTime,
+  })
 })
 
 // API Routes
@@ -76,6 +89,15 @@ const start = async () => {
       host: env.HOST,
     })
     
+    log.info('🚀 CryptoX Server started!', {
+      url: `http://localhost:${env.PORT}`,
+      health: `http://localhost:${env.PORT}/health`,
+      auth: `http://localhost:${env.PORT}/api/auth/register`,
+      search: `http://localhost:${env.PORT}/api/users/search?q=username`,
+      rateLimit: '100 requests per minute',
+      environment: env.NODE_ENV,
+    })
+    
     console.log(`
 🚀 CryptoX Server started!
     
@@ -87,7 +109,7 @@ const start = async () => {
 🌍 Environment: ${env.NODE_ENV}
     `)
   } catch (err) {
-    fastify.log.error(err)
+    log.error('Failed to start server', err)
     process.exit(1)
   }
 }
