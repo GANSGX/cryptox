@@ -3,6 +3,8 @@ import cors from '@fastify/cors'
 import helmet from '@fastify/helmet'
 import { env } from './config/env.js'
 import { authRoutes } from './routes/auth.routes.js'
+import { protectedRoutes } from './routes/protected.routes.js'
+
 
 const fastify = Fastify({
   logger: {
@@ -22,6 +24,7 @@ await fastify.register(helmet, {
 
 // API Routes
 await fastify.register(authRoutes, { prefix: '/api/auth' })
+await fastify.register(protectedRoutes, { prefix: '/api' })
 
 // Health check route
 fastify.get('/health', async () => {
