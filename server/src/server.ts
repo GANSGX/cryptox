@@ -1,6 +1,7 @@
 import Fastify from 'fastify'
 import cors from '@fastify/cors'
 import helmet from '@fastify/helmet'
+import rateLimit from '@fastify/rate-limit'
 import { env } from './config/env.js'
 import { authRoutes } from './routes/auth.routes.js'
 import { protectedRoutes } from './routes/protected.routes.js'
@@ -20,6 +21,23 @@ await fastify.register(cors, {
 
 await fastify.register(helmet, {
   contentSecurityPolicy: false,
+})
+
+// Rate Limiting
+await fastify.register(rateLimit, {
+  max: 100,
+  timeWindow: '1 minute',
+  cache: 10000,
+  allowList: ['127.0.0.1'], // ← ВЕРНИ ЭТУ СТРОКУ
+  redis: undefined,
+  skipOnError: true,
+  errorResponseBuilder: (request, context) => {
+    return {
+      success: false,
+      error: 'Too many requests. Please try again later.',
+      retryAfter: context.after,
+    }
+  },
 })
 
 // API Routes
@@ -60,6 +78,7 @@ const start = async () => {
 🏥 Health: http://localhost:${env.PORT}/health
 🔐 Auth: http://localhost:${env.PORT}/api/auth/register
 🔍 Search: http://localhost:${env.PORT}/api/users/search?q=username
+🛡️  Rate Limit: 100 requests per minute
 🌍 Environment: ${env.NODE_ENV}
     `)
   } catch (err) {
