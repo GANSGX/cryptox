@@ -40,3 +40,17 @@ export interface LoginResponse {
     }
 }
 
+// Типы для подтверждения email
+export interface SendVerificationCodeRequest {
+  username: string
+}
+
+export interface VerifyEmailRequest {
+  username: string
+  code: string
+}
+
+export interface VerifyEmailResponse {
+  message: string
+  email_verified: boolean
+}

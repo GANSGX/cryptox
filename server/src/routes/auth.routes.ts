@@ -1,7 +1,10 @@
 import type { FastifyInstance } from 'fastify'
+import { pool } from '../db/pool.js'
 import { UserService } from '../services/user.service.js'
 import { CryptoService } from '../services/crypto.service.js'
 import { JwtService } from '../services/jwt.service.js'
+import { EmailService } from '../services/email.service.js'
+import { RedisService } from '../services/redis.service.js'
 import {
   isValidUsername,
   isValidEmail,
@@ -11,7 +14,10 @@ import type {
   RegisterRequest, 
   RegisterResponse, 
   LoginRequest, 
-  LoginResponse, 
+  LoginResponse,
+  SendVerificationCodeRequest,
+  VerifyEmailRequest,
+  VerifyEmailResponse,
   ApiResponse 
 } from '../types/api.types.js'
 
@@ -181,6 +187,156 @@ export async function authRoutes(fastify: FastifyInstance) {
           email_verified: user.email_verified,
           last_seen: user.last_seen.toISOString(),
         },
+      },
+    })
+  })
+
+  /**
+   * POST /send-verification-code
+   * Отправка кода подтверждения на email
+   */
+  fastify.post<{
+    Body: SendVerificationCodeRequest
+    Reply: ApiResponse
+  }>('/send-verification-code', async (request, reply) => {
+    const { username } = request.body
+
+    if (!username) {
+      return reply.code(400).send({
+        success: false,
+        error: 'Missing username',
+      })
+    }
+
+    // Получение пользователя
+    const user = await UserService.getUserByUsername(username)
+
+    if (!user) {
+      return reply.code(404).send({
+        success: false,
+        error: 'User not found',
+      })
+    }
+
+    // Если уже подтверждён
+    if (user.email_verified) {
+      return reply.code(400).send({
+        success: false,
+        error: 'Email already verified',
+      })
+    }
+
+    // Проверка cooldown (1 минута)
+    const hasCooldown = await RedisService.checkEmailCooldown(username)
+    if (hasCooldown) {
+      return reply.code(429).send({
+        success: false,
+        error: 'Please wait 1 minute before requesting a new code',
+      })
+    }
+
+    // Генерация кода
+    const code = CryptoService.generateEmailCode()
+
+    // Сохранение в Redis (TTL 10 минут)
+    await RedisService.saveEmailCode(username, code)
+
+    // Установка cooldown
+    await RedisService.setEmailCooldown(username)
+
+    // Отправка email
+    const emailSent = await EmailService.sendVerificationCode(user.email, code)
+
+    if (!emailSent) {
+      return reply.code(500).send({
+        success: false,
+        error: 'Failed to send email',
+      })
+    }
+
+    return reply.code(200).send({
+      success: true,
+      message: 'Verification code sent to your email',
+    })
+  })
+
+  /**
+   * POST /verify-email
+   * Проверка кода и подтверждение email
+   */
+  fastify.post<{
+    Body: VerifyEmailRequest
+    Reply: ApiResponse<VerifyEmailResponse>
+  }>('/verify-email', async (request, reply) => {
+    const { username, code } = request.body
+
+    if (!username || !code) {
+      return reply.code(400).send({
+        success: false,
+        error: 'Missing required fields',
+      })
+    }
+
+    // Получение пользователя
+    const user = await UserService.getUserByUsername(username)
+
+    if (!user) {
+      return reply.code(404).send({
+        success: false,
+        error: 'User not found',
+      })
+    }
+
+    // Если уже подтверждён
+    if (user.email_verified) {
+      return reply.code(400).send({
+        success: false,
+        error: 'Email already verified',
+      })
+    }
+
+    // Проверка количества попыток (максимум 5)
+    const attempts = await RedisService.getEmailAttempts(username)
+    if (attempts >= 5) {
+      return reply.code(429).send({
+        success: false,
+        error: 'Too many attempts. Request a new code.',
+      })
+    }
+
+    // Получение кода из Redis
+    const storedCode = await RedisService.getEmailCode(username)
+
+    if (!storedCode) {
+      return reply.code(400).send({
+        success: false,
+        error: 'Code expired or not found. Request a new code.',
+      })
+    }
+
+    // Проверка кода
+    if (code !== storedCode) {
+      await RedisService.incrementEmailAttempts(username)
+      return reply.code(400).send({
+        success: false,
+        error: 'Invalid code',
+      })
+    }
+
+    // Код правильный — обновляем пользователя
+    await pool.query(
+      'UPDATE users SET email_verified = true WHERE username = $1',
+      [username]
+    )
+
+    // Удаляем код из Redis
+    await RedisService.deleteEmailCode(username)
+
+    return reply.code(200).send({
+      success: true,
+      data: {
+        message: 'Email verified successfully',
+        email_verified: true,
       },
     })
   })
