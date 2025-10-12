@@ -54,3 +54,20 @@ export interface VerifyEmailResponse {
   message: string
   email_verified: boolean
 }
+
+// Типы для поиска пользователей
+export interface SearchUsersQuery {
+  q: string // query string
+}
+
+export interface UserSearchResult {
+  username: string
+  avatar_path: string | null
+  bio: string | null
+  email_verified: boolean
+}
+
+export interface SearchUsersResponse {
+  users: UserSearchResult[]
+  count: number
+}

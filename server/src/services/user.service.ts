@@ -85,4 +85,28 @@ export class UserService {
       [username.toLowerCase()]
     )
   }
+
+  /**
+   * Поиск пользователей по username
+   */
+  static async searchUsers(query: string, limit: number = 20): Promise<any[]> {
+    const result = await pool.query(
+      `SELECT 
+        username, 
+        avatar_path, 
+        bio, 
+        email_verified
+      FROM users 
+      WHERE 
+        username ILIKE $1 
+        AND is_banned = false
+      ORDER BY 
+        CASE WHEN username = $2 THEN 0 ELSE 1 END,
+        username
+      LIMIT $3`,
+      [`%${query.toLowerCase()}%`, query.toLowerCase(), limit]
+    )
+
+    return result.rows
+  }
 }

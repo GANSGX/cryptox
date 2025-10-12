@@ -4,7 +4,7 @@ import helmet from '@fastify/helmet'
 import { env } from './config/env.js'
 import { authRoutes } from './routes/auth.routes.js'
 import { protectedRoutes } from './routes/protected.routes.js'
-
+import { usersRoutes } from './routes/users.routes.js'
 
 const fastify = Fastify({
   logger: {
@@ -25,6 +25,7 @@ await fastify.register(helmet, {
 // API Routes
 await fastify.register(authRoutes, { prefix: '/api/auth' })
 await fastify.register(protectedRoutes, { prefix: '/api' })
+await fastify.register(usersRoutes, { prefix: '/api/users' })
 
 // Health check route
 fastify.get('/health', async () => {
@@ -58,6 +59,7 @@ const start = async () => {
 📍 URL: http://localhost:${env.PORT}
 🏥 Health: http://localhost:${env.PORT}/health
 🔐 Auth: http://localhost:${env.PORT}/api/auth/register
+🔍 Search: http://localhost:${env.PORT}/api/users/search?q=username
 🌍 Environment: ${env.NODE_ENV}
     `)
   } catch (err) {
