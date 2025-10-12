@@ -1,8 +1,6 @@
 import argon2 from 'argon2'
 import nacl from 'tweetnacl'
-import { randomBytes, createHmac } from 'crypto'
-import { sha256 } from '@noble/hashes/sha2'
-import { bytesToHex } from '@noble/hashes/utils'
+import { randomBytes, createHmac, createHash } from 'crypto'
 
 // Добавляем hexToBytes вручную
 function hexToBytes(hex: string): Uint8Array {
@@ -12,6 +10,11 @@ function hexToBytes(hex: string): Uint8Array {
     bytes[i / 2] = parseInt(hex.substring(i, i + 2), 16)
   }
   return bytes
+}
+
+// bytesToHex вручную
+function bytesToHex(bytes: Uint8Array | Buffer): string {
+  return Buffer.from(bytes).toString('hex')
 }
 
 // ========================================
@@ -78,9 +81,9 @@ export function generateAuthToken(passwordKey: string): string {
  */
 export async function generateEmailRecoveryKey(email: string, serverSecret: string): Promise<string> {
   const combined = email.toLowerCase() + serverSecret
-  const combinedBytes = Buffer.from(combined, 'utf-8')
-  const hash = sha256(combinedBytes)
-  return bytesToHex(hash)
+  const hash = createHash('sha256')
+  hash.update(combined, 'utf-8')
+  return hash.digest('hex')
 }
 
 /**
