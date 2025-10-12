@@ -1,134 +1,416 @@
 /* ========================================
-   AUTH PAGE LAYOUT
+   LOGIN PAGE - REFINED GLASSMORPHISM
    ======================================== */
 .auth-container {
-  min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 20px;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    position: relative;
+    overflow: hidden;
 }
 
+/* ========================================
+AUTH CARD - BALANCED GLASSMORPHISM
+======================================== */
 .auth-card {
-  background: rgba(var(--bg-card-rgb), 0.85);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid var(--border);
-  border-radius: 16px;
-  padding: 48px 40px;
-  width: 100%;
-  max-width: 420px;
-  box-shadow: 0 8px 24px var(--shadow);
-  transition: transform 0.3s ease, opacity 0.3s ease, box-shadow 0.3s ease;
+    width: 100%;
+    max-width: 440px;
+    padding: 48px 40px;
+    border-radius: 24px;
+    position: relative;
+    /* 🔥 СБАЛАНСИРОВАННЫЙ GLASSMORPHISM */
+    background: rgba(15, 15, 25, 0.5);
+    backdrop-filter: blur(24px) saturate(180%);
+    -webkit-backdrop-filter: blur(24px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    box-shadow:
+        0 8px 32px 0 rgba(0, 0, 0, 0.4),
+        0 0 0 1px rgba(255, 255, 255, 0.08) inset;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .auth-card:hover {
-  box-shadow: 0 12px 32px var(--shadow-hover);
-}
-
-.auth-card.flipping {
-  transform: rotateY(90deg);
-  opacity: 0.5;
+    border-color: rgba(255, 255, 255, 0.2);
+    box-shadow:
+        0 12px 48px 0 rgba(0, 0, 0, 0.5),
+        0 0 0 1px rgba(255, 255, 255, 0.12) inset;
 }
 
 /* ========================================
-   LOGO
-   ======================================== */
+LOGO & HEADER
+======================================== */
 .auth-logo {
-  text-align: center;
-  margin-bottom: 32px;
+    text-align: center;
+    margin-bottom: 40px;
 }
 
 .logo-icon {
-  font-size: 48px;
-  margin-bottom: 12px;
-  filter: drop-shadow(0 0 12px var(--accent));
-  animation: pulse 3s ease-in-out infinite;
+    width: 72px;
+    height: 72px;
+    margin: 0 auto 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    /* 🔥 ТУСКЛЫЙ GLASSMORPHISM */
+    background: rgba(255, 120, 60, 0.06);
+    backdrop-filter: blur(16px) saturate(150%);
+    -webkit-backdrop-filter: blur(16px) saturate(150%);
+    border: 1px solid rgba(255, 120, 60, 0.15);
+    border-radius: 20px;
+    box-shadow:
+        0 4px 16px 0 rgba(255, 120, 60, 0.15),
+        0 0 0 1px rgba(255, 255, 255, 0.03) inset;
+    transition: all 0.3s ease;
 }
 
-@keyframes pulse {
-  0%, 100% {
-    filter: drop-shadow(0 0 12px var(--accent));
-  }
-  50% {
-    filter: drop-shadow(0 0 20px var(--accent));
-  }
+.logo-icon::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 140%;
+    height: 140%;
+    border-radius: 24px;
+    background: radial-gradient(circle, rgba(255, 120, 60, 0.4) 0%, transparent 70%);
+    filter: blur(24px);
+    z-index: -1;
+    /* 🔥 УСИЛЕННАЯ ПУЛЬСАЦИЯ */
+    animation: glow-pulse 3s ease-in-out infinite;
+}
+
+@keyframes glow-pulse {
+
+    0%,
+    100% {
+        opacity: 0.7;
+        transform: translate(-50%, -50%) scale(1);
+    }
+
+    50% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1.15);
+    }
+}
+
+.logo-icon:hover {
+    transform: translateY(-2px);
+    box-shadow:
+        0 8px 24px 0 rgba(255, 120, 60, 0.25),
+        0 0 0 1px rgba(255, 255, 255, 0.06) inset;
+}
+
+/* SVG иконка щита */
+.logo-icon svg {
+    width: 40px;
+    height: 40px;
+    fill: rgba(255, 120, 60, 0.95);
+    filter: drop-shadow(0 0 6px rgba(255, 120, 60, 0.4));
 }
 
 .logo-text {
-  font-size: 28px;
-  font-weight: 600;
-  color: var(--text-primary);
-  margin: 0;
+    font-size: 32px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 0 0 8px 0;
+    letter-spacing: -0.5px;
+}
+
+.auth-logo p {
+    color: var(--text-secondary);
+    font-size: 14px;
+    margin: 0;
 }
 
 /* ========================================
-   CONTROLS (Theme + Language)
-   ======================================== */
+CONTROLS (Language Button)
+======================================== */
 .auth-controls {
-  display: flex;
-  gap: 8px;
-  justify-content: flex-end;
-  margin-bottom: 24px;
+    position: absolute;
+    top: 24px;
+    right: 24px;
+    display: flex;
+    gap: 8px;
+    z-index: 10;
 }
 
 .control-button {
-  background: var(--bg-tertiary);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  padding: 8px 12px;
-  color: var(--text-secondary);
-  font-size: 14px;
-  transition: all 0.2s ease;
-  display: flex;
-  align-items: center;
-  gap: 6px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 14px;
+    border: none;
+    border-radius: 12px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-secondary);
+    /* 🔥 ЛЕГКИЙ GLASSMORPHISM */
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(16px) saturate(180%);
+    -webkit-backdrop-filter: blur(16px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow:
+        0 4px 12px 0 rgba(0, 0, 0, 0.2),
+        0 0 0 1px rgba(255, 255, 255, 0.04) inset;
+    transition: all 0.2s ease;
+    cursor: pointer;
 }
 
 .control-button:hover {
-  background: var(--bg-secondary);
-  border-color: var(--border-hover);
-  color: var(--text-primary);
+    background: rgba(255, 255, 255, 0.08);
+    color: var(--text-primary);
+    border-color: rgba(255, 255, 255, 0.15);
+    transform: translateY(-1px);
+    box-shadow:
+        0 6px 16px 0 rgba(0, 0, 0, 0.3),
+        0 0 0 1px rgba(255, 255, 255, 0.06) inset;
+}
+
+.control-button:active {
+    transform: translateY(0);
 }
 
 /* ========================================
-   AUTH TITLE
-   ======================================== */
+FORM ELEMENTS
+======================================== */
 .auth-title {
-  font-size: 24px;
-  font-weight: 600;
-  color: var(--text-primary);
-  text-align: center;
-  margin-bottom: 24px;
+    font-size: 24px;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin: 0 0 32px 0;
+    text-align: center;
 }
 
-/* ========================================
-   AUTH FORM
-   ======================================== */
 .auth-form {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.form-label {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-secondary);
+    margin: 0;
+}
+
+.form-input {
+    width: 100%;
+    padding: 14px 16px;
+    border-radius: 12px;
+    font-size: 15px;
+    color: var(--text-primary);
+    /* 🔥 ЛЕГКИЙ GLASSMORPHISM */
+    background: rgba(255, 255, 255, 0.04);
+    backdrop-filter: blur(16px) saturate(180%);
+    -webkit-backdrop-filter: blur(16px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow:
+        0 2px 8px 0 rgba(0, 0, 0, 0.15),
+        0 0 0 1px rgba(255, 255, 255, 0.02) inset;
+    transition: all 0.2s ease;
+    outline: none;
+}
+
+.form-input::placeholder {
+    color: var(--text-tertiary);
+}
+
+.form-input:focus {
+    border-color: rgba(255, 120, 60, 0.5);
+    background: rgba(255, 255, 255, 0.06);
+    box-shadow:
+        0 0 0 3px rgba(255, 120, 60, 0.12),
+        0 4px 12px 0 rgba(255, 120, 60, 0.15),
+        0 0 0 1px rgba(255, 255, 255, 0.04) inset;
+}
+
+.form-input.error {
+    border-color: rgba(239, 83, 80, 0.5);
+    background: rgba(239, 83, 80, 0.06);
+}
+
+.form-error {
+    font-size: 13px;
+    color: var(--error);
+    margin: 0;
 }
 
 /* ========================================
-   AUTH FOOTER
-   ======================================== */
+BUTTONS - REFINED GLASSMORPHISM
+======================================== */
+.btn {
+    width: 100%;
+    padding: 14px 24px;
+    border: none;
+    border-radius: 12px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-primary {
+    color: #ffffff;
+    /* 🔥 МЯГКАЯ СТЕКЛЯННАЯ КНОПКА */
+    background: linear-gradient(135deg, rgba(255, 120, 60, 0.8), rgba(255, 90, 40, 0.8));
+    backdrop-filter: blur(16px) saturate(180%);
+    -webkit-backdrop-filter: blur(16px) saturate(180%);
+    border: 1px solid rgba(255, 120, 60, 0.4);
+    box-shadow:
+        0 6px 20px 0 rgba(255, 120, 60, 0.25),
+        0 0 0 1px rgba(255, 255, 255, 0.15) inset;
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow:
+        0 8px 28px 0 rgba(255, 120, 60, 0.35),
+        0 0 0 1px rgba(255, 255, 255, 0.2) inset;
+    background: linear-gradient(135deg, rgba(255, 130, 70, 0.85), rgba(255, 100, 50, 0.85));
+}
+
+.btn-primary:active {
+    transform: translateY(0);
+}
+
+.btn-primary:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* ========================================
+LOADING SPINNER
+======================================== */
+.loading {
+    display: inline-block;
+    width: 18px;
+    height: 18px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-top-color: #ffffff;
+    border-radius: 50%;
+    animation: spin 0.6s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* ========================================
+ALERTS
+======================================== */
+.alert {
+    padding: 14px 16px;
+    border-radius: 12px;
+    font-size: 14px;
+    line-height: 1.5;
+    margin-bottom: 20px;
+    /* 🔥 ЛЕГКИЙ GLASSMORPHISM */
+    backdrop-filter: blur(16px) saturate(180%);
+    -webkit-backdrop-filter: blur(16px) saturate(180%);
+    border: 1px solid;
+    box-shadow: 0 4px 12px 0 rgba(0, 0, 0, 0.2);
+}
+
+.alert-error {
+    background: rgba(239, 83, 80, 0.1);
+    border-color: rgba(239, 83, 80, 0.3);
+    color: #ff6b6b;
+}
+
+/* ========================================
+FOOTER
+======================================== */
 .auth-footer {
-  margin-top: 24px;
-  text-align: center;
-  font-size: 14px;
-  color: var(--text-secondary);
+    text-align: center;
+    font-size: 14px;
+    color: var(--text-secondary);
+    margin-top: 24px;
 }
 
 .auth-link {
-  color: var(--accent);
-  font-weight: 500;
-  cursor: pointer;
-  transition: color 0.2s ease;
+    color: #ff783c;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
 }
 
 .auth-link:hover {
-  color: var(--accent-hover);
-  text-decoration: underline;
+    color: #ff8a54;
+    text-decoration: underline;
+}
+
+/* ========================================
+FLIPPING ANIMATION - ULTRA SMOOTH
+======================================== */
+.auth-card.flipping {
+    animation: cardFlip 1.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+@keyframes cardFlip {
+    0% {
+        transform: perspective(1200px) rotateY(0deg);
+        opacity: 1;
+    }
+
+    25% {
+        opacity: 0.9;
+    }
+
+    45% {
+        transform: perspective(1200px) rotateY(90deg);
+        opacity: 0.5;
+    }
+
+    55% {
+        transform: perspective(1200px) rotateY(-90deg);
+        opacity: 0.5;
+    }
+
+    75% {
+        opacity: 0.9;
+    }
+
+    100% {
+        transform: perspective(1200px) rotateY(0deg);
+        opacity: 1;
+    }
+}
+
+/* ========================================
+RESPONSIVE
+======================================== */
+@media (max-width: 480px) {
+    .auth-card {
+        padding: 36px 24px;
+        border-radius: 20px;
+    }
+
+    .logo-text {
+        font-size: 28px;
+    }
+
+    .logo-icon {
+        width: 64px;
+        height: 64px;
+    }
+
+    .logo-icon svg {
+        width: 36px;
+        height: 36px;
+    }
 }

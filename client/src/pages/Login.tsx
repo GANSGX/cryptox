@@ -98,14 +98,14 @@ export function Login() {
         <LiquidEther
           key="background"
           colors={backgroundColors}
-          mouseForce={25}         // ⬆️ Увеличили силу (было 15)
-          cursorSize={80}        // ⬆️ Больше радиус кисти (было 80)
+          mouseForce={25}
+          cursorSize={80}
           autoDemo={true}
-          autoSpeed={0.5}         // ⬆️ Быстрее движение (было 0.3)
-          autoIntensity={1.7}     // ⬆️ Сильнее волны (было 1.5)
-          resolution={0.5}        // ⬆️ Чуть лучше качество (было 0.5)
-          autoResumeDelay={800}   // ⬇️ Быстрее возобновление (было 1000)
-          autoRampDuration={0.5}  // ⬇️ Быстрее разгон (было 0.6)
+          autoSpeed={0.5}
+          autoIntensity={1.7}
+          resolution={0.5}
+          autoResumeDelay={800}
+          autoRampDuration={0.5}
         />
       </div>
 
@@ -113,7 +113,12 @@ export function Login() {
       <div className={`auth-card ${isFlipping ? 'flipping' : ''}`} style={{ position: 'relative', zIndex: 1 }}>
         {/* Logo */}
         <div className="auth-logo">
-          <div className="logo-icon">🔮</div>
+          <div className="logo-icon">
+            {/* SVG ИКОНКА ЩИТА */}
+            <svg viewBox="0 0 24 24">
+              <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z"/>
+            </svg>
+          </div>
           <h1 className="logo-text">{t('common.appName')}</h1>
         </div>
 
