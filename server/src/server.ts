@@ -6,6 +6,7 @@ import { env } from './config/env.js'
 import { authRoutes } from './routes/auth.routes.js'
 import { protectedRoutes } from './routes/protected.routes.js'
 import { usersRoutes } from './routes/users.routes.js'
+import { errorHandler, notFoundHandler } from './middleware/error.middleware.js'
 
 const fastify = Fastify({
   logger: {
@@ -28,7 +29,7 @@ await fastify.register(rateLimit, {
   max: 100,
   timeWindow: '1 minute',
   cache: 10000,
-  allowList: ['127.0.0.1'], // ← ВЕРНИ ЭТУ СТРОКУ
+  allowList: ['127.0.0.1'],
   redis: undefined,
   skipOnError: true,
   errorResponseBuilder: (request, context) => {
@@ -44,6 +45,10 @@ await fastify.register(rateLimit, {
 await fastify.register(authRoutes, { prefix: '/api/auth' })
 await fastify.register(protectedRoutes, { prefix: '/api' })
 await fastify.register(usersRoutes, { prefix: '/api/users' })
+
+// Error handlers
+fastify.setErrorHandler(errorHandler)
+fastify.setNotFoundHandler(notFoundHandler)
 
 // Health check route
 fastify.get('/health', async () => {
