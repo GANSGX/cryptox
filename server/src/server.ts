@@ -8,6 +8,7 @@ import { protectedRoutes } from './routes/protected.routes.js'
 import { usersRoutes } from './routes/users.routes.js'
 import { errorHandler, notFoundHandler } from './middleware/error.middleware.js'
 import { log } from './services/logger.service.js'
+import { initializeSocketServer } from './sockets/socket.server.js'
 
 const fastify = Fastify({
   logger: false, // Отключаем встроенный logger, используем Winston
@@ -15,8 +16,30 @@ const fastify = Fastify({
 
 // Plugins
 await fastify.register(cors, {
-  origin: env.CORS_ORIGIN,
+  origin: (origin, cb) => {
+    // Разрешаем null origin (для file://)
+    if (!origin) {
+      cb(null, true)
+      return
+    }
+    
+    // Разрешаем localhost origins для разработки
+    if (origin.includes('localhost') || origin.includes('127.0.0.1') || origin.includes('file://')) {
+      cb(null, true)
+      return
+    }
+    
+    // В production проверяем env.CORS_ORIGIN
+    if (origin === env.CORS_ORIGIN) {
+      cb(null, true)
+      return
+    }
+    
+    cb(new Error('Not allowed by CORS'), false)
+  },
   credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
 })
 
 await fastify.register(helmet, {
@@ -81,13 +104,29 @@ fastify.get('/', async () => {
   }
 })
 
+// Расширяем Fastify для добавления io
+declare module 'fastify' {
+  interface FastifyInstance {
+    io: ReturnType<typeof initializeSocketServer>
+  }
+}
+
 // Start server
 const start = async () => {
   try {
+    // Добавляем декоратор ДО запуска сервера
+    fastify.decorate('io', null as any)
+
     await fastify.listen({ 
       port: env.PORT, 
       host: env.HOST,
     })
+
+    // Инициализация Socket.io ПОСЛЕ запуска Fastify
+    const io = initializeSocketServer(fastify.server)
+    
+    // Заменяем null на реальный io
+    fastify.io = io
     
     log.info('🚀 CryptoX Server started!', {
       url: `http://localhost:${env.PORT}`,
@@ -95,6 +134,7 @@ const start = async () => {
       auth: `http://localhost:${env.PORT}/api/auth/register`,
       search: `http://localhost:${env.PORT}/api/users/search?q=username`,
       rateLimit: '100 requests per minute',
+      socketio: 'enabled',
       environment: env.NODE_ENV,
     })
     
@@ -106,6 +146,7 @@ const start = async () => {
 🔐 Auth: http://localhost:${env.PORT}/api/auth/register
 🔍 Search: http://localhost:${env.PORT}/api/users/search?q=username
 🛡️  Rate Limit: 100 requests per minute
+🔌 Socket.io: Enabled
 🌍 Environment: ${env.NODE_ENV}
     `)
   } catch (err) {

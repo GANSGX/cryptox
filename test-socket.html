@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>CryptoX Socket.io Test</title>
+  <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
+</head>
+<body>
+  <h1>CryptoX Socket.io Test</h1>
+  
+  <div>
+    <label>JWT Token:</label><br>
+    <input type="text" id="token" size="80" placeholder="Paste your JWT token here"><br><br>
+    <button onclick="connect()">Connect</button>
+    <button onclick="disconnect()">Disconnect</button>
+  </div>
+  
+  <div style="margin-top: 20px;">
+    <h3>Status:</h3>
+    <div id="status" style="padding: 10px; background: #f0f0f0;"></div>
+  </div>
+  
+  <div style="margin-top: 20px;">
+    <h3>Events:</h3>
+    <div id="events" style="padding: 10px; background: #f0f0f0; max-height: 300px; overflow-y: auto;"></div>
+  </div>
+
+  <script>
+    let socket = null;
+
+    function log(message) {
+      const events = document.getElementById('events');
+      const time = new Date().toLocaleTimeString();
+      events.innerHTML = `[${time}] ${message}<br>` + events.innerHTML;
+    }
+
+    function setStatus(message, color = 'black') {
+      document.getElementById('status').innerHTML = `<span style="color: ${color}">${message}</span>`;
+    }
+
+    function connect() {
+      const token = document.getElementById('token').value.trim();
+      
+      if (!token) {
+        alert('Please enter a JWT token!');
+        return;
+      }
+
+      if (socket && socket.connected) {
+        log('Already connected!');
+        return;
+      }
+
+      log('Connecting to Socket.io...');
+      setStatus('Connecting...', 'orange');
+
+      socket = io('http://localhost:3001', {
+        auth: {
+          token: token
+        }
+      });
+
+      socket.on('connect', () => {
+        log('✅ Connected! Socket ID: ' + socket.id);
+        setStatus('Connected ✅', 'green');
+      });
+
+      socket.on('connected', (data) => {
+        log('Server confirmation: ' + JSON.stringify(data));
+      });
+
+      socket.on('disconnect', (reason) => {
+        log('❌ Disconnected. Reason: ' + reason);
+        setStatus('Disconnected ❌', 'red');
+      });
+
+      socket.on('connect_error', (error) => {
+        log('⚠️ Connection error: ' + error.message);
+        setStatus('Error: ' + error.message, 'red');
+      });
+
+      socket.on('user_typing', (data) => {
+        log('👤 User typing: ' + JSON.stringify(data));
+      });
+
+      socket.on('user_stopped_typing', (data) => {
+        log('👤 User stopped typing: ' + JSON.stringify(data));
+      });
+    }
+
+    function disconnect() {
+      if (socket) {
+        socket.disconnect();
+        log('Disconnected manually');
+        setStatus('Disconnected', 'gray');
+      }
+    }
+  </script>
+</body>
+</html>
