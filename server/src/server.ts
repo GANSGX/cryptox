@@ -6,30 +6,28 @@ import { env } from './config/env.js'
 import { authRoutes } from './routes/auth.routes.js'
 import { protectedRoutes } from './routes/protected.routes.js'
 import { usersRoutes } from './routes/users.routes.js'
+import { messagesRoutes } from './routes/messages.routes.js'
 import { errorHandler, notFoundHandler } from './middleware/error.middleware.js'
 import { log } from './services/logger.service.js'
 import { initializeSocketServer } from './sockets/socket.server.js'
 
 const fastify = Fastify({
-  logger: false, // Отключаем встроенный logger, используем Winston
+  logger: false,
 })
 
 // Plugins
 await fastify.register(cors, {
   origin: (origin, cb) => {
-    // Разрешаем null origin (для file://)
     if (!origin) {
       cb(null, true)
       return
     }
     
-    // Разрешаем localhost origins для разработки
     if (origin.includes('localhost') || origin.includes('127.0.0.1') || origin.includes('file://')) {
       cb(null, true)
       return
     }
     
-    // В production проверяем env.CORS_ORIGIN
     if (origin === env.CORS_ORIGIN) {
       cb(null, true)
       return
@@ -38,7 +36,7 @@ await fastify.register(cors, {
     cb(new Error('Not allowed by CORS'), false)
   },
   credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
   allowedHeaders: ['Content-Type', 'Authorization'],
 })
 
@@ -81,6 +79,7 @@ fastify.addHook('onResponse', async (request, reply) => {
 await fastify.register(authRoutes, { prefix: '/api/auth' })
 await fastify.register(protectedRoutes, { prefix: '/api' })
 await fastify.register(usersRoutes, { prefix: '/api/users' })
+await fastify.register(messagesRoutes, { prefix: '/api' })
 
 // Error handlers
 fastify.setErrorHandler(errorHandler)
@@ -114,7 +113,6 @@ declare module 'fastify' {
 // Start server
 const start = async () => {
   try {
-    // Добавляем декоратор ДО запуска сервера
     fastify.decorate('io', null as any)
 
     await fastify.listen({ 
@@ -122,10 +120,8 @@ const start = async () => {
       host: env.HOST,
     })
 
-    // Инициализация Socket.io ПОСЛЕ запуска Fastify
     const io = initializeSocketServer(fastify.server)
     
-    // Заменяем null на реальный io
     fastify.io = io
     
     log.info('🚀 CryptoX Server started!', {
@@ -133,6 +129,7 @@ const start = async () => {
       health: `http://localhost:${env.PORT}/health`,
       auth: `http://localhost:${env.PORT}/api/auth/register`,
       search: `http://localhost:${env.PORT}/api/users/search?q=username`,
+      messages: `http://localhost:${env.PORT}/api/messages`,
       rateLimit: '100 requests per minute',
       socketio: 'enabled',
       environment: env.NODE_ENV,
@@ -145,6 +142,7 @@ const start = async () => {
 🏥 Health: http://localhost:${env.PORT}/health
 🔐 Auth: http://localhost:${env.PORT}/api/auth/register
 🔍 Search: http://localhost:${env.PORT}/api/users/search?q=username
+💬 Messages: http://localhost:${env.PORT}/api/messages
 🛡️  Rate Limit: 100 requests per minute
 🔌 Socket.io: Enabled
 🌍 Environment: ${env.NODE_ENV}

@@ -71,3 +71,36 @@ export interface SearchUsersResponse {
   users: UserSearchResult[]
   count: number
 }
+
+// Типы для сообщений
+export interface SendMessageRequest {
+  recipient_username: string
+  encrypted_content: string
+  message_type?: 'text' | 'image' | 'video' | 'file' | 'audio'
+}
+
+export interface SendMessageResponse {
+  message_id: string
+  chat_id: string
+  created_at: string
+  status: 'sent'
+}
+
+export interface GetMessagesQuery {
+  limit?: number
+  offset?: number
+}
+
+export interface GetMessagesResponse {
+  messages: Array<{
+    id: string
+    sender_username: string
+    recipient_username: string
+    encrypted_content: string
+    message_type: string
+    created_at: string
+    read_at: string | null
+  }>
+  total: number
+  has_more: boolean
+}

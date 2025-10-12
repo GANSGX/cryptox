@@ -16,19 +16,16 @@ export function initializeSocketServer(httpServer: HTTPServer) {
   const io = new SocketIOServer(httpServer, {
     cors: {
       origin: (origin, callback) => {
-        // Разрешаем null origin (для file://)
         if (!origin) {
           callback(null, true)
           return
         }
         
-        // Разрешаем localhost и file:// для разработки
         if (origin.includes('localhost') || origin.includes('127.0.0.1') || origin.startsWith('file://')) {
           callback(null, true)
           return
         }
         
-        // В production проверяем env.CORS_ORIGIN
         if (origin === env.CORS_ORIGIN) {
           callback(null, true)
           return
@@ -53,7 +50,6 @@ export function initializeSocketServer(httpServer: HTTPServer) {
       return next(new Error('Authentication error: No token provided'))
     }
 
-    // Проверяем JWT токен
     const payload = JwtService.verify(token)
 
     if (!payload) {
@@ -64,7 +60,6 @@ export function initializeSocketServer(httpServer: HTTPServer) {
       return next(new Error('Authentication error: Invalid token'))
     }
 
-    // Добавляем данные пользователя к сокету
     socket.user = {
       username: payload.username,
       email: payload.email,
@@ -119,6 +114,24 @@ export function initializeSocketServer(httpServer: HTTPServer) {
       socket.to(`user:${data.chatId}`).emit('user_stopped_typing', {
         username,
         chatId: data.chatId,
+      })
+    })
+
+    // Подтверждение доставки сообщения
+    socket.on('message_delivered', (data: { messageId: string; toUsername: string }) => {
+      log.debug('Message delivered', { messageId: data.messageId, username })
+      socket.to(`user:${data.toUsername}`).emit('message_status_update', {
+        messageId: data.messageId,
+        status: 'delivered',
+      })
+    })
+
+    // Подтверждение прочтения сообщения
+    socket.on('message_read', (data: { messageId: string; toUsername: string }) => {
+      log.debug('Message read', { messageId: data.messageId, username })
+      socket.to(`user:${data.toUsername}`).emit('message_status_update', {
+        messageId: data.messageId,
+        status: 'read',
       })
     })
 
