@@ -355,39 +355,39 @@ FOOTER
 }
 
 /* ========================================
-FLIPPING ANIMATION - ULTRA SMOOTH
+DEPTH TRANSITION - SMOOTH FADE & SCALE
 ======================================== */
-.auth-card.flipping {
-    animation: cardFlip 1.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+.auth-form {
+    transition: none; /* Отключаем дефолтный transition */
 }
 
-@keyframes cardFlip {
+.auth-form.exiting {
+    animation: sinkDown 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+.auth-form.entering {
+    animation: riseUp 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+@keyframes sinkDown {
     0% {
-        transform: perspective(1200px) rotateY(0deg);
         opacity: 1;
+        transform: scale(1);
     }
-
-    25% {
-        opacity: 0.9;
-    }
-
-    45% {
-        transform: perspective(1200px) rotateY(90deg);
-        opacity: 0.5;
-    }
-
-    55% {
-        transform: perspective(1200px) rotateY(-90deg);
-        opacity: 0.5;
-    }
-
-    75% {
-        opacity: 0.9;
-    }
-
     100% {
-        transform: perspective(1200px) rotateY(0deg);
+        opacity: 0;
+        transform: scale(0.88);
+    }
+}
+
+@keyframes riseUp {
+    0% {
+        opacity: 0;
+        transform: scale(0.88);
+    }
+    100% {
         opacity: 1;
+        transform: scale(1);
     }
 }
 
