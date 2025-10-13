@@ -1,28 +1,34 @@
-
 /* ========================================
    CSS VARIABLES - DARK THEME
    ======================================== */
 :root[data-theme='dark'] {
-  --bg-primary: #1e1e1e;
-  --bg-secondary: #2d2d30;
-  --bg-tertiary: #252526;
-  --bg-card: #2d2d30;
-  --bg-card-rgb: 45, 45, 48;
+  /* Backgrounds */
+  --bg-primary: #0f0f17;
+  --bg-secondary: #1a1a24;
+  --bg-tertiary: #252532;
+  --bg-card: #1e1e2e;
+  --bg-card-rgb: 30, 30, 46;
   
-  --text-primary: #e0e0e0;
-  --text-secondary: #9d9d9d;
-  --text-tertiary: #6e6e6e;
+  /* Text colors */
+  --text-primary: #e0e0e8;
+  --text-secondary: #a0a0b0;
+  --text-tertiary: #6a6a7a;
   
-  --accent: #14b8a6;
-  --accent-hover: #10a694;
-  --accent-light: rgba(20, 184, 166, 0.15);
+  /* Accent colors */
+  --accent: #ff783c;
+  --accent-hover: #ff8a54;
+  --accent-light: rgba(255, 120, 60, 0.15);
   
-  --border: #3e3e42;
-  --border-hover: #4e4e52;
+  /* Borders */
+  --border: rgba(255, 255, 255, 0.08);
+  --border-hover: rgba(255, 255, 255, 0.12);
   
+  /* Status colors */
   --error: #ef5350;
   --success: #66bb6a;
+  --warning: #ffa726;
   
+  /* Shadows */
   --shadow: rgba(0, 0, 0, 0.3);
   --shadow-hover: rgba(0, 0, 0, 0.5);
 }
