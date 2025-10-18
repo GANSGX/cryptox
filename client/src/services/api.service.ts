@@ -106,7 +106,7 @@ class ApiService {
   /**
    * Проверка авторизации
    */
-  async me(): Promise<ApiResponse<{ username: string; email: string }>> {
+  async me(): Promise<ApiResponse<{ username: string; email: string; email_verified: boolean }>> {
     return this.request('/me')
   }
 

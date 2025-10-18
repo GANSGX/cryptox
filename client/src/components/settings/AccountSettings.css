@@ -1,0 +1,218 @@
+/* ========================================
+   ACCOUNT SETTINGS
+   ======================================== */
+.account-settings {
+  max-width: 700px;
+}
+
+.settings-section-title {
+  font-size: 28px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0 0 32px 0;
+}
+
+/* ========================================
+   SETTINGS BLOCK
+   ======================================== */
+.settings-block {
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  padding: 24px;
+  margin-bottom: 24px;
+  transition: all 0.2s ease;
+}
+
+.settings-block:hover {
+  border-color: rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.settings-block-header h4 {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0 0 16px 0;
+}
+
+.settings-block-content {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* ========================================
+   INFO ROW
+   ======================================== */
+.settings-info-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 0;
+}
+
+.settings-label {
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+
+.settings-value {
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+/* ========================================
+   EMAIL ROW
+   ======================================== */
+.settings-email-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.settings-email-info {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.settings-email-icon {
+  color: var(--text-secondary);
+  margin-top: 2px;
+}
+
+.settings-email-address {
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--text-primary);
+  margin-bottom: 6px;
+}
+
+.settings-email-status {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.settings-email-status.verified {
+  color: var(--success);
+}
+
+.settings-email-status.unverified {
+  color: var(--warning);
+}
+
+.settings-email-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+/* ========================================
+   BUTTONS
+   ======================================== */
+.settings-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 500;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.settings-btn-primary {
+  background: linear-gradient(135deg, #ff783c, #ff5a3c);
+  color: white;
+  box-shadow: 0 4px 12px rgba(255, 120, 60, 0.3);
+}
+
+.settings-btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(255, 120, 60, 0.4);
+}
+
+.settings-btn-secondary {
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text-primary);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.settings-btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+.settings-btn:active {
+  transform: translateY(0);
+}
+
+/* ========================================
+   INFO BANNER
+   ======================================== */
+.settings-info-banner {
+  display: flex;
+  gap: 16px;
+  padding: 16px;
+  background: rgba(255, 183, 77, 0.1);
+  border: 1px solid rgba(255, 183, 77, 0.3);
+  border-radius: 12px;
+  margin-top: 16px;
+}
+
+.settings-info-banner-icon {
+  font-size: 24px;
+  flex-shrink: 0;
+}
+
+.settings-info-banner-content {
+  flex: 1;
+}
+
+.settings-info-banner-content strong {
+  display: block;
+  font-size: 15px;
+  color: var(--text-primary);
+  margin-bottom: 8px;
+}
+
+.settings-info-banner-content ul {
+  margin: 0;
+  padding-left: 20px;
+  color: var(--text-secondary);
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.settings-info-banner-content li {
+  margin-bottom: 4px;
+}
+
+/* ========================================
+   RESPONSIVE
+   ======================================== */
+@media (max-width: 768px) {
+  .settings-email-row {
+    flex-direction: column;
+  }
+
+  .settings-email-actions {
+    width: 100%;
+  }
+
+  .settings-btn {
+    flex: 1;
+    justify-content: center;
+  }
+}

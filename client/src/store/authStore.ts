@@ -50,7 +50,11 @@ export const useAuthStore = create<AuthState>((set) => ({
       cryptoService.loadSessionKeys()
 
       set({
-        user,
+        user: {
+          username: user.username,
+          email: user.email,
+          email_verified: user.email_verified || false,
+        },
         token,
         isLoading: false,
         error: null,
@@ -94,7 +98,11 @@ export const useAuthStore = create<AuthState>((set) => ({
       socketService.connect(token)
 
       set({
-        user,
+        user: {
+          username: user.username,
+          email: user.email,
+          email_verified: user.email_verified || false,
+        },
         token,
         isLoading: false,
         error: null,
@@ -154,7 +162,7 @@ export const useAuthStore = create<AuthState>((set) => ({
         user: {
           username: response.data.username,
           email: response.data.email,
-          email_verified: false, // TODO: добавить в ответ API
+          email_verified: response.data.email_verified || false,
         },
         token,
         isLoading: false,

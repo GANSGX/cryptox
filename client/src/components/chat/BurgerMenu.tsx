@@ -2,6 +2,7 @@ import { User, Settings, LogOut, X } from 'lucide-react'
 import { useAuthStore } from '@/store/authStore'
 import { useNavigate } from 'react-router-dom'
 import { useEffect, useState } from 'react'
+import { SettingsModal } from '@/components/settings/SettingsModal'
 
 interface BurgerMenuProps {
   isOpen: boolean
@@ -14,27 +15,21 @@ export function BurgerMenu({ isOpen, onClose }: BurgerMenuProps) {
   
   const [isMounted, setIsMounted] = useState(false)
   const [isAnimated, setIsAnimated] = useState(false)
+  const [showSettings, setShowSettings] = useState(false)
 
   useEffect(() => {
     if (isOpen) {
-      // Монтируем компонент
       setIsMounted(true)
-      
-      // Ждём ДВА фрейма для гарантии отрисовки начального состояния
       requestAnimationFrame(() => {
         requestAnimationFrame(() => {
           setIsAnimated(true)
         })
       })
     } else if (isMounted) {
-      // Убираем класс - начинается анимация закрытия
       setIsAnimated(false)
-      
-      // Размонтируем через 300ms
       const timer = setTimeout(() => {
         setIsMounted(false)
       }, 300)
-      
       return () => clearTimeout(timer)
     }
   }, [isOpen, isMounted])
@@ -79,7 +74,7 @@ export function BurgerMenu({ isOpen, onClose }: BurgerMenuProps) {
             <User size={20} />
             <span>Profile</span>
           </div>
-          <div className="menu-item">
+          <div className="menu-item" onClick={() => setShowSettings(true)}>
             <Settings size={20} />
             <span>Settings</span>
           </div>
@@ -98,6 +93,9 @@ export function BurgerMenu({ isOpen, onClose }: BurgerMenuProps) {
           CryptoX v0.1.0
         </div>
       </div>
+
+      {/* Settings Modal */}
+      <SettingsModal isOpen={showSettings} onClose={() => setShowSettings(false)} />
     </>
   )
 }
