@@ -61,13 +61,19 @@
   background: rgba(0, 0, 0, 0.6);
   backdrop-filter: blur(4px);
   z-index: 200;
-  animation: fadeIn 0.2s ease;
+  transition: opacity 0.3s ease;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
 .burger-menu {
   position: fixed;
   top: 0;
-  left: 0;
+  left: -300px;
   width: 300px;
   height: 100vh;
   background: rgba(25, 25, 35, 0.95);
@@ -77,7 +83,11 @@
   z-index: 201;
   display: flex;
   flex-direction: column;
-  animation: slideIn 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.burger-menu.open {
+  left: 0;
 }
 
 @keyframes fadeIn {
@@ -500,4 +510,249 @@
 .chat-list::-webkit-scrollbar-thumb:hover,
 .messages-container::-webkit-scrollbar-thumb:hover {
   background: rgba(255, 255, 255, 0.15);
+}
+
+/* ========================================
+   TELEGRAM-STYLE MESSAGE INPUT
+   ======================================== */
+.message-input-wrapper {
+  position: relative;
+}
+
+.message-input-container-new {
+  padding: 12px 20px;
+  background: transparent;
+  border-top: none;
+  display: flex;
+  gap: 10px;
+  align-items: stretch;
+}
+
+/* ========================================
+   ACTION BUTTONS
+   ======================================== */
+.action-button {
+  width: 44px;
+  min-height: 44px;
+  border-radius: 50%;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  flex-shrink: 0;
+  
+  /* GLASSMORPHISM */
+  background: rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow: 
+    0 8px 32px 0 rgba(0, 0, 0, 0.37),
+    inset 0 1px 1px 0 rgba(255, 255, 255, 0.1);
+  color: var(--text-secondary);
+}
+
+.action-button:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.2);
+  color: var(--text-primary);
+  transform: translateY(-2px);
+  box-shadow: 
+    0 12px 40px 0 rgba(0, 0, 0, 0.45),
+    inset 0 1px 2px 0 rgba(255, 255, 255, 0.15);
+}
+
+.action-button:active {
+  transform: scale(0.92);
+}
+
+/* ========================================
+   INPUT FIELD WRAPPER
+   ======================================== */
+.input-field-wrapper {
+  flex: 1;
+  position: relative;
+  display: flex;
+  align-items: center;
+  min-height: 44px;
+  
+  /* GLASSMORPHISM */
+  background: rgba(255, 255, 255, 0.04);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 22px;
+  box-shadow: 
+    0 8px 32px 0 rgba(0, 0, 0, 0.37),
+    inset 0 1px 1px 0 rgba(255, 255, 255, 0.08);
+  transition: background 0.25s ease;
+}
+
+.input-field-wrapper:focus-within {
+  background: rgba(255, 255, 255, 0.07);
+  border-color: rgba(255, 120, 60, 0.35);
+  box-shadow: 
+    0 0 0 4px rgba(255, 120, 60, 0.1),
+    0 8px 32px 0 rgba(255, 120, 60, 0.2),
+    inset 0 1px 2px 0 rgba(255, 255, 255, 0.12);
+}
+
+/* ========================================
+   TEXTAREA
+   ======================================== */
+.message-input-new {
+  flex: 1;
+  padding: 11px 16px;
+  background: transparent;
+  border: none;
+  color: var(--text-primary);
+  font-size: 15px;
+  resize: none;
+  outline: none;
+  font-family: inherit;
+  line-height: 1.4;
+  max-height: 120px;
+  overflow-y: auto;
+  min-height: 44px;
+}
+
+.message-input-new::placeholder {
+  color: var(--text-tertiary);
+}
+
+.message-input-new::-webkit-scrollbar {
+  width: 4px;
+}
+
+.message-input-new::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 2px;
+}
+
+/* ========================================
+   SEND BUTTON INLINE
+   ======================================== */
+.send-button-inline {
+  width: 36px;
+  height: 36px;
+  border-radius: 18px;
+  background: linear-gradient(135deg, #ff783c, #ff5a3c);
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  color: white;
+  margin-right: 4px;
+  flex-shrink: 0;
+  box-shadow: 0 4px 12px rgba(255, 120, 60, 0.35);
+}
+
+.send-button-inline:hover {
+  transform: scale(1.1);
+  box-shadow: 0 6px 16px rgba(255, 120, 60, 0.45);
+}
+
+.send-button-inline:active {
+  transform: scale(0.95);
+}
+
+/* ========================================
+   ATTACH MENU
+   ======================================== */
+.attach-menu-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: transparent;
+  z-index: 99;
+}
+
+.attach-menu {
+  position: absolute;
+  bottom: 70px;
+  left: 20px;
+  width: 260px;
+  
+  /* GLASSMORPHISM */
+  background: rgba(25, 25, 35, 0.7);
+  backdrop-filter: blur(30px) saturate(180%);
+  -webkit-backdrop-filter: blur(30px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 20px;
+  box-shadow: 
+    0 16px 48px 0 rgba(0, 0, 0, 0.5),
+    inset 0 1px 2px 0 rgba(255, 255, 255, 0.1);
+  padding: 12px;
+  z-index: 100;
+  animation: slideUpFade 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes slideUpFade {
+  from {
+    opacity: 0;
+    transform: translateY(15px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.attach-menu-item {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 14px;
+  background: transparent;
+  border: none;
+  border-radius: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  color: var(--text-primary);
+  font-size: 15px;
+  text-align: left;
+}
+
+.attach-menu-item:hover {
+  background: rgba(255, 255, 255, 0.1);
+  transform: translateX(4px);
+}
+
+.attach-icon {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.attach-icon.media {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.attach-icon.file {
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+}
+
+.attach-icon.contact {
+  background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+}
+
+.attach-icon.location {
+  background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+}
+
+.attach-icon svg {
+  color: white;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
 }
