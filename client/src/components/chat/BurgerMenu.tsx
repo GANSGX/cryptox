@@ -1,6 +1,7 @@
 import { User, Settings, LogOut, X } from 'lucide-react'
 import { useAuthStore } from '@/store/authStore'
 import { useNavigate } from 'react-router-dom'
+import { useEffect, useState } from 'react'
 
 interface BurgerMenuProps {
   isOpen: boolean
@@ -10,8 +11,35 @@ interface BurgerMenuProps {
 export function BurgerMenu({ isOpen, onClose }: BurgerMenuProps) {
   const { user, logout } = useAuthStore()
   const navigate = useNavigate()
+  
+  const [isMounted, setIsMounted] = useState(false)
+  const [isAnimated, setIsAnimated] = useState(false)
 
-  if (!isOpen) return null
+  useEffect(() => {
+    if (isOpen) {
+      // Монтируем компонент
+      setIsMounted(true)
+      
+      // Ждём ДВА фрейма для гарантии отрисовки начального состояния
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          setIsAnimated(true)
+        })
+      })
+    } else if (isMounted) {
+      // Убираем класс - начинается анимация закрытия
+      setIsAnimated(false)
+      
+      // Размонтируем через 300ms
+      const timer = setTimeout(() => {
+        setIsMounted(false)
+      }, 300)
+      
+      return () => clearTimeout(timer)
+    }
+  }, [isOpen, isMounted])
+
+  if (!isMounted) return null
 
   const handleLogout = () => {
     logout()
@@ -21,10 +49,13 @@ export function BurgerMenu({ isOpen, onClose }: BurgerMenuProps) {
   return (
     <>
       {/* Overlay */}
-      <div className="burger-menu-overlay" onClick={onClose} />
+      <div 
+        className={`burger-menu-overlay ${isAnimated ? 'visible' : ''}`}
+        onClick={onClose}
+      />
 
       {/* Menu */}
-      <div className="burger-menu">
+      <div className={`burger-menu ${isAnimated ? 'open' : ''}`}>
         {/* Header - Profile + Close Button */}
         <div className="burger-menu-header">
           <button className="close-button" onClick={onClose}>
@@ -54,7 +85,7 @@ export function BurgerMenu({ isOpen, onClose }: BurgerMenuProps) {
           </div>
         </div>
 
-        {/* Logout Button (above footer) */}
+        {/* Logout Button */}
         <div style={{ padding: '0 0 8px 0' }}>
           <div className="menu-item danger" onClick={handleLogout}>
             <LogOut size={20} />
@@ -62,7 +93,7 @@ export function BurgerMenu({ isOpen, onClose }: BurgerMenuProps) {
           </div>
         </div>
 
-        {/* Footer - Version */}
+        {/* Footer */}
         <div className="burger-menu-footer">
           CryptoX v0.1.0
         </div>
