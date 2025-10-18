@@ -2,16 +2,23 @@ import { useState } from 'react'
 import { Mail, CheckCircle, XCircle, Edit2 } from 'lucide-react'
 import { useAuthStore } from '@/store/authStore'
 import { ChangeEmailModal } from './ChangeEmailModal'
+import { VerifyEmailModal } from './VerifyEmailModal'
 import './AccountSettings.css'
 
 export function AccountSettings() {
   const { user, checkAuth } = useAuthStore()
   const [showChangeEmail, setShowChangeEmail] = useState(false)
+  const [showVerifyEmail, setShowVerifyEmail] = useState(false)
 
   const isEmailVerified = user?.email_verified || false
 
   const handleEmailChanged = () => {
     // Обновляем данные пользователя после смены email
+    checkAuth()
+  }
+
+  const handleEmailVerified = () => {
+    // Обновляем данные пользователя после верификации
     checkAuth()
   }
 
@@ -61,7 +68,10 @@ export function AccountSettings() {
 
             <div className="settings-email-actions">
               {!isEmailVerified && (
-                <button className="settings-btn settings-btn-primary">
+                <button 
+                  className="settings-btn settings-btn-primary"
+                  onClick={() => setShowVerifyEmail(true)}
+                >
                   Verify Email
                 </button>
               )}
@@ -98,6 +108,13 @@ export function AccountSettings() {
         isOpen={showChangeEmail} 
         onClose={() => setShowChangeEmail(false)}
         onSuccess={handleEmailChanged}
+      />
+
+      {/* Verify Email Modal */}
+      <VerifyEmailModal 
+        isOpen={showVerifyEmail} 
+        onClose={() => setShowVerifyEmail(false)}
+        onSuccess={handleEmailVerified}
       />
     </div>
   )

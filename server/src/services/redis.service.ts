@@ -65,7 +65,7 @@ export class RedisService {
    */
   static async setEmailCooldown(username: string): Promise<void> {
     const key = `email_cooldown:${username}`
-    await redis.setex(key, 60, '1') // 60 секунд
+    await redis.setex(key, 30, '1') // 30 секунд
   }
 
   /**

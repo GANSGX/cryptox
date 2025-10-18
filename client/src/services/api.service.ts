@@ -185,6 +185,26 @@ class ApiService {
       body: JSON.stringify({ username, new_email: newEmail }),
     })
   }
+
+  /**
+   * Отправка кода верификации на email
+   */
+  async sendVerificationCode(username: string): Promise<ApiResponse> {
+    return this.request('/auth/send-verification-code', {
+      method: 'POST',
+      body: JSON.stringify({ username }),
+    })
+  }
+
+  /**
+   * Проверка кода и подтверждение email
+   */
+  async verifyEmail(username: string, code: string): Promise<ApiResponse> {
+    return this.request('/auth/verify-email', {
+      method: 'POST',
+      body: JSON.stringify({ username, code }),
+    })
+  }
 }
 
 export const apiService = new ApiService()

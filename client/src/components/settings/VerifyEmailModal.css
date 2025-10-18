@@ -1,0 +1,289 @@
+/* ========================================
+   VERIFY EMAIL MODAL
+   ======================================== */
+.verify-email-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0);
+  backdrop-filter: blur(0px);
+  z-index: 400;
+  pointer-events: none;
+  transition: background 0.3s ease, backdrop-filter 0.3s ease;
+}
+
+.verify-email-overlay.visible {
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(8px);
+  pointer-events: all;
+}
+
+.verify-email-modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0.9);
+  width: 90%;
+  max-width: 440px;
+  background: rgba(20, 20, 30, 0.95);
+  backdrop-filter: blur(40px) saturate(180%);
+  -webkit-backdrop-filter: blur(40px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 20px;
+  box-shadow: 
+    0 20px 60px 0 rgba(0, 0, 0, 0.6),
+    inset 0 1px 2px 0 rgba(255, 255, 255, 0.1);
+  z-index: 401;
+  opacity: 0;
+  transition: opacity 0.3s ease, transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.verify-email-modal.open {
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1);
+}
+
+/* ========================================
+   HEADER
+   ======================================== */
+.verify-email-header {
+  padding: 24px 24px 20px 24px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.verify-email-header h2 {
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.verify-email-close {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  color: var(--text-secondary);
+}
+
+.verify-email-close:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.15);
+  color: var(--text-primary);
+  transform: rotate(90deg);
+}
+
+/* ========================================
+   CONTENT
+   ======================================== */
+.verify-email-content {
+  padding: 32px 24px 24px 24px;
+}
+
+.verify-email-form {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* ========================================
+   INFO SECTION
+   ======================================== */
+.verify-email-info {
+  text-align: center;
+  padding: 0 0 8px 0;
+}
+
+.verify-email-icon {
+  font-size: 48px;
+  margin-bottom: 16px;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}
+
+.verify-email-info h3 {
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0 0 8px 0;
+}
+
+.verify-email-info p {
+  font-size: 14px;
+  color: var(--text-secondary);
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* ========================================
+   ERROR
+   ======================================== */
+.verify-email-error {
+  padding: 12px 16px;
+  background: rgba(239, 83, 80, 0.1);
+  border: 1px solid rgba(239, 83, 80, 0.3);
+  border-radius: 10px;
+  color: #ff6b6b;
+  font-size: 14px;
+  text-align: center;
+}
+
+/* ========================================
+   CODE INPUT
+   ======================================== */
+.verify-code-input {
+  text-align: center;
+  font-size: 24px;
+  font-weight: 600;
+  letter-spacing: 8px;
+  padding: 16px;
+}
+
+/* ========================================
+   SUBMIT BUTTON
+   ======================================== */
+.verify-submit-btn {
+  width: 100%;
+  justify-content: center;
+  padding: 14px;
+  font-size: 15px;
+}
+
+/* ========================================
+   RESEND
+   ======================================== */
+.verify-email-resend {
+  text-align: center;
+  padding-top: 8px;
+}
+
+.resend-disabled {
+  font-size: 13px;
+  color: var(--text-tertiary);
+}
+
+.resend-button {
+  background: none;
+  border: none;
+  color: #ff783c;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  padding: 4px 8px;
+}
+
+.resend-button:hover {
+  color: #ff8c52;
+  text-decoration: underline;
+}
+
+.resend-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ========================================
+   RESPONSIVE
+   ======================================== */
+@media (max-width: 480px) {
+  .verify-email-modal {
+    width: 95%;
+  }
+
+  .verify-email-header {
+    padding: 20px 20px 16px 20px;
+  }
+
+  .verify-email-content {
+    padding: 28px 20px 20px 20px;
+  }
+}
+
+/* ========================================
+   CURRENT EMAIL DISPLAY
+   ======================================== */
+.verify-email-current {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 12px 16px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+}
+
+.verify-email-label {
+  font-size: 12px;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.verify-email-value {
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+/* ========================================
+   ACTIONS (для шага с паролем)
+   ======================================== */
+.verify-email-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.verify-email-actions .settings-btn {
+  flex: 1;
+  justify-content: center;
+}
+
+/* ========================================
+   BACK BUTTON
+   ======================================== */
+.verify-back-button {
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  padding: 8px;
+  margin-top: 8px;
+  text-align: center;
+  width: 100%;
+}
+
+.verify-back-button:hover {
+  color: var(--text-primary);
+}
+
+/* ========================================
+   INFO TEXT STRONG
+   ======================================== */
+.verify-email-info p strong {
+  color: var(--text-primary);
+  font-weight: 500;
+}
