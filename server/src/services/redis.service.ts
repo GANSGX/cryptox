@@ -76,4 +76,53 @@ export class RedisService {
     const exists = await redis.exists(key)
     return exists === 1
   }
+
+  /**
+   * Сохранение кода для смены email (TTL 10 минут)
+   */
+  static async saveChangeEmailCode(username: string, code: string): Promise<void> {
+    const key = `change_email:${username}`
+    await redis.setex(key, 600, code)
+  }
+
+  /**
+   * Получение кода для смены email
+   */
+  static async getChangeEmailCode(username: string): Promise<string | null> {
+    const key = `change_email:${username}`
+    return await redis.get(key)
+  }
+
+  /**
+   * Удаление кода смены email
+   */
+  static async deleteChangeEmailCode(username: string): Promise<void> {
+    const key = `change_email:${username}`
+    await redis.del(key)
+  }
+
+  /**
+   * Установка флага успешной верификации текущей почты (TTL 5 минут)
+   */
+  static async setChangeEmailVerified(username: string): Promise<void> {
+    const key = `change_email_verified:${username}`
+    await redis.setex(key, 300, 'true')
+  }
+
+  /**
+   * Проверка флага верификации текущей почты
+   */
+  static async isChangeEmailVerified(username: string): Promise<boolean> {
+    const key = `change_email_verified:${username}`
+    const exists = await redis.exists(key)
+    return exists === 1
+  }
+
+  /**
+   * Удаление флага верификации
+   */
+  static async deleteChangeEmailVerified(username: string): Promise<void> {
+    const key = `change_email_verified:${username}`
+    await redis.del(key)
+  }
 }

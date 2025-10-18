@@ -354,4 +354,207 @@ export async function authRoutes(fastify: FastifyInstance) {
       },
     })
   })
+
+  /**
+   * POST /verify-password-send-code
+   * Проверка пароля и отправка кода на текущую почту для смены email
+   */
+  fastify.post<{
+    Body: { username: string; password: string }
+    Reply: ApiResponse
+  }>('/verify-password-send-code', async (request, reply) => {
+    try {
+      const { username, password } = request.body
+
+      if (!username || !password) {
+        return reply.code(400).send({
+          success: false,
+          error: 'Missing required fields',
+        })
+      }
+
+      // Получение пользователя
+      const user = await UserService.getUserByUsername(username)
+
+      if (!user) {
+        return reply.code(401).send({
+          success: false,
+          error: 'Invalid credentials',
+        })
+      }
+
+      // Проверка пароля
+      const isPasswordValid = await CryptoService.verifyAuthToken(
+        password,
+        user.salt,
+        user.auth_token
+      )
+
+      if (!isPasswordValid) {
+        return reply.code(401).send({
+          success: false,
+          error: 'Invalid credentials',
+        })
+      }
+
+      // Проверка cooldown (1 минута)
+      const hasCooldown = await RedisService.checkEmailCooldown(username)
+      if (hasCooldown) {
+        return reply.code(429).send({
+          success: false,
+          error: 'Please wait 1 minute before requesting a new code',
+        })
+      }
+
+      // Генерация кода
+      const code = CryptoService.generateEmailCode()
+
+      // Сохранение в Redis с префиксом "change_email"
+      await RedisService.saveChangeEmailCode(username, code)
+
+      // Установка cooldown
+      await RedisService.setEmailCooldown(username)
+
+      // Отправка email на текущую почту
+      const emailSent = await EmailService.sendVerificationCode(user.email, code)
+
+      if (!emailSent) {
+        return reply.code(500).send({
+          success: false,
+          error: 'Failed to send email',
+        })
+      }
+
+      return reply.code(200).send({
+        success: true,
+        message: 'Verification code sent to your current email',
+      })
+    } catch (error) {
+      console.error('❌ verify-password-send-code error:', error)
+      return reply.code(500).send({
+        success: false,
+        error: 'Internal server error',
+      })
+    }
+  })
+
+  /**
+   * POST /verify-current-email-code
+   * Проверка кода с текущей почты
+   */
+  fastify.post<{
+    Body: { username: string; code: string }
+    Reply: ApiResponse
+  }>('/verify-current-email-code', async (request, reply) => {
+    try {
+      const { username, code } = request.body
+
+      if (!username || !code) {
+        return reply.code(400).send({
+          success: false,
+          error: 'Missing required fields',
+        })
+      }
+
+      // Получение кода из Redis
+      const storedCode = await RedisService.getChangeEmailCode(username)
+
+      if (!storedCode) {
+        return reply.code(400).send({
+          success: false,
+          error: 'Code expired or not found. Request a new code.',
+        })
+      }
+
+      // Проверка кода
+      if (code !== storedCode) {
+        return reply.code(400).send({
+          success: false,
+          error: 'Invalid code',
+        })
+      }
+
+      // Код правильный - сохраняем флаг что можно менять email
+      await RedisService.setChangeEmailVerified(username)
+
+      return reply.code(200).send({
+        success: true,
+        message: 'Code verified successfully',
+      })
+    } catch (error) {
+      console.error('❌ verify-current-email-code error:', error)
+      return reply.code(500).send({
+        success: false,
+        error: 'Internal server error',
+      })
+    }
+  })
+
+  /**
+   * POST /change-email
+   * Изменение email на новый (неподтвержденный)
+   */
+  fastify.post<{
+    Body: { username: string; new_email: string }
+    Reply: ApiResponse
+  }>('/change-email', async (request, reply) => {
+    try {
+      const { username, new_email } = request.body
+
+      if (!username || !new_email) {
+        return reply.code(400).send({
+          success: false,
+          error: 'Missing required fields',
+        })
+      }
+
+      // Валидация email
+      if (!isValidEmail(new_email)) {
+        return reply.code(400).send({
+          success: false,
+          error: 'Invalid email format',
+        })
+      }
+
+      // Проверка что прошёл верификацию кода
+      const isVerified = await RedisService.isChangeEmailVerified(username)
+
+      if (!isVerified) {
+        return reply.code(403).send({
+          success: false,
+          error: 'Please verify your current email first',
+        })
+      }
+
+      // Проверка что новый email не занят
+      const emailExists = await UserService.emailExists(new_email)
+      if (emailExists) {
+        return reply.code(409).send({
+          success: false,
+          error: 'Email already registered',
+        })
+      }
+
+      // Обновление email в БД (устанавливаем email_verified = false)
+      await pool.query(
+        'UPDATE users SET email = $1, email_verified = false WHERE username = $2',
+        [new_email, username]
+      )
+
+      // Удаляем флаги из Redis
+      await RedisService.deleteChangeEmailCode(username)
+      await RedisService.deleteChangeEmailVerified(username)
+
+      return reply.code(200).send({
+        success: true,
+        message: 'Email changed successfully',
+      })
+    } catch (error) {
+      console.error('❌ change-email error:', error)
+      return reply.code(500).send({
+        success: false,
+        error: 'Internal server error',
+      })
+    }
+  })
 }

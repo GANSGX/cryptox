@@ -155,6 +155,36 @@ class ApiService {
   async getUnreadCount(username: string): Promise<ApiResponse<{ count: number }>> {
     return this.request<{ count: number }>(`/messages/chat/${username}/unread`)
   }
+
+  /**
+   * Проверка пароля и отправка кода на текущую почту
+   */
+  async verifyPasswordAndSendCode(username: string, password: string): Promise<ApiResponse> {
+    return this.request('/auth/verify-password-send-code', {
+      method: 'POST',
+      body: JSON.stringify({ username, password }),
+    })
+  }
+
+  /**
+   * Проверка кода с текущей почты
+   */
+  async verifyCurrentEmailCode(username: string, code: string): Promise<ApiResponse> {
+    return this.request('/auth/verify-current-email-code', {
+      method: 'POST',
+      body: JSON.stringify({ username, code }),
+    })
+  }
+
+  /**
+   * Изменение email
+   */
+  async changeEmail(username: string, newEmail: string): Promise<ApiResponse> {
+    return this.request('/auth/change-email', {
+      method: 'POST',
+      body: JSON.stringify({ username, new_email: newEmail }),
+    })
+  }
 }
 
 export const apiService = new ApiService()

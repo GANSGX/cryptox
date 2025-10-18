@@ -1,13 +1,19 @@
 import { useState } from 'react'
 import { Mail, CheckCircle, XCircle, Edit2 } from 'lucide-react'
 import { useAuthStore } from '@/store/authStore'
+import { ChangeEmailModal } from './ChangeEmailModal'
 import './AccountSettings.css'
 
 export function AccountSettings() {
-  const { user } = useAuthStore()
+  const { user, checkAuth } = useAuthStore()
   const [showChangeEmail, setShowChangeEmail] = useState(false)
 
   const isEmailVerified = user?.email_verified || false
+
+  const handleEmailChanged = () => {
+    // Обновляем данные пользователя после смены email
+    checkAuth()
+  }
 
   return (
     <div className="account-settings">
@@ -87,18 +93,12 @@ export function AccountSettings() {
         </div>
       </div>
 
-      {/* Change Email Modal - будет позже */}
-      {showChangeEmail && (
-        <div className="settings-info-banner">
-          <p>Change Email flow - Coming in next step...</p>
-          <button 
-            className="settings-btn settings-btn-secondary"
-            onClick={() => setShowChangeEmail(false)}
-          >
-            Close
-          </button>
-        </div>
-      )}
+      {/* Change Email Modal */}
+      <ChangeEmailModal 
+        isOpen={showChangeEmail} 
+        onClose={() => setShowChangeEmail(false)}
+        onSuccess={handleEmailChanged}
+      />
     </div>
   )
 }
