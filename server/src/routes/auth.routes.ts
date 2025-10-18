@@ -125,70 +125,84 @@ export async function authRoutes(fastify: FastifyInstance) {
     Body: LoginRequest
     Reply: ApiResponse<LoginResponse>
   }>('/login', async (request, reply) => {
-    const { username, password } = request.body
+    try {
+      console.log('🔍 Login attempt:', request.body.username)
+      
+      const { username, password } = request.body
 
-    // Валидация входных данных
-    if (!username || !password) {
-      return reply.code(400).send({
-        success: false,
-        error: 'Missing required fields',
+      // Валидация входных данных
+      if (!username || !password) {
+        return reply.code(400).send({
+          success: false,
+          error: 'Missing required fields',
+        })
+      }
+
+      // Получение пользователя из БД
+      const user = await UserService.getUserByUsername(username)
+      console.log('📦 User from DB:', user ? 'found' : 'not found')
+
+      if (!user) {
+        return reply.code(401).send({
+          success: false,
+          error: 'Invalid username or password',
+        })
+      }
+
+      // Проверка пароля через CryptoService
+      const isPasswordValid = await CryptoService.verifyAuthToken(
+        password,
+        user.salt,
+        user.auth_token
+      )
+      console.log('🔑 Password valid:', isPasswordValid)
+
+      if (!isPasswordValid) {
+        return reply.code(401).send({
+          success: false,
+          error: 'Invalid username or password',
+        })
+      }
+
+      // Проверка бана
+      if (user.is_banned) {
+        return reply.code(403).send({
+          success: false,
+          error: 'Account is banned',
+        })
+      }
+
+      // Обновление last_seen
+      await UserService.updateLastSeen(username)
+
+      // Генерация JWT токена
+      const token = JwtService.generate({
+        username: user.username,
+        email: user.email,
       })
-    }
 
-    // Получение пользователя из БД
-    const user = await UserService.getUserByUsername(username)
+      console.log('✅ Login successful, email_verified:', user.email_verified)
 
-    if (!user) {
-      return reply.code(401).send({
-        success: false,
-        error: 'Invalid username or password',
-      })
-    }
-
-    // Проверка пароля через CryptoService
-    const isPasswordValid = await CryptoService.verifyAuthToken(
-      password,
-      user.salt,
-      user.auth_token
-    )
-
-    if (!isPasswordValid) {
-      return reply.code(401).send({
-        success: false,
-        error: 'Invalid username or password',
-      })
-    }
-
-    // Проверка бана
-    if (user.is_banned) {
-      return reply.code(403).send({
-        success: false,
-        error: 'Account is banned',
-      })
-    }
-
-    // Обновление last_seen
-    await UserService.updateLastSeen(username)
-
-    // Генерация JWT токена
-    const token = JwtService.generate({
-      username: user.username,
-      email: user.email,
-    })
-
-    // Ответ
-    return reply.code(200).send({
-      success: true,
-      data: {
-        token,
-        user: {
-          username: user.username,
-          email: user.email,
-          email_verified: user.email_verified,
-          last_seen: user.last_seen.toISOString(),
+      // Ответ
+      return reply.code(200).send({
+        success: true,
+        data: {
+          token,
+          user: {
+            username: user.username,
+            email: user.email,
+            email_verified: user.email_verified,
+            last_seen: user.last_seen.toISOString(),
+          },
         },
-      },
-    })
+      })
+    } catch (error) {
+      console.error('❌ Login error:', error)
+      return reply.code(500).send({
+        success: false,
+        error: 'Internal server error',
+      })
+    }
   })
 
   /**
