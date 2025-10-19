@@ -82,8 +82,9 @@ export function initializeSocketServer(httpServer: HTTPServer) {
       username,
     })
 
-    // Подписываем пользователя на его личный room
-    socket.join(`user:${username}`)
+    // Подписываем пользователя на его личный room (БЕЗ префикса user:)
+    socket.join(username)
+    console.log(`✅ Socket ${socket.id} joined room: ${username}`)
 
     // Отправляем подтверждение подключения
     socket.emit('connected', {
@@ -103,7 +104,7 @@ export function initializeSocketServer(httpServer: HTTPServer) {
     // Typing indicators
     socket.on('typing_start', (data: { chatId: string }) => {
       log.debug('Typing start', { username, chatId: data.chatId })
-      socket.to(`user:${data.chatId}`).emit('user_typing', {
+      socket.to(data.chatId).emit('user_typing', {
         username,
         chatId: data.chatId,
       })
@@ -111,7 +112,7 @@ export function initializeSocketServer(httpServer: HTTPServer) {
 
     socket.on('typing_stop', (data: { chatId: string }) => {
       log.debug('Typing stop', { username, chatId: data.chatId })
-      socket.to(`user:${data.chatId}`).emit('user_stopped_typing', {
+      socket.to(data.chatId).emit('user_stopped_typing', {
         username,
         chatId: data.chatId,
       })
@@ -120,7 +121,7 @@ export function initializeSocketServer(httpServer: HTTPServer) {
     // Подтверждение доставки сообщения
     socket.on('message_delivered', (data: { messageId: string; toUsername: string }) => {
       log.debug('Message delivered', { messageId: data.messageId, username })
-      socket.to(`user:${data.toUsername}`).emit('message_status_update', {
+      socket.to(data.toUsername).emit('message_status_update', {
         messageId: data.messageId,
         status: 'delivered',
       })
@@ -129,7 +130,7 @@ export function initializeSocketServer(httpServer: HTTPServer) {
     // Подтверждение прочтения сообщения
     socket.on('message_read', (data: { messageId: string; toUsername: string }) => {
       log.debug('Message read', { messageId: data.messageId, username })
-      socket.to(`user:${data.toUsername}`).emit('message_status_update', {
+      socket.to(data.toUsername).emit('message_status_update', {
         messageId: data.messageId,
         status: 'read',
       })

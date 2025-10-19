@@ -134,6 +134,34 @@ class SocketService {
   offMessageStatusUpdate(callback: (data: { messageId: string; status: string }) => void) {
     this.socket?.off('message_status_update', callback)
   }
+
+  /**
+   * Подписка на обновление списка сессий
+   */
+  onSessionsUpdated(callback: () => void) {
+    this.socket?.on('sessions:updated', callback)
+  }
+
+  /**
+   * Отписка от обновления списка сессий
+   */
+  offSessionsUpdated(callback: () => void) {
+    this.socket?.off('sessions:updated', callback)
+  }
+
+  /**
+   * Подписка на завершение сессии
+   */
+  onSessionTerminated(callback: (data: { sessionId: string; message: string }) => void) {
+    this.socket?.on('session:terminated', callback)
+  }
+
+  /**
+   * Отписка от завершения сессии
+   */
+  offSessionTerminated(callback: (data: { sessionId: string; message: string }) => void) {
+    this.socket?.off('session:terminated', callback)
+  }
 }
 
 export const socketService = new SocketService()

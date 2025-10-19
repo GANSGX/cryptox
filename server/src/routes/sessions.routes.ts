@@ -61,10 +61,36 @@ export async function sessionsRoutes(fastify: FastifyInstance) {
     const currentToken = request.headers.authorization?.replace('Bearer ', '')
 
     try {
+      // Получаем ID сессий которые будут удалены
+      const sessionsToDelete = await pool.query(
+        'SELECT id FROM sessions WHERE username = $1 AND jwt_token != $2',
+        [username, currentToken]
+      )
+
+      // Удаляем сессии
       const result = await pool.query(
         'DELETE FROM sessions WHERE username = $1 AND jwt_token != $2 RETURNING id',
         [username, currentToken]
       )
+
+      console.log('📡 Emitting session:terminated for', result.rowCount, 'sessions to room:', username)
+      console.log('🔌 fastify.io exists:', !!fastify.io)
+
+      if (fastify.io) {
+        // Уведомляем каждую удаленную сессию через Socket.IO
+        sessionsToDelete.rows.forEach((session) => {
+          fastify.io.to(username).emit('session:terminated', {
+            sessionId: session.id,
+            message: 'Your session has been terminated from another device'
+          })
+        })
+
+        // Уведомляем все устройства об обновлении списка сессий
+        fastify.io.to(username).emit('sessions:updated')
+        console.log('✅ Events emitted')
+      } else {
+        console.error('❌ fastify.io is undefined!')
+      }
 
       return reply.send({
         success: true,
@@ -101,6 +127,23 @@ export async function sessionsRoutes(fastify: FastifyInstance) {
           success: false,
           error: 'Session not found',
         })
+      }
+
+      console.log('📡 Emitting session:terminated for sessionId:', sessionId, 'to room:', username)
+      console.log('🔌 fastify.io exists:', !!fastify.io)
+
+      if (fastify.io) {
+        // Уведомляем устройство о завершении сессии
+        fastify.io.to(username).emit('session:terminated', {
+          sessionId,
+          message: 'Your session has been terminated from another device'
+        })
+
+        // Уведомляем все устройства об обновлении списка сессий
+        fastify.io.to(username).emit('sessions:updated')
+        console.log('✅ Events emitted')
+      } else {
+        console.error('❌ fastify.io is undefined!')
       }
 
       return reply.send({

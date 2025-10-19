@@ -1,5 +1,6 @@
 import type { FastifyRequest, FastifyReply } from 'fastify'
 import { JwtService } from '../services/jwt.service.js'
+import { pool } from '../db/pool.js'
 
 // Расширяем тип FastifyRequest для добавления user
 declare module 'fastify' {
@@ -56,6 +57,14 @@ export async function authMiddleware(
       username: payload.username,
       email: payload.email,
     }
+
+    // Обновляем last_active для текущей сессии (в фоне, без ожидания)
+    pool.query(
+      'UPDATE sessions SET last_active = NOW() WHERE jwt_token = $1',
+      [token]
+    ).catch(() => {
+      // Игнорируем ошибки обновления last_active
+    })
 
     // Продолжаем выполнение
   } catch (error) {

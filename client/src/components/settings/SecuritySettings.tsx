@@ -1,49 +1,10 @@
-import { useState, useEffect } from 'react'
-import { Shield, Monitor, Trash2, LogOut, RefreshCw } from 'lucide-react'
+import { Shield, Monitor, Trash2, LogOut } from 'lucide-react'
 import { apiService } from '@/services/api.service'
+import { useSessions } from '@/hooks/useSessions'
 import './SecuritySettings.css'
 
-interface Session {
-  id: string
-  device_info: {
-    type: string
-    name: string
-    os: string
-  }
-  ip_address: string
-  created_at: string
-  last_active: string
-  is_current: boolean
-}
-
 export function SecuritySettings() {
-  const [sessions, setSessions] = useState<Session[]>([])
-  const [isLoading, setIsLoading] = useState(true)
-  const [error, setError] = useState('')
-
-  // Загрузка сессий
-  const loadSessions = async () => {
-    setIsLoading(true)
-    setError('')
-
-    try {
-      const response = await apiService.getSessions()
-
-      if (response.success && response.sessions) {
-        setSessions(response.sessions)
-      } else {
-        setError(response.error || 'Failed to load sessions')
-      }
-    } catch (error) {
-      setError('Network error')
-    } finally {
-      setIsLoading(false)
-    }
-  }
-
-  useEffect(() => {
-    loadSessions()
-  }, [])
+  const { sessions, isLoading, error } = useSessions()
 
   // Удаление конкретной сессии
   const handleDeleteSession = async (sessionId: string) => {
@@ -51,18 +12,8 @@ export function SecuritySettings() {
       return
     }
 
-    try {
-      const response = await apiService.deleteSession(sessionId)
-
-      if (response.success) {
-        // Обновляем список
-        setSessions(sessions.filter(s => s.id !== sessionId))
-      } else {
-        setError(response.error || 'Failed to delete session')
-      }
-    } catch (error) {
-      setError('Network error')
-    }
+    await apiService.deleteSession(sessionId)
+    // Список обновится через WebSocket автоматически!
   }
 
   // Выход со всех других устройств
@@ -71,18 +22,8 @@ export function SecuritySettings() {
       return
     }
 
-    try {
-      const response = await apiService.deleteOtherSessions()
-
-      if (response.success) {
-        // Перезагружаем список
-        loadSessions()
-      } else {
-        setError(response.error || 'Failed to delete sessions')
-      }
-    } catch (error) {
-      setError('Network error')
-    }
+    await apiService.deleteOtherSessions()
+    // Список обновится через WebSocket автоматически!
   }
 
   // Форматирование даты
@@ -123,13 +64,9 @@ export function SecuritySettings() {
       <div className="settings-block">
         <div className="settings-block-header">
           <h4>Active Sessions</h4>
-          <button
-            className="settings-btn settings-btn-icon"
-            onClick={loadSessions}
-            disabled={isLoading}
-          >
-            <RefreshCw size={16} className={isLoading ? 'spinning' : ''} />
-          </button>
+          <div style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>
+            Updates in real-time
+          </div>
         </div>
 
         <div className="settings-block-content">

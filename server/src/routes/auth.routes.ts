@@ -203,6 +203,18 @@ export async function authRoutes(fastify: FastifyInstance) {
             token,
           ]
         )
+
+        // Уведомляем все устройства пользователя о новой сессии
+        console.log('📡 Emitting sessions:updated to room:', username)
+        console.log('🔌 fastify.io exists:', !!fastify.io)
+        
+        if (fastify.io) {
+          fastify.io.to(username).emit('sessions:updated')
+          console.log('✅ Event sessions:updated emitted')
+        } else {
+          console.error('❌ fastify.io is undefined!')
+        }
+
       } catch (error) {
         fastify.log.error({ error }, 'Failed to save session')
       }
