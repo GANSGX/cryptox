@@ -7,12 +7,14 @@ import { authRoutes } from './routes/auth.routes.js'
 import { protectedRoutes } from './routes/protected.routes.js'
 import { usersRoutes } from './routes/users.routes.js'
 import { messagesRoutes } from './routes/messages.routes.js'
+import { sessionsRoutes } from './routes/sessions.routes'
 import { errorHandler, notFoundHandler } from './middleware/error.middleware.js'
 import { log } from './services/logger.service.js'
 import { initializeSocketServer } from './sockets/socket.server.js'
 
 const fastify = Fastify({
   logger: false,
+  ignoreTrailingSlash: true,
 })
 
 // Plugins
@@ -44,7 +46,6 @@ await fastify.register(helmet, {
   contentSecurityPolicy: false,
 })
 
-// Rate Limiting
 await fastify.register(rateLimit, {
   max: 100,
   timeWindow: '1 minute',
@@ -80,6 +81,7 @@ await fastify.register(authRoutes, { prefix: '/api/auth' })
 await fastify.register(protectedRoutes, { prefix: '/api' })
 await fastify.register(usersRoutes, { prefix: '/api/users' })
 await fastify.register(messagesRoutes, { prefix: '/api' })
+await fastify.register(sessionsRoutes, { prefix: '/api' })
 
 // Error handlers
 fastify.setErrorHandler(errorHandler)
@@ -130,6 +132,7 @@ const start = async () => {
       auth: `http://localhost:${env.PORT}/api/auth/register`,
       search: `http://localhost:${env.PORT}/api/users/search?q=username`,
       messages: `http://localhost:${env.PORT}/api/messages`,
+      sessions: `http://localhost:${env.PORT}/api/sessions`,
       rateLimit: '100 requests per minute',
       socketio: 'enabled',
       environment: env.NODE_ENV,
@@ -143,6 +146,7 @@ const start = async () => {
 🔐 Auth: http://localhost:${env.PORT}/api/auth/register
 🔍 Search: http://localhost:${env.PORT}/api/users/search?q=username
 💬 Messages: http://localhost:${env.PORT}/api/messages
+🔒 Sessions: http://localhost:${env.PORT}/api/sessions
 🛡️  Rate Limit: 100 requests per minute
 🔌 Socket.io: Enabled
 🌍 Environment: ${env.NODE_ENV}

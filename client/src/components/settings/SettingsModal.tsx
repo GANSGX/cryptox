@@ -2,6 +2,7 @@ import { X } from 'lucide-react'
 import { useState, useEffect } from 'react'
 import { SettingsSidebar } from './SettingsSidebar'
 import { AccountSettings } from './AccountSettings'
+import { SecuritySettings } from './SecuritySettings'
 import './SettingsModal.css'
 
 interface SettingsModalProps {
@@ -36,17 +37,19 @@ export function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
   if (!isMounted) return null
 
   const renderContent = () => {
-    switch (activeSection) {
+    switch (activeSection) {  // ← ИСПРАВЛЕНО: было activeTab
       case 'account':
         return <AccountSettings />
       case 'security':
-        return <div className="settings-placeholder">Security Settings (Coming Soon)</div>
+        return <SecuritySettings />
       case 'privacy':
-        return <div className="settings-placeholder">Privacy Settings (Coming Soon)</div>
       case 'notifications':
-        return <div className="settings-placeholder">Notification Settings (Coming Soon)</div>
       case 'appearance':
-        return <div className="settings-placeholder">Appearance Settings (Coming Soon)</div>
+        return (
+          <div style={{ padding: '40px', textAlign: 'center', color: 'var(--text-secondary)' }}>
+            {activeSection.charAt(0).toUpperCase() + activeSection.slice(1)} Settings (Coming Soon)
+          </div>
+        )
       default:
         return null
     }
@@ -55,7 +58,7 @@ export function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
   return (
     <>
       {/* Overlay */}
-      <div 
+      <div
         className={`settings-overlay ${isAnimated ? 'visible' : ''}`}
         onClick={onClose}
       />
@@ -73,7 +76,7 @@ export function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
         {/* Content */}
         <div className="settings-content">
           {/* Sidebar */}
-          <SettingsSidebar 
+          <SettingsSidebar
             activeSection={activeSection}
             onSectionChange={setActiveSection}
           />

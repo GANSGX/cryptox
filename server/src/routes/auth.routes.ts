@@ -10,19 +10,19 @@ import {
   isValidEmail,
   isValidPassword,
 } from '../utils/crypto.js'
-import type { 
-  RegisterRequest, 
-  RegisterResponse, 
-  LoginRequest, 
+import type {
+  RegisterRequest,
+  RegisterResponse,
+  LoginRequest,
   LoginResponse,
   SendVerificationCodeRequest,
   VerifyEmailRequest,
   VerifyEmailResponse,
-  ApiResponse 
+  ApiResponse
 } from '../types/api.types.js'
 
 export async function authRoutes(fastify: FastifyInstance) {
-  
+
   /**
    * POST /register
    * Регистрация нового пользователя
@@ -127,7 +127,7 @@ export async function authRoutes(fastify: FastifyInstance) {
   }>('/login', async (request, reply) => {
     try {
       console.log('🔍 Login attempt:', request.body.username)
-      
+
       const { username, password } = request.body
 
       // Валидация входных данных
@@ -180,6 +180,32 @@ export async function authRoutes(fastify: FastifyInstance) {
         username: user.username,
         email: user.email,
       })
+
+      // Сохранение сессии в БД
+      try {
+        await pool.query(
+          `INSERT INTO sessions (username, device_info, ip_address, jwt_token, created_at, last_active, expires_at)
+           VALUES ($1, $2, $3, $4, NOW(), NOW(), NOW() + INTERVAL '30 days')`,
+          [
+            username,
+            JSON.stringify({
+              type: 'browser',
+              name: request.headers['user-agent']?.includes('YaBrowser') ? 'Yandex' :
+                request.headers['user-agent']?.includes('Edg') ? 'Edge' :
+                  request.headers['user-agent']?.includes('Firefox') ? 'Firefox' :
+                    request.headers['user-agent']?.includes('Chrome') ? 'Chrome' :
+                      request.headers['user-agent']?.includes('Safari') ? 'Safari' : 'Browser',
+              os: request.headers['user-agent']?.includes('Windows') ? 'Windows' :
+                request.headers['user-agent']?.includes('Mac') ? 'macOS' :
+                  request.headers['user-agent']?.includes('Linux') ? 'Linux' : 'Unknown',
+            }),
+            request.ip,
+            token,
+          ]
+        )
+      } catch (error) {
+        fastify.log.error({ error }, 'Failed to save session')
+      }
 
       console.log('✅ Login successful, email_verified:', user.email_verified)
 

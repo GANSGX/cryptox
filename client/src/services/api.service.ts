@@ -50,8 +50,12 @@ class ApiService {
     const token = this.getToken()
 
     const headers: Record<string, string> = {
-      'Content-Type': 'application/json',
       ...(options.headers as Record<string, string>),
+    }
+
+    // Добавляем Content-Type только если есть body
+    if (options.body) {
+      headers['Content-Type'] = 'application/json'
     }
 
     if (token) {
@@ -203,6 +207,58 @@ class ApiService {
     return this.request('/auth/verify-email', {
       method: 'POST',
       body: JSON.stringify({ username, code }),
+    })
+  }
+
+  /**
+   * Получить список активных сессий
+   */
+  async getSessions(): Promise<{ success: boolean; sessions: any[]; error?: string }> {
+    const token = this.getToken()
+
+    try {
+      const response = await fetch(`${API_URL}/sessions`, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
+      })
+
+      const data = await response.json()
+
+      if (!response.ok) {
+        return {
+          success: false,
+          sessions: [],
+          error: data.error || 'Failed to get sessions',
+        }
+      }
+
+      return data
+    } catch (error) {
+      console.error('API Error:', error)
+      return {
+        success: false,
+        sessions: [],
+        error: 'Network error',
+      }
+    }
+  }
+
+  /**
+   * Удалить конкретную сессию
+   */
+  async deleteSession(sessionId: string): Promise<ApiResponse> {
+    return this.request(`/sessions/${sessionId}`, {
+      method: 'DELETE',
+    })
+  }
+
+  /**
+   * Выйти со всех других устройств
+   */
+  async deleteOtherSessions(): Promise<ApiResponse<{ count: number }>> {
+    return this.request<{ count: number }>('/sessions/others', {
+      method: 'DELETE',
     })
   }
 }

@@ -3,6 +3,7 @@ import { LeftStrip } from './LeftStrip'
 import { BurgerMenu } from './BurgerMenu'
 import { Sidebar } from './Sidebar'
 import { ChatWindow } from './ChatWindow'
+import { EmailVerificationBanner } from '@/components/settings/EmailVerificationBanner'
 
 export function ChatLayout() {
   const [isBurgerOpen, setIsBurgerOpen] = useState(false)
@@ -27,6 +28,9 @@ export function ChatLayout() {
 
       {/* Окно чата */}
       <ChatWindow activeChat={activeChat} />
+
+      {/* Email Verification Banner */}
+      <EmailVerificationBanner />
     </div>
   )
 }

@@ -1,0 +1,305 @@
+/* ========================================
+   EMAIL VERIFICATION BANNER
+   ======================================== */
+.email-banner-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(8px);
+  z-index: 500;
+  animation: fadeIn 0.3s ease;
+}
+
+.email-verification-banner {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 90%;
+  max-width: 600px;
+  max-height: 85vh;
+  overflow-y: auto;
+  background: rgba(20, 20, 30, 0.98);
+  backdrop-filter: blur(40px) saturate(180%);
+  -webkit-backdrop-filter: blur(40px) saturate(180%);
+  border: 2px solid rgba(255, 183, 77, 0.4);
+  border-radius: 20px;
+  box-shadow: 
+    0 20px 60px 0 rgba(0, 0, 0, 0.7),
+    0 0 40px rgba(255, 183, 77, 0.2),
+    inset 0 1px 2px 0 rgba(255, 255, 255, 0.1);
+  z-index: 501;
+  animation: slideIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -45%) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+/* ========================================
+   HEADER
+   ======================================== */
+.email-banner-header {
+  padding: 24px 24px 20px 24px;
+  border-bottom: 1px solid rgba(255, 183, 77, 0.2);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: rgba(255, 183, 77, 0.05);
+  border-radius: 20px 20px 0 0;
+  position: relative;
+}
+
+.email-banner-icon-warning {
+  color: #ffb74d;
+  flex-shrink: 0;
+}
+
+.email-banner-header h3 {
+  flex: 1;
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.email-banner-close {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  color: var(--text-secondary);
+  flex-shrink: 0;
+}
+
+.email-banner-close:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.15);
+  color: var(--text-primary);
+  transform: rotate(90deg);
+}
+
+/* ========================================
+   CONTENT
+   ======================================== */
+.email-banner-content {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.email-banner-description {
+  font-size: 15px;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  margin: 0;
+}
+
+.email-banner-description strong {
+  color: var(--text-primary);
+  font-weight: 500;
+}
+
+/* ========================================
+   LIMITATIONS
+   ======================================== */
+.email-banner-limitations {
+  padding: 16px;
+  background: rgba(239, 83, 80, 0.08);
+  border: 1px solid rgba(239, 83, 80, 0.25);
+  border-radius: 12px;
+}
+
+.email-banner-limitations h4 {
+  font-size: 15px;
+  font-weight: 600;
+  color: #ff6b6b;
+  margin: 0 0 12px 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.email-banner-limitations ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.email-banner-limitations li {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 14px;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+.email-banner-limitations li svg {
+  flex-shrink: 0;
+  margin-top: 2px;
+  color: #ff8a80;
+}
+
+.email-banner-limitations li strong {
+  color: var(--text-primary);
+}
+
+/* ========================================
+   BENEFITS
+   ======================================== */
+.email-banner-benefits {
+  padding: 16px;
+  background: rgba(102, 187, 106, 0.08);
+  border: 1px solid rgba(102, 187, 106, 0.25);
+  border-radius: 12px;
+}
+
+.email-banner-benefits h4 {
+  font-size: 15px;
+  font-weight: 600;
+  color: #66bb6a;
+  margin: 0 0 12px 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.email-banner-benefits ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.email-banner-benefits li {
+  font-size: 14px;
+  color: var(--text-secondary);
+  padding-left: 20px;
+  position: relative;
+  line-height: 1.5;
+}
+
+.email-banner-benefits li::before {
+  content: '✓';
+  position: absolute;
+  left: 0;
+  color: #66bb6a;
+  font-weight: bold;
+}
+
+/* ========================================
+   ACTIONS
+   ======================================== */
+.email-banner-actions {
+  padding: 20px 24px 24px 24px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  display: flex;
+  gap: 12px;
+}
+
+.email-banner-btn {
+  flex: 1;
+  padding: 14px 24px;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.email-banner-btn-secondary {
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text-primary);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.email-banner-btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+.email-banner-btn-primary {
+  background: linear-gradient(135deg, #ff783c, #ff5a3c);
+  color: white;
+  box-shadow: 0 4px 12px rgba(255, 120, 60, 0.3);
+}
+
+.email-banner-btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(255, 120, 60, 0.4);
+}
+
+.email-banner-btn:active {
+  transform: translateY(0);
+}
+
+/* ========================================
+   SCROLLBAR
+   ======================================== */
+.email-verification-banner::-webkit-scrollbar {
+  width: 6px;
+}
+
+.email-verification-banner::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.email-verification-banner::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 3px;
+}
+
+/* ========================================
+   RESPONSIVE
+   ======================================== */
+@media (max-width: 640px) {
+  .email-verification-banner {
+    width: 95%;
+    max-height: 90vh;
+  }
+
+  .email-banner-header {
+    padding: 20px 20px 16px 20px;
+  }
+
+  .email-banner-content {
+    padding: 20px;
+  }
+
+  .email-banner-actions {
+    padding: 16px 20px 20px 20px;
+    flex-direction: column;
+  }
+}

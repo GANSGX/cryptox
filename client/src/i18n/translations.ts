@@ -1,6 +1,6 @@
 export const translations = {
   en: {
-    translation: {  // ← ДОБАВЬ ВЛОЖЕННОСТЬ!
+    translation: {
       auth: {
         login: 'Login',
         register: 'Register',
@@ -24,10 +24,101 @@ export const translations = {
         language: 'Language',
         loading: 'Loading...',
       },
+      burgerMenu: {
+        profile: 'Profile',
+        settings: 'Settings',
+        logout: 'Logout',
+        version: 'CryptoX v0.1.0'
+      },
+      settings: {
+        title: 'Settings',
+        account: 'Account',
+        security: 'Security',
+        privacy: 'Privacy',
+        notifications: 'Notifications',
+        appearance: 'Appearance',
+        comingSoon: '{{section}} Settings (Coming Soon)'
+      },
+      accountSettings: {
+        title: 'Account Settings',
+        username: 'Username',
+        currentUsername: 'Current username:',
+        emailAddress: 'Email Address',
+        verified: 'Verified',
+        notVerified: 'Not verified',
+        verifyEmail: 'Verify Email',
+        changeEmail: 'Change Email',
+        whyVerify: 'Why verify your email?',
+        benefits: {
+          recovery: 'Recover your password if you forget it',
+          twoFA: 'Enable Two-Factor Authentication (2FA)',
+          notifications: 'Receive important security notifications',
+          features: 'Unlock all account features'
+        }
+      },
+      changeEmail: {
+        title: 'Change Email',
+        verifyIdentity: 'Verify Your Identity',
+        enterPassword: 'Enter your password to continue',
+        currentEmail: 'Current email:',
+        password: 'Password',
+        passwordPlaceholder: 'Enter your password',
+        cancel: 'Cancel',
+        continue: 'Continue',
+        verifying: 'Verifying...',
+        verifyCurrent: 'Verify Current Email',
+        codeSent: 'We sent a 6-digit code to',
+        verificationCode: 'Verification Code',
+        codePlaceholder: '000000',
+        back: 'Back',
+        verify: 'Verify',
+        enterNew: 'Enter New Email',
+        newEmailDesc: 'Your new email will need to be verified',
+        newEmailAddress: 'New Email Address',
+        newEmailPlaceholder: 'newemail@example.com',
+        changeEmailBtn: 'Change Email',
+        changing: 'Changing...',
+        invalidPassword: 'Invalid password',
+        invalidCode: 'Invalid code',
+        failed: 'Failed to change email',
+        network: 'Network error'
+      },
+      verifyEmail: {
+        title: 'Verify Email',
+        verifyIdentity: 'Verify Your Identity',
+        enterPasswordDesc: 'Enter your password to receive a verification code',
+        emailToVerify: 'Email to verify:',
+        sendCode: 'Send Code',
+        sending: 'Sending...',
+        checkEmail: 'Check your email',
+        codeSentTo: 'We sent a 6-digit code to',
+        verifyEmailBtn: 'Verify Email',
+        verifying: 'Verifying...',
+        resendIn: 'Resend code in {{seconds}}s',
+        resendCode: 'Resend code',
+        back: '← Back'
+      },
+      emailBanner: {
+        title: 'Confirm Your Email',
+        description: 'Your email {{email}} is not verified. Without verification, your account has limitations.',
+        limitationsTitle: '⚠️ Current Limitations:',
+        messages: 'Messages: Maximum 10 per hour',
+        contacts: 'Contacts: Maximum 5 new per day',
+        recovery: 'Password Recovery: Unavailable',
+        twoFA: 'Two-Factor Authentication: Unavailable',
+        benefitsTitle: '✅ With Verified Email:',
+        unlimitedMessages: 'Unlimited messages and contacts',
+        recoveryBenefit: 'Password recovery via email',
+        twoFABenefit: 'Enable Two-Factor Authentication',
+        security: 'Full account security',
+        features: 'Access to all features',
+        remindLater: 'Remind Me Later',
+        verifyEmail: 'Verify Email'
+      }
     }
   },
   ru: {
-    translation: {  // ← ДОБАВЬ ВЛОЖЕННОСТЬ!
+    translation: {
       auth: {
         login: 'Вход',
         register: 'Регистрация',
@@ -51,6 +142,97 @@ export const translations = {
         language: 'Язык',
         loading: 'Загрузка...',
       },
+      burgerMenu: {
+        profile: 'Профиль',
+        settings: 'Настройки',
+        logout: 'Выйти',
+        version: 'CryptoX v0.1.0'
+      },
+      settings: {
+        title: 'Настройки',
+        account: 'Аккаунт',
+        security: 'Безопасность',
+        privacy: 'Приватность',
+        notifications: 'Уведомления',
+        appearance: 'Внешний вид',
+        comingSoon: 'Настройки {{section}} (Скоро)'
+      },
+      accountSettings: {
+        title: 'Настройки аккаунта',
+        username: 'Имя пользователя',
+        currentUsername: 'Текущее имя:',
+        emailAddress: 'Email адрес',
+        verified: 'Подтверждён',
+        notVerified: 'Не подтверждён',
+        verifyEmail: 'Подтвердить Email',
+        changeEmail: 'Изменить Email',
+        whyVerify: 'Зачем подтверждать email?',
+        benefits: {
+          recovery: 'Восстановить пароль если забыли',
+          twoFA: 'Включить двухфакторную аутентификацию (2FA)',
+          notifications: 'Получать важные уведомления безопасности',
+          features: 'Разблокировать все функции'
+        }
+      },
+      changeEmail: {
+        title: 'Изменить Email',
+        verifyIdentity: 'Подтвердите личность',
+        enterPassword: 'Введите пароль для продолжения',
+        currentEmail: 'Текущий email:',
+        password: 'Пароль',
+        passwordPlaceholder: 'Введите пароль',
+        cancel: 'Отмена',
+        continue: 'Продолжить',
+        verifying: 'Проверка...',
+        verifyCurrent: 'Подтвердите текущий Email',
+        codeSent: 'Мы отправили 6-значный код на',
+        verificationCode: 'Код подтверждения',
+        codePlaceholder: '000000',
+        back: 'Назад',
+        verify: 'Подтвердить',
+        enterNew: 'Введите новый Email',
+        newEmailDesc: 'Новый email потребует подтверждения',
+        newEmailAddress: 'Новый Email адрес',
+        newEmailPlaceholder: 'newemail@example.com',
+        changeEmailBtn: 'Изменить Email',
+        changing: 'Изменение...',
+        invalidPassword: 'Неверный пароль',
+        invalidCode: 'Неверный код',
+        failed: 'Не удалось изменить email',
+        network: 'Ошибка сети'
+      },
+      verifyEmail: {
+        title: 'Подтвердить Email',
+        verifyIdentity: 'Подтвердите личность',
+        enterPasswordDesc: 'Введите пароль для получения кода подтверждения',
+        emailToVerify: 'Email для подтверждения:',
+        sendCode: 'Отправить код',
+        sending: 'Отправка...',
+        checkEmail: 'Проверьте email',
+        codeSentTo: 'Мы отправили 6-значный код на',
+        verifyEmailBtn: 'Подтвердить Email',
+        verifying: 'Проверка...',
+        resendIn: 'Отправить снова через {{seconds}}с',
+        resendCode: 'Отправить снова',
+        back: '← Назад'
+      },
+      emailBanner: {
+        title: 'Подтвердите Email',
+        description: 'Ваш email {{email}} не подтверждён. Без подтверждения ваш аккаунт имеет ограничения.',
+        limitationsTitle: '⚠️ Текущие ограничения:',
+        messages: 'Сообщения: Максимум 10 в час',
+        contacts: 'Контакты: Максимум 5 новых в день',
+        recovery: 'Восстановление пароля: Недоступно',
+        twoFA: 'Двухфакторная аутентификация: Недоступна',
+        benefitsTitle: '✅ С подтверждённым Email:',
+        unlimitedMessages: 'Неограниченные сообщения и контакты',
+        recoveryBenefit: 'Восстановление пароля через email',
+        twoFABenefit: 'Включение двухфакторной аутентификации',
+        security: 'Полная безопасность аккаунта',
+        features: 'Доступ ко всем функциям',
+        remindLater: 'Напомнить позже',
+        verifyEmail: 'Подтвердить Email'
+      }
     }
   },
 }

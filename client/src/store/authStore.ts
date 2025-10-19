@@ -123,6 +123,8 @@ export const useAuthStore = create<AuthState>((set) => ({
     socketService.disconnect()
     cryptoService.clearSessionKeys()
 
+    localStorage.removeItem('email_verify_dismissed')
+
     set({
       user: null,
       token: null,
