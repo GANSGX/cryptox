@@ -1,5 +1,5 @@
 /* ========================================
-   SETTINGS MODAL - GLASSMORPHISM
+   SETTINGS MODAL - LIQUID GLASS (iOS 16+ Style)
    ======================================== */
 .settings-overlay {
   position: fixed;
@@ -9,14 +9,17 @@
   height: 100vh;
   background: rgba(0, 0, 0, 0);
   backdrop-filter: blur(0px);
+  -webkit-backdrop-filter: blur(0px);
   z-index: 300;
   pointer-events: none;
-  transition: background 0.3s ease, backdrop-filter 0.3s ease;
+  transition: background 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+              backdrop-filter 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .settings-overlay.visible {
-  background: rgba(0, 0, 0, 0.7);
-  backdrop-filter: blur(8px);
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(24px) saturate(1.2);
+  -webkit-backdrop-filter: blur(24px) saturate(1.2);
   pointer-events: all;
 }
 
@@ -24,25 +27,72 @@
   position: fixed;
   top: 50%;
   left: 50%;
-  transform: translate(-50%, -50%) scale(0.9);
+  transform: translate(-50%, -50%) scale(0.92);
   width: 90%;
-  max-width: 900px;
+  max-width: 920px;
   height: 85vh;
-  max-height: 700px;
-  background: rgba(20, 20, 30, 0.95);
-  backdrop-filter: blur(40px) saturate(180%);
-  -webkit-backdrop-filter: blur(40px) saturate(180%);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  border-radius: 24px;
-  box-shadow: 
-    0 20px 60px 0 rgba(0, 0, 0, 0.6),
-    inset 0 1px 2px 0 rgba(255, 255, 255, 0.1);
+  max-height: 720px;
+
+  /* TRUE Liquid Glass - полупрозрачность */
+  background: rgba(20, 20, 32, 0.45);
+  backdrop-filter: blur(80px) saturate(200%) brightness(1.1);
+  -webkit-backdrop-filter: blur(80px) saturate(200%) brightness(1.1);
+
+  /* Тонкая полупрозрачная граница */
+  border: 1px solid rgba(255, 255, 255, 0.18);
+
+  border-radius: 32px;
+
+  /* Мягкие многослойные тени */
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.4),
+    0 24px 80px rgba(0, 0, 0, 0.5),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.3);
+
   z-index: 301;
   display: flex;
   flex-direction: column;
   overflow: hidden;
   opacity: 0;
-  transition: opacity 0.3s ease, transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+  transition:
+    opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+    transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* Внутреннее свечение */
+.settings-modal::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border-radius: 32px;
+  background: radial-gradient(
+    circle at 50% 0%,
+    rgba(255, 255, 255, 0.08) 0%,
+    transparent 50%
+  );
+  pointer-events: none;
+}
+
+/* Тонкий градиентный highlight сверху */
+.settings-modal::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 5%;
+  right: 5%;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.3) 50%,
+    transparent 100%
+  );
+  pointer-events: none;
 }
 
 .settings-modal.open {
@@ -54,40 +104,96 @@
    HEADER
    ======================================== */
 .settings-header {
-  padding: 24px 32px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 28px 36px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background: rgba(25, 25, 35, 0.6);
+  /* Полупрозрачный header с blur */
+  background: rgba(30, 30, 46, 0.3);
+  backdrop-filter: blur(40px) saturate(180%);
+  -webkit-backdrop-filter: blur(40px) saturate(180%);
+  position: relative;
+  z-index: 2;
+}
+
+/* Тонкий highlight сверху */
+.settings-header::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.2) 50%,
+    transparent 100%
+  );
 }
 
 .settings-header h2 {
-  font-size: 24px;
-  font-weight: 600;
+  font-size: 26px;
+  font-weight: 700;
   color: var(--text-primary);
   margin: 0;
+  letter-spacing: -0.5px;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
 }
 
 .settings-close-button {
-  width: 40px;
-  height: 40px;
-  border-radius: 10px;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
+  /* Полупрозрачная кнопка */
+  background: rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   color: var(--text-secondary);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Shimmer effect on hover */
+.settings-close-button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.15) 50%,
+    transparent 100%
+  );
+  transition: left 0.5s ease;
 }
 
 .settings-close-button:hover {
-  background: rgba(255, 255, 255, 0.08);
-  border-color: rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(30px);
+  -webkit-backdrop-filter: blur(30px);
+  border-color: rgba(255, 255, 255, 0.25);
   color: var(--text-primary);
-  transform: rotate(90deg);
+  transform: rotate(90deg) scale(1.05);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+}
+
+.settings-close-button:hover::before {
+  left: 100%;
+}
+
+.settings-close-button:active {
+  transform: rotate(90deg) scale(0.95);
 }
 
 /* ========================================
@@ -101,8 +207,67 @@
 
 .settings-main {
   flex: 1;
-  padding: 32px;
+  padding: 36px;
   overflow-y: auto;
+  scroll-behavior: smooth;
+  position: relative;
+
+  /* Полупрозрачный фон с blur */
+  background: rgba(15, 15, 25, 0.25);
+  backdrop-filter: blur(40px) saturate(180%);
+  -webkit-backdrop-filter: blur(40px) saturate(180%);
+}
+
+/* Анимированный градиентный фон */
+.settings-main::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background:
+    radial-gradient(
+      circle at 20% 30%,
+      rgba(255, 120, 60, 0.03) 0%,
+      transparent 40%
+    ),
+    radial-gradient(
+      circle at 80% 70%,
+      rgba(138, 99, 210, 0.03) 0%,
+      transparent 40%
+    );
+  pointer-events: none;
+  animation: gradientShift 15s ease-in-out infinite alternate;
+}
+
+@keyframes gradientShift {
+  0% {
+    opacity: 0.5;
+    transform: scale(1) rotate(0deg);
+  }
+  100% {
+    opacity: 0.8;
+    transform: scale(1.1) rotate(5deg);
+  }
+}
+
+/* Fade in animation for content */
+.settings-main > * {
+  animation: fadeIn 0.5s ease-out;
+  position: relative;
+  z-index: 1;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /* ========================================
@@ -118,23 +283,38 @@
 }
 
 /* ========================================
-   SCROLLBAR
+   SCROLLBAR (Liquid Glass Style)
    ======================================== */
 .settings-main::-webkit-scrollbar {
-  width: 6px;
+  width: 8px;
 }
 
 .settings-main::-webkit-scrollbar-track {
-  background: transparent;
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 8px;
+  margin: 8px 0;
 }
 
 .settings-main::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 3px;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.15) 0%,
+    rgba(255, 255, 255, 0.1) 100%
+  );
+  border-radius: 8px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+  transition: all 0.3s ease;
 }
 
 .settings-main::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.15);
+  background: linear-gradient(
+    180deg,
+    rgba(255, 120, 60, 0.4) 0%,
+    rgba(255, 120, 60, 0.25) 100%
+  );
+  border-color: rgba(255, 120, 60, 0.2);
+  box-shadow: 0 0 8px rgba(255, 120, 60, 0.3);
 }
 
 /* ========================================
@@ -159,44 +339,128 @@
    SIDEBAR
    ======================================== */
 .settings-sidebar {
-  width: 240px;
-  padding: 16px;
-  border-right: 1px solid rgba(255, 255, 255, 0.08);
-  background: rgba(15, 15, 25, 0.4);
+  width: 260px;
+  padding: 20px 16px;
+  border-right: 1px solid rgba(255, 255, 255, 0.12);
+  /* Полупрозрачный sidebar с blur */
+  background: rgba(18, 18, 28, 0.3);
+  backdrop-filter: blur(40px) saturate(180%);
+  -webkit-backdrop-filter: blur(40px) saturate(180%);
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 6px;
+  position: relative;
+}
+
+/* Тонкое свечение слева */
+.settings-sidebar::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: linear-gradient(
+    180deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.1) 50%,
+    transparent 100%
+  );
 }
 
 .settings-sidebar-item {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 14px 16px;
-  border-radius: 12px;
-  background: transparent;
-  border: none;
+  gap: 14px;
+  padding: 16px 18px;
+  border-radius: 16px;
+  /* Полупрозрачный item */
+  background: rgba(255, 255, 255, 0.02);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid transparent;
   color: var(--text-secondary);
   font-size: 15px;
-  font-weight: 500;
+  font-weight: 600;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   text-align: left;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Тонкий highlight */
+.settings-sidebar-item::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.08) 50%,
+    transparent 100%
+  );
+  opacity: 0;
+  transition: opacity 0.3s ease;
 }
 
 .settings-sidebar-item:hover {
-  background: rgba(255, 255, 255, 0.05);
+  background: rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(30px);
+  -webkit-backdrop-filter: blur(30px);
+  border-color: rgba(255, 255, 255, 0.15);
   color: var(--text-primary);
+  transform: translateX(4px);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+}
+
+.settings-sidebar-item:hover::before {
+  opacity: 1;
 }
 
 .settings-sidebar-item.active {
-  background: rgba(255, 120, 60, 0.15);
+  /* Полупрозрачный с оранжевым тоном */
+  background: rgba(255, 120, 60, 0.12);
+  backdrop-filter: blur(30px) saturate(150%);
+  -webkit-backdrop-filter: blur(30px) saturate(150%);
+  border-color: rgba(255, 120, 60, 0.35);
   color: #ff783c;
-  border-left: 3px solid #ff783c;
+  box-shadow:
+    0 4px 20px rgba(255, 120, 60, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.15),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.1);
+  position: relative;
+}
+
+/* Тонкая активная полоска */
+.settings-sidebar-item.active::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 3px;
+  height: 50%;
+  background: linear-gradient(
+    180deg,
+    #ff783c,
+    #ff8a54
+  );
+  border-radius: 0 3px 3px 0;
+  box-shadow: 0 0 16px rgba(255, 120, 60, 0.8);
 }
 
 .settings-sidebar-item svg {
   flex-shrink: 0;
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.settings-sidebar-item.active svg {
+  transform: scale(1.1);
+  filter: drop-shadow(0 2px 4px rgba(255, 120, 60, 0.4));
 }
 
 /* ========================================
