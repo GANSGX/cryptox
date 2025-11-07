@@ -15,15 +15,15 @@ export function ChatLayout() {
       <LeftStrip onBurgerClick={() => setIsBurgerOpen(true)} />
 
       {/* Выдвижное меню */}
-      <BurgerMenu 
-        isOpen={isBurgerOpen} 
-        onClose={() => setIsBurgerOpen(false)} 
+      <BurgerMenu
+        isOpen={isBurgerOpen}
+        onClose={() => setIsBurgerOpen(false)}
       />
 
       {/* Сайдбар со списком чатов */}
-      <Sidebar 
-        activeChat={activeChat} 
-        onChatSelect={setActiveChat} 
+      <Sidebar
+        activeChat={activeChat}
+        onChatSelect={setActiveChat}
       />
 
       {/* Окно чата */}

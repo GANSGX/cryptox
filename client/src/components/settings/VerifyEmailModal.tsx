@@ -1,5 +1,6 @@
 import { X } from 'lucide-react'
 import { useState, useEffect } from 'react'
+import { createPortal } from 'react-dom'
 import { useAuthStore } from '@/store/authStore'
 import { apiService } from '@/services/api.service'
 import './VerifyEmailModal.css'
@@ -236,7 +237,7 @@ export function VerifyEmailModal({ isOpen, onClose, onSuccess }: VerifyEmailModa
         }
     }
 
-    return (
+    return createPortal(
         <>
             {/* Overlay */}
             <div
@@ -259,6 +260,7 @@ export function VerifyEmailModal({ isOpen, onClose, onSuccess }: VerifyEmailModa
                     {renderStep()}
                 </div>
             </div>
-        </>
+        </>,
+        document.body
     )
 }

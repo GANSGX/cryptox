@@ -1,5 +1,6 @@
 /* ========================================
-   EMAIL VERIFICATION BANNER
+   EMAIL VERIFICATION BANNER (iOS 26 Liquid Glass)
+   Поверх окна настроек с отдельным размытием
    ======================================== */
 .email-banner-overlay {
   position: fixed;
@@ -7,9 +8,10 @@
   left: 0;
   width: 100vw;
   height: 100vh;
-  background: rgba(0, 0, 0, 0.75);
-  backdrop-filter: blur(8px);
-  z-index: 500;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(10px) saturate(110%);
+  -webkit-backdrop-filter: blur(10px) saturate(110%);
+  z-index: 600; /* Выше окна настроек (301) */
   animation: fadeIn 0.3s ease;
 }
 
@@ -22,16 +24,19 @@
   max-width: 600px;
   max-height: 85vh;
   overflow-y: auto;
-  background: rgba(20, 20, 30, 0.98);
-  backdrop-filter: blur(40px) saturate(180%);
-  -webkit-backdrop-filter: blur(40px) saturate(180%);
-  border: 2px solid rgba(255, 183, 77, 0.4);
-  border-radius: 20px;
-  box-shadow: 
-    0 20px 60px 0 rgba(0, 0, 0, 0.7),
-    0 0 40px rgba(255, 183, 77, 0.2),
-    inset 0 1px 2px 0 rgba(255, 255, 255, 0.1);
-  z-index: 501;
+  overflow-x: hidden;
+
+  /* iOS 26 Liquid Glass Style */
+  background: rgba(20, 20, 30, 0.88);
+  backdrop-filter: blur(60px) saturate(180%) brightness(1.05);
+  -webkit-backdrop-filter: blur(60px) saturate(180%) brightness(1.05);
+  border: 1.5px solid rgba(255, 183, 77, 0.35);
+  border-radius: 24px;
+  box-shadow:
+    0 20px 60px 0 rgba(0, 0, 0, 0.5),
+    0 0 30px rgba(255, 183, 77, 0.15),
+    inset 0 1px 2px 0 rgba(255, 255, 255, 0.08);
+  z-index: 601; /* Выше overlay */
   animation: slideIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
@@ -251,14 +256,24 @@
 }
 
 .email-banner-btn-primary {
-  background: linear-gradient(135deg, #ff783c, #ff5a3c);
+  /* Liquid Glass Primary Button */
+  background: rgba(255, 120, 60, 0.22);
+  backdrop-filter: blur(30px) saturate(180%);
+  -webkit-backdrop-filter: blur(30px) saturate(180%);
   color: white;
-  box-shadow: 0 4px 12px rgba(255, 120, 60, 0.3);
+  border: 1px solid rgba(255, 120, 60, 0.5);
+  box-shadow:
+    0 4px 12px rgba(255, 120, 60, 0.25),
+    inset 0 1px 0 rgba(255, 255, 255, 0.15);
 }
 
 .email-banner-btn-primary:hover {
+  background: rgba(255, 120, 60, 0.32);
   transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(255, 120, 60, 0.4);
+  box-shadow:
+    0 6px 16px rgba(255, 120, 60, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 120, 60, 0.6);
 }
 
 .email-banner-btn:active {

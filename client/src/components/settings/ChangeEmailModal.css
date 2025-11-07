@@ -9,14 +9,15 @@
   height: 100vh;
   background: rgba(0, 0, 0, 0);
   backdrop-filter: blur(0px);
-  z-index: 400;
+  z-index: 700; /* Выше баннера верификации (601) */
   pointer-events: none;
   transition: background 0.3s ease, backdrop-filter 0.3s ease;
 }
 
 .change-email-overlay.visible {
-  background: rgba(0, 0, 0, 0.7);
-  backdrop-filter: blur(8px);
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(10px) saturate(110%);
+  -webkit-backdrop-filter: blur(10px) saturate(110%);
   pointer-events: all;
 }
 
@@ -27,15 +28,15 @@
   transform: translate(-50%, -50%) scale(0.9);
   width: 90%;
   max-width: 480px;
-  background: rgba(20, 20, 30, 0.95);
-  backdrop-filter: blur(40px) saturate(180%);
-  -webkit-backdrop-filter: blur(40px) saturate(180%);
+  background: rgba(20, 20, 30, 0.92);
+  backdrop-filter: blur(50px) saturate(180%);
+  -webkit-backdrop-filter: blur(50px) saturate(180%);
   border: 1px solid rgba(255, 255, 255, 0.15);
   border-radius: 20px;
-  box-shadow: 
-    0 20px 60px 0 rgba(0, 0, 0, 0.6),
-    inset 0 1px 2px 0 rgba(255, 255, 255, 0.1);
-  z-index: 401;
+  box-shadow:
+    0 20px 60px 0 rgba(0, 0, 0, 0.5),
+    inset 0 1px 2px 0 rgba(255, 255, 255, 0.08);
+  z-index: 701; /* Выше overlay */
   opacity: 0;
   transition: opacity 0.3s ease, transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }

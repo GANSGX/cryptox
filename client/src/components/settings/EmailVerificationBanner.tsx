@@ -14,17 +14,17 @@ export function EmailVerificationBanner() {
     if (user && !user.email_verified) {
       // Проверяем localStorage - когда пользователь нажал "Напомнить позже"
       const dismissedUntil = localStorage.getItem('email_verify_dismissed')
-      
+
       if (dismissedUntil) {
         const dismissedTime = parseInt(dismissedUntil, 10)
         const now = Date.now()
-        
+
         // Если прошло меньше сессии - не показываем
         if (now < dismissedTime) {
           return
         }
       }
-      
+
       // Показываем баннер
       setIsVisible(true)
     }
@@ -111,13 +111,13 @@ export function EmailVerificationBanner() {
         </div>
 
         <div className="email-banner-actions">
-          <button 
+          <button
             className="email-banner-btn email-banner-btn-secondary"
             onClick={handleRemindLater}
           >
             Remind Me Later
           </button>
-          <button 
+          <button
             className="email-banner-btn email-banner-btn-primary"
             onClick={handleVerifyEmail}
           >

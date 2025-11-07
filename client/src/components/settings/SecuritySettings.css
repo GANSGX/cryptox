@@ -43,18 +43,18 @@
   align-items: center;
   gap: 18px;
   padding: 20px;
-  /* TRUE Liquid Glass - полупрозрачные карточки */
-  background: rgba(255, 255, 255, 0.04);
+  /* TRUE Liquid Glass - полупрозрачные карточки (нейтрально-синий тон) */
+  background: rgba(100, 150, 200, 0.06);
   backdrop-filter: blur(40px) saturate(180%);
   -webkit-backdrop-filter: blur(40px) saturate(180%);
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(120, 160, 210, 0.18);
   border-radius: 20px;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
   overflow: hidden;
 }
 
-/* Тонкий highlight сверху */
+/* Тонкий highlight сверху (синий оттенок для обычных сессий) */
 .session-item::before {
   content: '';
   position: absolute;
@@ -65,32 +65,42 @@
   background: linear-gradient(
     90deg,
     transparent 0%,
-    rgba(255, 255, 255, 0.15) 50%,
+    rgba(120, 180, 220, 0.25) 50%,
     transparent 100%
   );
 }
 
 .session-item:hover {
-  background: rgba(255, 255, 255, 0.08);
+  background: rgba(120, 160, 210, 0.12);
   backdrop-filter: blur(50px) saturate(200%);
   -webkit-backdrop-filter: blur(50px) saturate(200%);
-  border-color: rgba(255, 255, 255, 0.2);
+  border-color: rgba(120, 180, 220, 0.3);
   transform: translateY(-3px);
   box-shadow:
-    0 8px 32px rgba(0, 0, 0, 0.3),
-    inset 0 1px 0 rgba(255, 255, 255, 0.15);
+    0 8px 32px rgba(100, 150, 200, 0.2),
+    inset 0 1px 0 rgba(120, 180, 220, 0.2);
 }
 
-/* Current session - полупрозрачное свечение */
+/* Current session - оранжевое свечение (контрастирует с синими) */
 .session-item.current {
-  background: rgba(255, 120, 60, 0.12);
+  background: rgba(255, 120, 60, 0.10);
   backdrop-filter: blur(50px) saturate(200%) brightness(1.1);
   -webkit-backdrop-filter: blur(50px) saturate(200%) brightness(1.1);
-  border-color: rgba(255, 120, 60, 0.4);
+  border-color: rgba(255, 120, 60, 0.35);
   box-shadow:
-    0 8px 24px rgba(255, 120, 60, 0.25),
-    inset 0 1px 0 rgba(255, 255, 255, 0.2),
-    inset 0 -1px 0 rgba(0, 0, 0, 0.1);
+    0 8px 24px rgba(255, 120, 60, 0.18),
+    inset 0 1px 0 rgba(255, 255, 255, 0.15),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.08);
+}
+
+/* Оранжевый highlight для текущей сессии */
+.session-item.current::before {
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 120, 60, 0.4) 50%,
+    transparent 100%
+  );
 }
 
 .session-item.current::after {
@@ -102,7 +112,7 @@
   bottom: 0;
   background: radial-gradient(
     circle at 20% 40%,
-    rgba(255, 120, 60, 0.12) 0%,
+    rgba(255, 120, 60, 0.08) 0%,
     transparent 60%
   );
   pointer-events: none;
@@ -112,38 +122,39 @@
   width: 52px;
   height: 52px;
   border-radius: 14px;
-  /* Полупрозрачная иконка */
-  background: rgba(255, 255, 255, 0.06);
+  /* Полупрозрачная иконка (синий оттенок) */
+  background: rgba(120, 160, 210, 0.12);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(120, 180, 220, 0.25);
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--text-secondary);
+  color: rgba(150, 190, 230, 0.9);
   flex-shrink: 0;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   box-shadow:
-    0 2px 12px rgba(0, 0, 0, 0.2),
-    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    0 2px 12px rgba(100, 150, 200, 0.15),
+    inset 0 1px 0 rgba(120, 180, 220, 0.15);
 }
 
 .session-item:hover .session-icon {
   transform: scale(1.05);
-  background: rgba(255, 255, 255, 0.1);
-  border-color: rgba(255, 255, 255, 0.22);
+  background: rgba(120, 160, 210, 0.18);
+  border-color: rgba(120, 180, 220, 0.35);
+  color: rgba(150, 200, 240, 1);
 }
 
 .session-item.current .session-icon {
-  /* Полупрозрачная с оранжевым тоном */
-  background: rgba(255, 120, 60, 0.15);
+  /* Полупрозрачная с оранжевым тоном для текущей сессии */
+  background: rgba(255, 120, 60, 0.12);
   backdrop-filter: blur(20px) saturate(150%);
   -webkit-backdrop-filter: blur(20px) saturate(150%);
-  border-color: rgba(255, 120, 60, 0.5);
-  color: #ff783c;
+  border-color: rgba(255, 120, 60, 0.4);
+  color: #ff9060;
   box-shadow:
-    0 4px 16px rgba(255, 120, 60, 0.35),
-    inset 0 1px 0 rgba(255, 255, 255, 0.25);
+    0 4px 16px rgba(255, 120, 60, 0.25),
+    inset 0 1px 0 rgba(255, 255, 255, 0.18);
 }
 
 .session-info {
@@ -167,24 +178,24 @@
   display: inline-flex;
   align-items: center;
   padding: 5px 12px;
-  /* Полупрозрачный бейдж */
-  background: rgba(255, 120, 60, 0.15);
+  /* Полупрозрачный бейдж (оранжевый для текущей) */
+  background: rgba(255, 120, 60, 0.12);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 120, 60, 0.5);
+  border: 1px solid rgba(255, 120, 60, 0.4);
   border-radius: 10px;
   font-size: 11px;
   font-weight: 700;
-  color: #ff783c;
+  color: #ff9060;
   text-transform: uppercase;
   letter-spacing: 0.8px;
   box-shadow:
-    0 2px 12px rgba(255, 120, 60, 0.3),
-    inset 0 1px 0 rgba(255, 255, 255, 0.25);
+    0 2px 12px rgba(255, 120, 60, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.18);
   position: relative;
 }
 
-/* Subtle pulse glow */
+/* Subtle pulse glow (уменьшенная яркость) */
 .session-badge::before {
   content: '';
   position: absolute;
@@ -195,7 +206,7 @@
   border-radius: 10px;
   background: radial-gradient(
     circle,
-    rgba(255, 120, 60, 0.4) 0%,
+    rgba(255, 120, 60, 0.25) 0%,
     transparent 70%
   );
   z-index: -1;
@@ -209,7 +220,7 @@
     transform: scale(1);
   }
   50% {
-    opacity: 0.6;
+    opacity: 0.4;
     transform: scale(1.05);
   }
 }
@@ -236,11 +247,11 @@
   width: 42px;
   height: 42px;
   border-radius: 12px;
-  /* Полупрозрачная delete button */
-  background: rgba(239, 83, 80, 0.12);
+  /* Полупрозрачная delete button (уменьшенная яркость) */
+  background: rgba(239, 83, 80, 0.10);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(239, 83, 80, 0.35);
+  border: 1px solid rgba(239, 83, 80, 0.3);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -251,8 +262,8 @@
   position: relative;
   overflow: hidden;
   box-shadow:
-    0 2px 12px rgba(239, 83, 80, 0.2),
-    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    0 2px 12px rgba(239, 83, 80, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
 }
 
 /* Тонкий highlight */
@@ -272,14 +283,14 @@
 }
 
 .session-delete:hover {
-  background: rgba(239, 83, 80, 0.2);
+  background: rgba(239, 83, 80, 0.18);
   backdrop-filter: blur(30px);
   -webkit-backdrop-filter: blur(30px);
-  border-color: rgba(239, 83, 80, 0.5);
+  border-color: rgba(239, 83, 80, 0.45);
   transform: scale(1.08) rotate(-5deg);
   box-shadow:
-    0 6px 24px rgba(239, 83, 80, 0.4),
-    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    0 6px 24px rgba(239, 83, 80, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.15);
 }
 
 .session-delete:active {
@@ -298,12 +309,12 @@
 .settings-btn-danger {
   width: 100%;
   padding: 16px 24px;
-  /* Полупрозрачная danger button */
-  background: rgba(239, 83, 80, 0.12);
+  /* Полупрозрачная danger button (уменьшенная яркость) */
+  background: rgba(239, 83, 80, 0.10);
   backdrop-filter: blur(30px) saturate(150%);
   -webkit-backdrop-filter: blur(30px) saturate(150%);
   color: #ef5350;
-  border: 1px solid rgba(239, 83, 80, 0.4);
+  border: 1px solid rgba(239, 83, 80, 0.35);
   border-radius: 16px;
   font-size: 15px;
   font-weight: 700;
@@ -316,8 +327,8 @@
   position: relative;
   overflow: hidden;
   box-shadow:
-    0 4px 16px rgba(239, 83, 80, 0.25),
-    inset 0 1px 0 rgba(255, 255, 255, 0.15);
+    0 4px 16px rgba(239, 83, 80, 0.18),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
 }
 
 .settings-btn-danger::before {
@@ -336,14 +347,14 @@
 }
 
 .settings-btn-danger:hover {
-  background: rgba(239, 83, 80, 0.2);
+  background: rgba(239, 83, 80, 0.16);
   backdrop-filter: blur(40px) saturate(180%);
   -webkit-backdrop-filter: blur(40px) saturate(180%);
-  border-color: rgba(239, 83, 80, 0.6);
+  border-color: rgba(239, 83, 80, 0.5);
   transform: translateY(-3px);
   box-shadow:
-    0 10px 32px rgba(239, 83, 80, 0.4),
-    inset 0 1px 0 rgba(255, 255, 255, 0.25);
+    0 10px 32px rgba(239, 83, 80, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.18);
 }
 
 .settings-btn-danger:active {

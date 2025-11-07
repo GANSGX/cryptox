@@ -30,8 +30,8 @@
   position: relative;
   overflow: hidden;
   box-shadow:
-    0 4px 16px rgba(0, 0, 0, 0.15),
-    inset 0 1px 0 rgba(255, 255, 255, 0.12);
+    0 4px 16px rgba(0, 0, 0, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
 }
 
 /* Тонкий highlight сверху */
@@ -57,8 +57,8 @@
   -webkit-backdrop-filter: blur(50px) saturate(200%);
   transform: translateY(-3px);
   box-shadow:
-    0 12px 32px rgba(0, 0, 0, 0.25),
-    inset 0 1px 0 rgba(255, 255, 255, 0.18);
+    0 12px 32px rgba(0, 0, 0, 0.18),
+    inset 0 1px 0 rgba(255, 255, 255, 0.12);
 }
 
 .settings-block-header h4 {
@@ -194,8 +194,8 @@
   color: white;
   border: 1px solid rgba(255, 120, 60, 0.5);
   box-shadow:
-    0 4px 20px rgba(255, 120, 60, 0.4),
-    inset 0 1px 0 rgba(255, 255, 255, 0.25);
+    0 4px 20px rgba(255, 120, 60, 0.25),
+    inset 0 1px 0 rgba(255, 255, 255, 0.15);
 }
 
 .settings-btn-primary:hover {
@@ -204,9 +204,9 @@
   -webkit-backdrop-filter: blur(40px) saturate(200%) brightness(1.15);
   transform: translateY(-3px);
   box-shadow:
-    0 8px 28px rgba(255, 120, 60, 0.5),
-    inset 0 1px 0 rgba(255, 255, 255, 0.35);
-  border-color: rgba(255, 120, 60, 0.7);
+    0 8px 28px rgba(255, 120, 60, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 120, 60, 0.6);
 }
 
 .settings-btn-secondary {
@@ -217,8 +217,8 @@
   color: var(--text-primary);
   border: 1px solid rgba(255, 255, 255, 0.15);
   box-shadow:
-    0 2px 12px rgba(0, 0, 0, 0.2),
-    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    0 2px 12px rgba(0, 0, 0, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
 }
 
 .settings-btn-secondary:hover {
@@ -228,8 +228,8 @@
   border-color: rgba(255, 255, 255, 0.25);
   transform: translateY(-3px);
   box-shadow:
-    0 6px 20px rgba(0, 0, 0, 0.3),
-    inset 0 1px 0 rgba(255, 255, 255, 0.18);
+    0 6px 20px rgba(0, 0, 0, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.12);
 }
 
 .settings-btn:active {
@@ -251,8 +251,8 @@
   border-radius: 18px;
   margin-top: 16px;
   box-shadow:
-    0 4px 20px rgba(255, 183, 77, 0.2),
-    inset 0 1px 0 rgba(255, 255, 255, 0.15);
+    0 4px 20px rgba(255, 183, 77, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
   position: relative;
   overflow: hidden;
 }

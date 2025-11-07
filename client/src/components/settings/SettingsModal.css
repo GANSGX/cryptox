@@ -17,9 +17,9 @@
 }
 
 .settings-overlay.visible {
-  background: rgba(0, 0, 0, 0.75);
-  backdrop-filter: blur(24px) saturate(1.2);
-  -webkit-backdrop-filter: blur(24px) saturate(1.2);
+  background: rgba(0, 0, 0, 0.65);
+  backdrop-filter: blur(16px) saturate(1.15);
+  -webkit-backdrop-filter: blur(16px) saturate(1.15);
   pointer-events: all;
 }
 
@@ -33,22 +33,22 @@
   height: 85vh;
   max-height: 720px;
 
-  /* TRUE Liquid Glass - полупрозрачность */
-  background: rgba(20, 20, 32, 0.45);
+  /* TRUE Liquid Glass - полупрозрачность (iOS 26 style) */
+  background: rgba(20, 20, 32, 0.35);
   backdrop-filter: blur(80px) saturate(200%) brightness(1.1);
   -webkit-backdrop-filter: blur(80px) saturate(200%) brightness(1.1);
 
   /* Тонкая полупрозрачная граница */
-  border: 1px solid rgba(255, 255, 255, 0.18);
+  border: 1px solid rgba(255, 255, 255, 0.15);
 
   border-radius: 32px;
 
-  /* Мягкие многослойные тени */
+  /* Мягкие многослойные тени (уменьшенная яркость) */
   box-shadow:
-    0 8px 32px rgba(0, 0, 0, 0.4),
-    0 24px 80px rgba(0, 0, 0, 0.5),
-    inset 0 1px 0 rgba(255, 255, 255, 0.2),
-    inset 0 -1px 0 rgba(0, 0, 0, 0.3);
+    0 8px 32px rgba(0, 0, 0, 0.25),
+    0 24px 80px rgba(0, 0, 0, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.12),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.2);
 
   z-index: 301;
   display: flex;
@@ -72,7 +72,7 @@
   border-radius: 32px;
   background: radial-gradient(
     circle at 50% 0%,
-    rgba(255, 255, 255, 0.08) 0%,
+    rgba(255, 255, 255, 0.04) 0%,
     transparent 50%
   );
   pointer-events: none;
@@ -203,17 +203,19 @@
   flex: 1;
   display: flex;
   overflow: hidden;
+  overflow-x: hidden; /* Убираем горизонтальный скролл */
 }
 
 .settings-main {
   flex: 1;
   padding: 36px;
   overflow-y: auto;
+  overflow-x: hidden; /* Только вертикальный скролл */
   scroll-behavior: smooth;
   position: relative;
 
-  /* Полупрозрачный фон с blur */
-  background: rgba(15, 15, 25, 0.25);
+  /* Полупрозрачный фон с blur (еще более прозрачный) */
+  background: rgba(15, 15, 25, 0.15);
   backdrop-filter: blur(40px) saturate(180%);
   -webkit-backdrop-filter: blur(40px) saturate(180%);
 }
@@ -429,9 +431,9 @@
   border-color: rgba(255, 120, 60, 0.35);
   color: #ff783c;
   box-shadow:
-    0 4px 20px rgba(255, 120, 60, 0.3),
-    inset 0 1px 0 rgba(255, 255, 255, 0.15),
-    inset 0 -1px 0 rgba(0, 0, 0, 0.1);
+    0 4px 20px rgba(255, 120, 60, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.08);
   position: relative;
 }
 
@@ -450,7 +452,7 @@
     #ff8a54
   );
   border-radius: 0 3px 3px 0;
-  box-shadow: 0 0 16px rgba(255, 120, 60, 0.8);
+  box-shadow: 0 0 12px rgba(255, 120, 60, 0.5);
 }
 
 .settings-sidebar-item svg {

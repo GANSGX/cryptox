@@ -68,14 +68,14 @@ export function AccountSettings() {
 
             <div className="settings-email-actions">
               {!isEmailVerified && (
-                <button 
+                <button
                   className="settings-btn settings-btn-primary"
                   onClick={() => setShowVerifyEmail(true)}
                 >
                   Verify Email
                 </button>
               )}
-              <button 
+              <button
                 className="settings-btn settings-btn-secondary"
                 onClick={() => setShowChangeEmail(true)}
               >
@@ -85,34 +85,19 @@ export function AccountSettings() {
             </div>
           </div>
 
-          {/* Verification Benefits */}
-          {!isEmailVerified && (
-            <div className="settings-info-banner">
-              <div className="settings-info-banner-icon">ℹ️</div>
-              <div className="settings-info-banner-content">
-                <strong>Why verify your email?</strong>
-                <ul>
-                  <li>Recover your password if you forget it</li>
-                  <li>Enable Two-Factor Authentication (2FA)</li>
-                  <li>Receive important security notifications</li>
-                  <li>Unlock all account features</li>
-                </ul>
-              </div>
-            </div>
-          )}
         </div>
       </div>
 
       {/* Change Email Modal */}
-      <ChangeEmailModal 
-        isOpen={showChangeEmail} 
+      <ChangeEmailModal
+        isOpen={showChangeEmail}
         onClose={() => setShowChangeEmail(false)}
         onSuccess={handleEmailChanged}
       />
 
       {/* Verify Email Modal */}
-      <VerifyEmailModal 
-        isOpen={showVerifyEmail} 
+      <VerifyEmailModal
+        isOpen={showVerifyEmail}
         onClose={() => setShowVerifyEmail(false)}
         onSuccess={handleEmailVerified}
       />
