@@ -13,6 +13,7 @@ interface Session {
   created_at: string
   last_active: string
   is_current: boolean
+  seconds_ago: number // Разница в секундах, вычисленная на сервере
 }
 
 export function useSessions() {
@@ -39,14 +40,11 @@ export function useSessions() {
   }
 
   useEffect(() => {
-    console.log('🎯 useSessions: Component mounted, loading sessions')
-    
     // Загружаем список при монтировании
     loadSessions()
 
     // WebSocket: обновление списка сессий
     const handleSessionsUpdated = () => {
-      console.log('🔄 Sessions updated via Socket.IO - reloading...')
       loadSessions()
     }
 
@@ -55,10 +53,9 @@ export function useSessions() {
 
     // Отписываемся при размонтировании
     return () => {
-      console.log('🔌 useSessions: Cleaning up Socket.IO listener')
       socketService.offSessionsUpdated(handleSessionsUpdated)
     }
-  }, [])  // ← ПУСТОЙ массив!
+  }, [])
 
   return {
     sessions,

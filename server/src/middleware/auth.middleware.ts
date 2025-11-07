@@ -2,6 +2,25 @@ import type { FastifyRequest, FastifyReply } from 'fastify'
 import { JwtService } from '../services/jwt.service.js'
 import { pool } from '../db/pool.js'
 
+// Кэш последнего обновления last_active для каждого токена (debounce)
+const lastActivityUpdate = new Map<string, number>()
+
+// Очищаем старые записи из кэша каждые 5 минут
+setInterval(() => {
+  const now = Date.now()
+  const fiveMinutes = 5 * 60 * 1000
+
+  for (const [token, timestamp] of lastActivityUpdate.entries()) {
+    if (now - timestamp > fiveMinutes) {
+      lastActivityUpdate.delete(token)
+    }
+  }
+
+  if (lastActivityUpdate.size > 0) {
+    console.log(`🧹 Cleaned up activity cache. Remaining entries: ${lastActivityUpdate.size}`)
+  }
+}, 5 * 60 * 1000)
+
 // Расширяем тип FastifyRequest для добавления user
 declare module 'fastify' {
   interface FastifyRequest {
@@ -58,13 +77,28 @@ export async function authMiddleware(
       email: payload.email,
     }
 
-    // Обновляем last_active для текущей сессии (в фоне, без ожидания)
-    pool.query(
-      'UPDATE sessions SET last_active = NOW() WHERE jwt_token = $1',
-      [token]
-    ).catch(() => {
-      // Игнорируем ошибки обновления last_active
-    })
+    // Обновляем last_active для текущей сессии (с debounce 30 секунд)
+    const now = Date.now()
+    const lastUpdate = lastActivityUpdate.get(token) || 0
+    const timeSinceLastUpdate = now - lastUpdate
+
+    // Обновляем только если прошло больше 30 секунд с последнего обновления
+    if (timeSinceLastUpdate > 30000) {
+      lastActivityUpdate.set(token, now)
+
+      pool.query(
+        'UPDATE sessions SET last_active = NOW() WHERE jwt_token = $1',
+        [token]
+      ).then(() => {
+        // После обновления last_active отправляем событие через Socket.IO
+        const io = (request.server as any).io
+        if (io) {
+          io.to(payload.username).emit('sessions:updated')
+        }
+      }).catch(() => {
+        // Игнорируем ошибки обновления last_active
+      })
+    }
 
     // Продолжаем выполнение
   } catch (error) {

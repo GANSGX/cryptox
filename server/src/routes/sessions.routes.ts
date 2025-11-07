@@ -14,15 +14,16 @@ export async function sessionsRoutes(fastify: FastifyInstance) {
 
     try {
       const result = await pool.query(
-        `SELECT 
+        `SELECT
           id,
           device_info,
           ip_address,
           created_at,
           last_active,
           expires_at,
-          (jwt_token = $2) as is_current
-         FROM sessions 
+          (jwt_token = $2) as is_current,
+          EXTRACT(EPOCH FROM (NOW() - last_active))::INTEGER as seconds_ago
+         FROM sessions
          WHERE username = $1 AND expires_at > NOW()
          ORDER BY last_active DESC`,
         [username, request.headers.authorization?.replace('Bearer ', '')]
@@ -31,9 +32,10 @@ export async function sessionsRoutes(fastify: FastifyInstance) {
       // Парсим device_info из строки в объект
       const sessions = result.rows.map(row => ({
         ...row,
-        device_info: typeof row.device_info === 'string' 
-          ? JSON.parse(row.device_info) 
-          : row.device_info
+        device_info: typeof row.device_info === 'string'
+          ? JSON.parse(row.device_info)
+          : row.device_info,
+        seconds_ago: Math.max(0, row.seconds_ago || 0) // Защита от отрицательных значений
       }))
 
       return reply.send({
@@ -73,9 +75,6 @@ export async function sessionsRoutes(fastify: FastifyInstance) {
         [username, currentToken]
       )
 
-      console.log('📡 Emitting session:terminated for', result.rowCount, 'sessions to room:', username)
-      console.log('🔌 fastify.io exists:', !!fastify.io)
-
       if (fastify.io) {
         // Уведомляем каждую удаленную сессию через Socket.IO
         sessionsToDelete.rows.forEach((session) => {
@@ -87,9 +86,6 @@ export async function sessionsRoutes(fastify: FastifyInstance) {
 
         // Уведомляем все устройства об обновлении списка сессий
         fastify.io.to(username).emit('sessions:updated')
-        console.log('✅ Events emitted')
-      } else {
-        console.error('❌ fastify.io is undefined!')
       }
 
       return reply.send({
@@ -129,9 +125,6 @@ export async function sessionsRoutes(fastify: FastifyInstance) {
         })
       }
 
-      console.log('📡 Emitting session:terminated for sessionId:', sessionId, 'to room:', username)
-      console.log('🔌 fastify.io exists:', !!fastify.io)
-
       if (fastify.io) {
         // Уведомляем устройство о завершении сессии
         fastify.io.to(username).emit('session:terminated', {
@@ -141,9 +134,6 @@ export async function sessionsRoutes(fastify: FastifyInstance) {
 
         // Уведомляем все устройства об обновлении списка сессий
         fastify.io.to(username).emit('sessions:updated')
-        console.log('✅ Events emitted')
-      } else {
-        console.error('❌ fastify.io is undefined!')
       }
 
       return reply.send({

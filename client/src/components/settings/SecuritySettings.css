@@ -14,6 +14,7 @@
   display: flex;
   flex-direction: column;
   gap: 14px;
+  margin-top: 20px; /* Отступ от "Updates in real-time" */
 }
 
 /* Staggered animation for session items */
@@ -71,14 +72,14 @@
 }
 
 .session-item:hover {
-  background: rgba(120, 160, 210, 0.12);
-  backdrop-filter: blur(50px) saturate(200%);
-  -webkit-backdrop-filter: blur(50px) saturate(200%);
-  border-color: rgba(120, 180, 220, 0.3);
-  transform: translateY(-3px);
+  background: rgba(120, 160, 210, 0.09);
+  backdrop-filter: blur(50px) saturate(180%);
+  -webkit-backdrop-filter: blur(50px) saturate(180%);
+  border-color: rgba(120, 180, 220, 0.25);
+  transform: translateY(-2px);
   box-shadow:
-    0 8px 32px rgba(100, 150, 200, 0.2),
-    inset 0 1px 0 rgba(120, 180, 220, 0.2);
+    0 6px 24px rgba(100, 150, 200, 0.15),
+    inset 0 1px 0 rgba(120, 180, 220, 0.15);
 }
 
 /* Current session - оранжевое свечение (контрастирует с синими) */
@@ -139,10 +140,10 @@
 }
 
 .session-item:hover .session-icon {
-  transform: scale(1.05);
-  background: rgba(120, 160, 210, 0.18);
-  border-color: rgba(120, 180, 220, 0.35);
-  color: rgba(150, 200, 240, 1);
+  transform: scale(1.03);
+  background: rgba(120, 160, 210, 0.15);
+  border-color: rgba(120, 180, 220, 0.3);
+  color: rgba(150, 200, 240, 0.95);
 }
 
 .session-item.current .session-icon {
@@ -283,14 +284,14 @@
 }
 
 .session-delete:hover {
-  background: rgba(239, 83, 80, 0.18);
+  background: rgba(239, 83, 80, 0.15);
   backdrop-filter: blur(30px);
   -webkit-backdrop-filter: blur(30px);
-  border-color: rgba(239, 83, 80, 0.45);
-  transform: scale(1.08) rotate(-5deg);
+  border-color: rgba(239, 83, 80, 0.4);
+  transform: scale(1.05) rotate(-3deg);
   box-shadow:
-    0 6px 24px rgba(239, 83, 80, 0.3),
-    inset 0 1px 0 rgba(255, 255, 255, 0.15);
+    0 4px 20px rgba(239, 83, 80, 0.25),
+    inset 0 1px 0 rgba(255, 255, 255, 0.12);
 }
 
 .session-delete:active {
@@ -347,14 +348,14 @@
 }
 
 .settings-btn-danger:hover {
-  background: rgba(239, 83, 80, 0.16);
+  background: rgba(239, 83, 80, 0.14);
   backdrop-filter: blur(40px) saturate(180%);
   -webkit-backdrop-filter: blur(40px) saturate(180%);
-  border-color: rgba(239, 83, 80, 0.5);
-  transform: translateY(-3px);
+  border-color: rgba(239, 83, 80, 0.45);
+  transform: translateY(-2px);
   box-shadow:
-    0 10px 32px rgba(239, 83, 80, 0.3),
-    inset 0 1px 0 rgba(255, 255, 255, 0.18);
+    0 8px 28px rgba(239, 83, 80, 0.25),
+    inset 0 1px 0 rgba(255, 255, 255, 0.15);
 }
 
 .settings-btn-danger:active {

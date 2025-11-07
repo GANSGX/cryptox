@@ -183,36 +183,66 @@ export async function authRoutes(fastify: FastifyInstance) {
 
       // Сохранение сессии в БД
       try {
+        const userAgent = request.headers['user-agent'] || ''
+        const secChUaPlatform = request.headers['sec-ch-ua-platform'] as string || ''
+
+        // Улучшенное определение ОС
+        // Сначала проверяем sec-ch-ua-platform (более надежный источник)
+        let os = 'Unknown'
+        if (secChUaPlatform) {
+          const platformLower = secChUaPlatform.toLowerCase().replace(/"/g, '')
+          if (platformLower.includes('windows')) {
+            os = 'Windows'
+          } else if (platformLower.includes('macos') || platformLower.includes('mac os')) {
+            os = 'macOS'
+          } else if (platformLower.includes('linux')) {
+            os = 'Linux'
+          } else if (platformLower.includes('android')) {
+            os = 'Android'
+          } else if (platformLower.includes('ios')) {
+            os = 'iOS'
+          }
+        }
+
+        // Fallback на User-Agent если sec-ch-ua-platform не помог
+        if (os === 'Unknown') {
+          if (userAgent.includes('Windows NT') || userAgent.includes('Win64') || userAgent.includes('Win32')) {
+            os = 'Windows'
+          } else if (userAgent.includes('Mac OS X') || userAgent.includes('Macintosh')) {
+            os = 'macOS'
+          } else if (userAgent.includes('Android')) {
+            os = 'Android'
+          } else if (userAgent.includes('iPhone') || userAgent.includes('iPad')) {
+            os = 'iOS'
+          } else if (userAgent.includes('Linux')) {
+            os = 'Linux'
+          }
+        }
+
+        const deviceInfo = {
+          type: 'browser',
+          name: userAgent.includes('YaBrowser') || userAgent.includes('YaBro') ? 'Yandex' :
+            userAgent.includes('Edg') ? 'Edge' :
+              userAgent.includes('Firefox') ? 'Firefox' :
+                userAgent.includes('Chrome') ? 'Chrome' :
+                  userAgent.includes('Safari') ? 'Safari' : 'Browser',
+          os: os,
+        }
+
         await pool.query(
           `INSERT INTO sessions (username, device_info, ip_address, jwt_token, created_at, last_active, expires_at)
            VALUES ($1, $2, $3, $4, NOW(), NOW(), NOW() + INTERVAL '30 days')`,
           [
             username,
-            JSON.stringify({
-              type: 'browser',
-              name: request.headers['user-agent']?.includes('YaBrowser') ? 'Yandex' :
-                request.headers['user-agent']?.includes('Edg') ? 'Edge' :
-                  request.headers['user-agent']?.includes('Firefox') ? 'Firefox' :
-                    request.headers['user-agent']?.includes('Chrome') ? 'Chrome' :
-                      request.headers['user-agent']?.includes('Safari') ? 'Safari' : 'Browser',
-              os: request.headers['user-agent']?.includes('Windows') ? 'Windows' :
-                request.headers['user-agent']?.includes('Mac') ? 'macOS' :
-                  request.headers['user-agent']?.includes('Linux') ? 'Linux' : 'Unknown',
-            }),
+            JSON.stringify(deviceInfo),
             request.ip,
             token,
           ]
         )
 
         // Уведомляем все устройства пользователя о новой сессии
-        console.log('📡 Emitting sessions:updated to room:', username)
-        console.log('🔌 fastify.io exists:', !!fastify.io)
-        
         if (fastify.io) {
           fastify.io.to(username).emit('sessions:updated')
-          console.log('✅ Event sessions:updated emitted')
-        } else {
-          console.error('❌ fastify.io is undefined!')
         }
 
       } catch (error) {
