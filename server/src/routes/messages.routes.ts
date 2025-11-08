@@ -34,6 +34,32 @@ export async function messagesRoutes(fastify: FastifyInstance) {
         })
       }
 
+      // Проверка типа данных
+      if (typeof encrypted_content !== 'string') {
+        return reply.code(400).send({
+          success: false,
+          error: 'Invalid encrypted_content type',
+        })
+      }
+
+      // Проверка максимальной длины (50KB для зашифрованного текста)
+      // Plain text max 10,000 символов → зашифрованный ~20-30KB
+      if (encrypted_content.length > 50000) {
+        return reply.code(400).send({
+          success: false,
+          error: 'Message too long (max 50KB encrypted)',
+        })
+      }
+
+      // Проверка на подозрительные паттерны (базовая защита от инъекций)
+      // Зашифрованный текст должен быть base64-подобным
+      if (!/^[A-Za-z0-9+/=:]+$/.test(encrypted_content)) {
+        return reply.code(400).send({
+          success: false,
+          error: 'Invalid encrypted_content format',
+        })
+      }
+
       // Нельзя отправить самому себе
       if (sender_username.toLowerCase() === recipient_username.toLowerCase()) {
         return reply.code(400).send({
