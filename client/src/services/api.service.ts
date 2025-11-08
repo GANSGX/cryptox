@@ -108,6 +108,15 @@ class ApiService {
   }
 
   /**
+   * Выход (удаление сессии на сервере)
+   */
+  async logout(): Promise<ApiResponse> {
+    return this.request('/auth/logout', {
+      method: 'POST',
+    })
+  }
+
+  /**
    * Проверка авторизации
    */
   async me(): Promise<ApiResponse<{ username: string; email: string; email_verified: boolean }>> {

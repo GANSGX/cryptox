@@ -13,7 +13,7 @@ interface AuthState {
   // Actions
   login: (username: string, password: string) => Promise<boolean>
   register: (username: string, email: string, password: string) => Promise<boolean>
-  logout: () => void
+  logout: () => Promise<void>
   checkAuth: () => Promise<void>
   clearError: () => void
 }
@@ -118,7 +118,16 @@ export const useAuthStore = create<AuthState>((set) => ({
   /**
    * Выход
    */
-  logout: () => {
+  logout: async () => {
+    // Сначала вызываем API для удаления сессии на сервере
+    try {
+      await apiService.logout()
+    } catch (error) {
+      // Игнорируем ошибки, все равно удаляем локальные данные
+      console.error('Logout error:', error)
+    }
+
+    // Затем очищаем локальные данные
     apiService.clearToken()
     socketService.disconnect()
     cryptoService.clearSessionKeys()

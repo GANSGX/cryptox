@@ -53,3 +53,9 @@ media/
 # Backup files
 *.bak
 *.backup
+
+# Claude Code
+.claude/
+
+# Technical documentation (local only)
+ДИПЛОМНАЯ РАБОТА*.md

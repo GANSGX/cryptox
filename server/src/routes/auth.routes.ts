@@ -229,12 +229,37 @@ export async function authRoutes(fastify: FastifyInstance) {
           os: os,
         }
 
+        const deviceInfoStr = JSON.stringify(deviceInfo)
+
+        // Проверяем количество активных сессий
+        const sessionsCount = await pool.query(
+          'SELECT COUNT(*) as count FROM sessions WHERE username = $1 AND expires_at > NOW()',
+          [username]
+        )
+
+        const currentSessionsCount = parseInt(sessionsCount.rows[0].count)
+
+        // Если уже есть 10 или больше сессий - удаляем самые старые
+        if (currentSessionsCount >= 10) {
+          await pool.query(
+            `DELETE FROM sessions
+             WHERE id IN (
+               SELECT id FROM sessions
+               WHERE username = $1 AND expires_at > NOW()
+               ORDER BY last_active ASC
+               LIMIT $2
+             )`,
+            [username, currentSessionsCount - 9] // Оставляем только 9, чтобы новая стала 10-й
+          )
+        }
+
+        // Создаем новую сессию
         await pool.query(
           `INSERT INTO sessions (username, device_info, ip_address, jwt_token, created_at, last_active, expires_at)
            VALUES ($1, $2, $3, $4, NOW(), NOW(), NOW() + INTERVAL '30 days')`,
           [
             username,
-            JSON.stringify(deviceInfo),
+            deviceInfoStr,
             request.ip,
             token,
           ]
@@ -266,6 +291,58 @@ export async function authRoutes(fastify: FastifyInstance) {
       })
     } catch (error) {
       console.error('❌ Login error:', error)
+      return reply.code(500).send({
+        success: false,
+        error: 'Internal server error',
+      })
+    }
+  })
+
+  /**
+   * POST /logout
+   * Выход из аккаунта (удаление текущей сессии)
+   */
+  fastify.post('/logout', async (request, reply) => {
+    try {
+      const authHeader = request.headers.authorization
+
+      if (!authHeader) {
+        return reply.code(401).send({
+          success: false,
+          error: 'Missing authorization header',
+        })
+      }
+
+      const token = authHeader.replace('Bearer ', '')
+
+      // Проверяем токен и получаем username
+      const payload = JwtService.verify(token)
+
+      if (!payload) {
+        return reply.code(401).send({
+          success: false,
+          error: 'Invalid token',
+        })
+      }
+
+      // Удаляем сессию из БД
+      const result = await pool.query(
+        'DELETE FROM sessions WHERE jwt_token = $1 RETURNING id',
+        [token]
+      )
+
+      if (result.rowCount > 0) {
+        // Уведомляем все устройства пользователя об обновлении списка сессий
+        if (fastify.io) {
+          fastify.io.to(payload.username).emit('sessions:updated')
+        }
+      }
+
+      return reply.code(200).send({
+        success: true,
+        message: 'Logged out successfully',
+      })
+    } catch (error) {
       return reply.code(500).send({
         success: false,
         error: 'Internal server error',
