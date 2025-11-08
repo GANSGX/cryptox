@@ -103,6 +103,9 @@ export function SecuritySettings() {
                         {session.is_current && (
                           <span className="session-badge">Current</span>
                         )}
+                        {session.is_primary && (
+                          <span className="session-badge primary">Primary Device</span>
+                        )}
                       </div>
                       <div className="session-details">
                         <span>{session.device_info?.os || 'Unknown OS'}</span>
@@ -114,7 +117,7 @@ export function SecuritySettings() {
                       </div>
                     </div>
 
-                    {!session.is_current && (
+                    {!session.is_current && !session.is_primary && (
                       <button
                         className="session-delete"
                         onClick={() => handleDeleteSession(session.id)}

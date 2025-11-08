@@ -13,6 +13,7 @@ interface Session {
   created_at: string
   last_active: string
   is_current: boolean
+  is_primary: boolean // Главное устройство (первое, нельзя удалить)
   seconds_ago: number // Разница в секундах, вычисленная на сервере
 }
 

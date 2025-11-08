@@ -196,6 +196,16 @@
   position: relative;
 }
 
+/* Primary Device badge - зеленое свечение */
+.session-badge.primary {
+  background: rgba(76, 175, 80, 0.12);
+  border: 1px solid rgba(76, 175, 80, 0.4);
+  color: #66bb6a;
+  box-shadow:
+    0 2px 12px rgba(76, 175, 80, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.18);
+}
+
 /* Subtle pulse glow (уменьшенная яркость) */
 .session-badge::before {
   content: '';
@@ -213,6 +223,15 @@
   z-index: -1;
   opacity: 0;
   animation: gentlePulse 3s ease-in-out infinite;
+}
+
+/* Primary badge glow - зеленое */
+.session-badge.primary::before {
+  background: radial-gradient(
+    circle,
+    rgba(76, 175, 80, 0.25) 0%,
+    transparent 70%
+  );
 }
 
 @keyframes gentlePulse {

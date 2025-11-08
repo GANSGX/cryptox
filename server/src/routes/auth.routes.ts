@@ -239,13 +239,16 @@ export async function authRoutes(fastify: FastifyInstance) {
 
         const currentSessionsCount = parseInt(sessionsCount.rows[0].count)
 
-        // Если уже есть 10 или больше сессий - удаляем самые старые
+        // Определяем, будет ли это первая (главная) сессия
+        const isPrimary = currentSessionsCount === 0
+
+        // Если уже есть 10 или больше сессий - удаляем самые старые (НО НЕ ГЛАВНУЮ!)
         if (currentSessionsCount >= 10) {
           await pool.query(
             `DELETE FROM sessions
              WHERE id IN (
                SELECT id FROM sessions
-               WHERE username = $1 AND expires_at > NOW()
+               WHERE username = $1 AND expires_at > NOW() AND is_primary = FALSE
                ORDER BY last_active ASC
                LIMIT $2
              )`,
@@ -253,15 +256,16 @@ export async function authRoutes(fastify: FastifyInstance) {
           )
         }
 
-        // Создаем новую сессию
+        // Создаем новую сессию (is_primary = true если это первая сессия)
         await pool.query(
-          `INSERT INTO sessions (username, device_info, ip_address, jwt_token, created_at, last_active, expires_at)
-           VALUES ($1, $2, $3, $4, NOW(), NOW(), NOW() + INTERVAL '30 days')`,
+          `INSERT INTO sessions (username, device_info, ip_address, jwt_token, is_primary, created_at, last_active, expires_at)
+           VALUES ($1, $2, $3, $4, $5, NOW(), NOW(), NOW() + INTERVAL '30 days')`,
           [
             username,
             deviceInfoStr,
             request.ip,
             token,
+            isPrimary,
           ]
         )
 

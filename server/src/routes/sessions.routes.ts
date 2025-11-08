@@ -21,11 +21,12 @@ export async function sessionsRoutes(fastify: FastifyInstance) {
           created_at,
           last_active,
           expires_at,
+          is_primary,
           (jwt_token = $2) as is_current,
           EXTRACT(EPOCH FROM (NOW() - last_active))::INTEGER as seconds_ago
          FROM sessions
          WHERE username = $1 AND expires_at > NOW()
-         ORDER BY last_active DESC`,
+         ORDER BY is_primary DESC, last_active DESC`,
         [username, request.headers.authorization?.replace('Bearer ', '')]
       )
 
@@ -53,25 +54,26 @@ export async function sessionsRoutes(fastify: FastifyInstance) {
 
   /**
    * DELETE /sessions/others
-   * Выйти со всех других устройств (кроме текущего)
+   * Выйти со всех других устройств (кроме текущего и главного)
    * ВАЖНО: Должен быть ПЕРЕД /:sessionId для правильного роутинга
+   * ВАЖНО: Не удаляет главную сессию (is_primary = true)
    */
-  fastify.delete('/sessions/others', { 
-    preHandler: authMiddleware 
+  fastify.delete('/sessions/others', {
+    preHandler: authMiddleware
   }, async (request, reply) => {
     const username = (request as any).user.username
     const currentToken = request.headers.authorization?.replace('Bearer ', '')
 
     try {
-      // Получаем ID сессий которые будут удалены
+      // Получаем ID сессий которые будут удалены (НЕ текущую и НЕ главную)
       const sessionsToDelete = await pool.query(
-        'SELECT id FROM sessions WHERE username = $1 AND jwt_token != $2',
+        'SELECT id FROM sessions WHERE username = $1 AND jwt_token != $2 AND is_primary = FALSE',
         [username, currentToken]
       )
 
-      // Удаляем сессии
+      // Удаляем сессии (кроме текущей и главной)
       const result = await pool.query(
-        'DELETE FROM sessions WHERE username = $1 AND jwt_token != $2 RETURNING id',
+        'DELETE FROM sessions WHERE username = $1 AND jwt_token != $2 AND is_primary = FALSE RETURNING id',
         [username, currentToken]
       )
 
@@ -105,14 +107,49 @@ export async function sessionsRoutes(fastify: FastifyInstance) {
   /**
    * DELETE /sessions/:sessionId
    * Удалить конкретную сессию (выйти с устройства)
+   * ВАЖНО: Нельзя удалить текущую сессию (используйте /logout)
+   * ВАЖНО: Нельзя удалить главную сессию (is_primary = true)
    */
   fastify.delete<{
     Params: { sessionId: string }
   }>('/sessions/:sessionId', { preHandler: authMiddleware }, async (request, reply) => {
     const username = (request as any).user.username
     const { sessionId } = request.params
+    const currentToken = request.headers.authorization?.replace('Bearer ', '')
 
     try {
+      // Проверяем сессию перед удалением
+      const sessionCheck = await pool.query(
+        'SELECT jwt_token, is_primary FROM sessions WHERE id = $1 AND username = $2',
+        [sessionId, username]
+      )
+
+      if (sessionCheck.rowCount === 0) {
+        return reply.status(404).send({
+          success: false,
+          error: 'Session not found',
+        })
+      }
+
+      const session = sessionCheck.rows[0]
+
+      // Проверяем, является ли это текущей сессией
+      if (session.jwt_token === currentToken) {
+        return reply.status(403).send({
+          success: false,
+          error: 'Cannot delete your current session. Use /logout instead.',
+        })
+      }
+
+      // Проверяем, является ли это главной сессией
+      if (session.is_primary) {
+        return reply.status(403).send({
+          success: false,
+          error: 'Cannot delete the primary device. Transfer primary status first.',
+        })
+      }
+
+      // Удаляем сессию
       const result = await pool.query(
         'DELETE FROM sessions WHERE id = $1 AND username = $2 RETURNING id',
         [sessionId, username]
