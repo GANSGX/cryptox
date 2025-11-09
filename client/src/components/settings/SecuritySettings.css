@@ -4,7 +4,39 @@
 .security-settings {
   display: flex;
   flex-direction: column;
-  gap: 28px;
+  gap: 16px;
+}
+
+/* ========================================
+   SESSIONS GROUPS (Telegram-style)
+   ======================================== */
+.sessions-group {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 28px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.sessions-group:first-of-type {
+  margin-top: 0; /* Первая группа - без отступа сверху */
+}
+
+.sessions-group:last-of-type {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.sessions-group-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+  margin: 0 0 8px 0;
+  padding: 0 4px;
+  opacity: 0.7;
 }
 
 /* ========================================
@@ -14,7 +46,6 @@
   display: flex;
   flex-direction: column;
   gap: 14px;
-  margin-top: 20px; /* Отступ от "Updates in real-time" */
 }
 
 /* Staggered animation for session items */
@@ -44,118 +75,152 @@
   align-items: center;
   gap: 18px;
   padding: 20px;
-  /* TRUE Liquid Glass - полупрозрачные карточки (нейтрально-синий тон) */
-  background: rgba(100, 150, 200, 0.06);
-  backdrop-filter: blur(40px) saturate(180%);
-  -webkit-backdrop-filter: blur(40px) saturate(180%);
-  border: 1px solid rgba(120, 160, 210, 0.18);
-  border-radius: 20px;
+  /* Улучшенный Liquid Glass */
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.04) 0%,
+    rgba(255, 255, 255, 0.02) 100%
+  );
+  backdrop-filter: blur(80px) saturate(150%);
+  -webkit-backdrop-filter: blur(80px) saturate(150%);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 18px;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
   overflow: hidden;
-}
-
-/* Тонкий highlight сверху (синий оттенок для обычных сессий) */
-.session-item::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 5%;
-  right: 5%;
-  height: 1px;
-  background: linear-gradient(
-    90deg,
-    transparent 0%,
-    rgba(120, 180, 220, 0.25) 50%,
-    transparent 100%
-  );
+  box-shadow:
+    0 4px 16px rgba(0, 0, 0, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06);
 }
 
 .session-item:hover {
-  background: rgba(120, 160, 210, 0.09);
-  backdrop-filter: blur(50px) saturate(180%);
-  -webkit-backdrop-filter: blur(50px) saturate(180%);
-  border-color: rgba(120, 180, 220, 0.25);
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.06) 0%,
+    rgba(255, 255, 255, 0.04) 100%
+  );
+  backdrop-filter: blur(100px) saturate(160%);
+  -webkit-backdrop-filter: blur(100px) saturate(160%);
+  border-color: rgba(255, 255, 255, 0.14);
   transform: translateY(-2px);
   box-shadow:
-    0 6px 24px rgba(100, 150, 200, 0.15),
-    inset 0 1px 0 rgba(120, 180, 220, 0.15);
+    0 8px 32px rgba(0, 0, 0, 0.12),
+    0 0 0 1px rgba(255, 255, 255, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
 }
 
-/* Current session - оранжевое свечение (контрастирует с синими) */
+/* Current session - яркое насыщенное свечение */
 .session-item.current {
-  background: rgba(255, 120, 60, 0.10);
-  backdrop-filter: blur(50px) saturate(200%) brightness(1.1);
-  -webkit-backdrop-filter: blur(50px) saturate(200%) brightness(1.1);
-  border-color: rgba(255, 120, 60, 0.35);
-  box-shadow:
-    0 8px 24px rgba(255, 120, 60, 0.18),
-    inset 0 1px 0 rgba(255, 255, 255, 0.15),
-    inset 0 -1px 0 rgba(0, 0, 0, 0.08);
-}
-
-/* Оранжевый highlight для текущей сессии */
-.session-item.current::before {
   background: linear-gradient(
-    90deg,
-    transparent 0%,
-    rgba(255, 120, 60, 0.4) 50%,
-    transparent 100%
+    135deg,
+    rgba(255, 140, 100, 0.12) 0%,
+    rgba(255, 160, 120, 0.08) 100%
   );
+  backdrop-filter: blur(80px) saturate(180%);
+  -webkit-backdrop-filter: blur(80px) saturate(180%);
+  border: 1.5px solid;
+  border-color: rgba(255, 120, 80, 0.5);
+  box-shadow:
+    0 8px 32px rgba(255, 120, 80, 0.25),
+    0 0 0 1px rgba(255, 140, 100, 0.2),
+    0 0 20px rgba(255, 120, 80, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
 }
 
-.session-item.current::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: radial-gradient(
-    circle at 20% 40%,
-    rgba(255, 120, 60, 0.08) 0%,
-    transparent 60%
+/* Primary device - яркое насыщенное зеленое свечение */
+.session-item.primary {
+  background: linear-gradient(
+    135deg,
+    rgba(80, 220, 130, 0.12) 0%,
+    rgba(100, 230, 150, 0.08) 100%
   );
-  pointer-events: none;
+  backdrop-filter: blur(80px) saturate(180%);
+  -webkit-backdrop-filter: blur(80px) saturate(180%);
+  border: 1.5px solid;
+  border-color: rgba(70, 200, 120, 0.5);
+  box-shadow:
+    0 8px 32px rgba(70, 200, 120, 0.25),
+    0 0 0 1px rgba(80, 220, 130, 0.2),
+    0 0 20px rgba(70, 200, 120, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
 }
+
+/* Убрали radial-gradient свечение заднего фона - было вырвиглазно */
 
 .session-icon {
   width: 52px;
   height: 52px;
   border-radius: 14px;
-  /* Полупрозрачная иконка (синий оттенок) */
-  background: rgba(120, 160, 210, 0.12);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(120, 180, 220, 0.25);
+  /* Улучшенная liquid glass иконка */
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.06) 0%,
+    rgba(255, 255, 255, 0.04) 100%
+  );
+  backdrop-filter: blur(40px) saturate(150%);
+  -webkit-backdrop-filter: blur(40px) saturate(150%);
+  border: 1px solid rgba(255, 255, 255, 0.12);
   display: flex;
   align-items: center;
   justify-content: center;
-  color: rgba(150, 190, 230, 0.9);
+  color: rgba(255, 255, 255, 0.7);
   flex-shrink: 0;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   box-shadow:
-    0 2px 12px rgba(100, 150, 200, 0.15),
-    inset 0 1px 0 rgba(120, 180, 220, 0.15);
+    0 4px 12px rgba(0, 0, 0, 0.08),
+    0 0 0 1px rgba(255, 255, 255, 0.05),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
 }
 
 .session-item:hover .session-icon {
   transform: scale(1.03);
-  background: rgba(120, 160, 210, 0.15);
-  border-color: rgba(120, 180, 220, 0.3);
-  color: rgba(150, 200, 240, 0.95);
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.08) 0%,
+    rgba(255, 255, 255, 0.06) 100%
+  );
+  border-color: rgba(255, 255, 255, 0.18);
+  color: rgba(255, 255, 255, 0.85);
+  box-shadow:
+    0 6px 16px rgba(0, 0, 0, 0.1),
+    0 0 0 1px rgba(255, 255, 255, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.12);
 }
 
 .session-item.current .session-icon {
-  /* Полупрозрачная с оранжевым тоном для текущей сессии */
-  background: rgba(255, 120, 60, 0.12);
-  backdrop-filter: blur(20px) saturate(150%);
-  -webkit-backdrop-filter: blur(20px) saturate(150%);
-  border-color: rgba(255, 120, 60, 0.4);
-  color: #ff9060;
+  /* Яркий насыщенный теплый оттенок для текущей */
+  background: linear-gradient(
+    135deg,
+    rgba(255, 120, 80, 0.2) 0%,
+    rgba(255, 140, 100, 0.15) 100%
+  );
+  backdrop-filter: blur(40px) saturate(200%);
+  -webkit-backdrop-filter: blur(40px) saturate(200%);
+  border-color: rgba(255, 100, 60, 0.6);
+  color: rgba(255, 140, 100, 1);
   box-shadow:
-    0 4px 16px rgba(255, 120, 60, 0.25),
-    inset 0 1px 0 rgba(255, 255, 255, 0.18);
+    0 4px 16px rgba(255, 120, 80, 0.3),
+    0 0 0 1px rgba(255, 120, 80, 0.25),
+    0 0 16px rgba(255, 120, 80, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.25);
+}
+
+.session-item.primary .session-icon {
+  /* Яркий насыщенный прохладный оттенок для primary */
+  background: linear-gradient(
+    135deg,
+    rgba(70, 200, 120, 0.2) 0%,
+    rgba(80, 220, 130, 0.15) 100%
+  );
+  backdrop-filter: blur(40px) saturate(200%);
+  -webkit-backdrop-filter: blur(40px) saturate(200%);
+  border-color: rgba(60, 180, 110, 0.6);
+  color: rgba(80, 220, 130, 1);
+  box-shadow:
+    0 4px 16px rgba(70, 200, 120, 0.3),
+    0 0 0 1px rgba(70, 200, 120, 0.25),
+    0 0 16px rgba(70, 200, 120, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.25);
 }
 
 .session-info {
@@ -179,70 +244,44 @@
   display: inline-flex;
   align-items: center;
   padding: 5px 12px;
-  /* Полупрозрачный бейдж (оранжевый для текущей) */
-  background: rgba(255, 120, 60, 0.12);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 120, 60, 0.4);
+  /* Яркий насыщенный liquid glass бейдж */
+  background: linear-gradient(
+    135deg,
+    rgba(255, 120, 80, 0.18) 0%,
+    rgba(255, 140, 100, 0.12) 100%
+  );
+  backdrop-filter: blur(30px) saturate(180%);
+  -webkit-backdrop-filter: blur(30px) saturate(180%);
+  border: 1px solid rgba(255, 100, 60, 0.5);
   border-radius: 10px;
   font-size: 11px;
-  font-weight: 700;
-  color: #ff9060;
+  font-weight: 600;
+  color: rgba(255, 140, 100, 1);
   text-transform: uppercase;
   letter-spacing: 0.8px;
   box-shadow:
-    0 2px 12px rgba(255, 120, 60, 0.2),
-    inset 0 1px 0 rgba(255, 255, 255, 0.18);
-  position: relative;
+    0 2px 12px rgba(255, 120, 80, 0.25),
+    0 0 0 1px rgba(255, 120, 80, 0.2),
+    0 0 12px rgba(255, 120, 80, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.25);
 }
 
-/* Primary Device badge - зеленое свечение */
+/* Primary Device badge - яркий насыщенный зеленоватый */
 .session-badge.primary {
-  background: rgba(76, 175, 80, 0.12);
-  border: 1px solid rgba(76, 175, 80, 0.4);
-  color: #66bb6a;
+  background: linear-gradient(
+    135deg,
+    rgba(70, 200, 120, 0.18) 0%,
+    rgba(80, 220, 130, 0.12) 100%
+  );
+  backdrop-filter: blur(30px) saturate(180%);
+  -webkit-backdrop-filter: blur(30px) saturate(180%);
+  border: 1px solid rgba(60, 180, 110, 0.5);
+  color: rgba(80, 220, 130, 1);
   box-shadow:
-    0 2px 12px rgba(76, 175, 80, 0.2),
-    inset 0 1px 0 rgba(255, 255, 255, 0.18);
-}
-
-/* Subtle pulse glow (уменьшенная яркость) */
-.session-badge::before {
-  content: '';
-  position: absolute;
-  top: -2px;
-  left: -2px;
-  right: -2px;
-  bottom: -2px;
-  border-radius: 10px;
-  background: radial-gradient(
-    circle,
-    rgba(255, 120, 60, 0.25) 0%,
-    transparent 70%
-  );
-  z-index: -1;
-  opacity: 0;
-  animation: gentlePulse 3s ease-in-out infinite;
-}
-
-/* Primary badge glow - зеленое */
-.session-badge.primary::before {
-  background: radial-gradient(
-    circle,
-    rgba(76, 175, 80, 0.25) 0%,
-    transparent 70%
-  );
-}
-
-@keyframes gentlePulse {
-  0%, 100% {
-    opacity: 0;
-    transform: scale(1);
-  }
-  50% {
-    opacity: 0.4;
-    transform: scale(1.05);
-  }
+    0 2px 12px rgba(70, 200, 120, 0.25),
+    0 0 0 1px rgba(70, 200, 120, 0.2),
+    0 0 12px rgba(70, 200, 120, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.25);
 }
 
 .session-details {
@@ -267,54 +306,52 @@
   width: 42px;
   height: 42px;
   border-radius: 12px;
-  /* Полупрозрачная delete button (уменьшенная яркость) */
-  background: rgba(239, 83, 80, 0.10);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(239, 83, 80, 0.3);
+  /* Яркая красная delete button */
+  background: linear-gradient(
+    135deg,
+    rgba(255, 100, 100, 0.12) 0%,
+    rgba(255, 120, 120, 0.08) 100%
+  );
+  backdrop-filter: blur(30px) saturate(160%);
+  -webkit-backdrop-filter: blur(30px) saturate(160%);
+  border: 1px solid rgba(255, 80, 80, 0.45);
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  color: #ef5350;
+  color: rgba(255, 100, 100, 1);
   flex-shrink: 0;
   position: relative;
   overflow: hidden;
   box-shadow:
-    0 2px 12px rgba(239, 83, 80, 0.15),
-    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+    0 2px 12px rgba(255, 80, 80, 0.2),
+    0 0 0 1px rgba(255, 80, 80, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.15);
 }
 
-/* Тонкий highlight */
-.session-delete::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 1px;
-  background: linear-gradient(
-    90deg,
-    transparent 0%,
-    rgba(255, 255, 255, 0.15) 50%,
-    transparent 100%
-  );
-}
+/* Убрали highlight - чистый вид */
 
 .session-delete:hover {
-  background: rgba(239, 83, 80, 0.15);
-  backdrop-filter: blur(30px);
-  -webkit-backdrop-filter: blur(30px);
-  border-color: rgba(239, 83, 80, 0.4);
-  transform: scale(1.05) rotate(-3deg);
+  background: linear-gradient(
+    135deg,
+    rgba(255, 80, 80, 0.18) 0%,
+    rgba(255, 100, 100, 0.12) 100%
+  );
+  backdrop-filter: blur(40px) saturate(180%);
+  -webkit-backdrop-filter: blur(40px) saturate(180%);
+  border-color: rgba(255, 60, 60, 0.6);
+  transform: scale(1.05);
+  color: rgba(255, 90, 90, 1);
   box-shadow:
-    0 4px 20px rgba(239, 83, 80, 0.25),
-    inset 0 1px 0 rgba(255, 255, 255, 0.12);
+    0 4px 20px rgba(255, 80, 80, 0.3),
+    0 0 0 1px rgba(255, 80, 80, 0.25),
+    0 0 16px rgba(255, 80, 80, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
 }
 
 .session-delete:active {
-  transform: scale(0.92) rotate(-5deg);
+  transform: scale(0.95);
 }
 
 /* ========================================
@@ -329,15 +366,19 @@
 .settings-btn-danger {
   width: 100%;
   padding: 16px 24px;
-  /* Полупрозрачная danger button (уменьшенная яркость) */
-  background: rgba(239, 83, 80, 0.10);
-  backdrop-filter: blur(30px) saturate(150%);
-  -webkit-backdrop-filter: blur(30px) saturate(150%);
-  color: #ef5350;
-  border: 1px solid rgba(239, 83, 80, 0.35);
+  /* Яркая насыщенная danger button */
+  background: linear-gradient(
+    135deg,
+    rgba(255, 100, 100, 0.12) 0%,
+    rgba(255, 120, 120, 0.08) 100%
+  );
+  backdrop-filter: blur(40px) saturate(160%);
+  -webkit-backdrop-filter: blur(40px) saturate(160%);
+  color: rgba(255, 100, 100, 1);
+  border: 1px solid rgba(255, 80, 80, 0.45);
   border-radius: 16px;
   font-size: 15px;
-  font-weight: 700;
+  font-weight: 600;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -347,34 +388,29 @@
   position: relative;
   overflow: hidden;
   box-shadow:
-    0 4px 16px rgba(239, 83, 80, 0.18),
-    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    0 4px 16px rgba(255, 80, 80, 0.2),
+    0 0 0 1px rgba(255, 80, 80, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.15);
 }
 
-.settings-btn-danger::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 1px;
-  background: linear-gradient(
-    90deg,
-    transparent 0%,
-    rgba(255, 255, 255, 0.2) 50%,
-    transparent 100%
-  );
-}
+/* Убрали highlight - чистый вид */
 
 .settings-btn-danger:hover {
-  background: rgba(239, 83, 80, 0.14);
-  backdrop-filter: blur(40px) saturate(180%);
-  -webkit-backdrop-filter: blur(40px) saturate(180%);
-  border-color: rgba(239, 83, 80, 0.45);
+  background: linear-gradient(
+    135deg,
+    rgba(255, 80, 80, 0.18) 0%,
+    rgba(255, 100, 100, 0.12) 100%
+  );
+  backdrop-filter: blur(50px) saturate(180%);
+  -webkit-backdrop-filter: blur(50px) saturate(180%);
+  border-color: rgba(255, 60, 60, 0.6);
   transform: translateY(-2px);
+  color: rgba(255, 90, 90, 1);
   box-shadow:
-    0 8px 28px rgba(239, 83, 80, 0.25),
-    inset 0 1px 0 rgba(255, 255, 255, 0.15);
+    0 8px 28px rgba(255, 80, 80, 0.3),
+    0 0 0 1px rgba(255, 80, 80, 0.25),
+    0 0 16px rgba(255, 80, 80, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
 }
 
 .settings-btn-danger:active {

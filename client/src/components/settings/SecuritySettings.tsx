@@ -87,60 +87,149 @@ export function SecuritySettings() {
             <div className="security-empty">No active sessions</div>
           ) : (
             <>
-              <div className="sessions-list">
-                {sessions.map((session) => (
-                  <div
-                    key={session.id}
-                    className={`session-item ${session.is_current ? 'current' : ''}`}
-                  >
-                    <div className="session-icon">
-                      {getDeviceIcon(session.device_info?.type || 'desktop')}
-                    </div>
+              {/* Разделение на группы */}
+              {(() => {
+                const currentSession = sessions.find(s => s.is_current)
+                const primarySession = sessions.find(s => s.is_primary)
+                const otherSessions = sessions.filter(s => !s.is_current && !s.is_primary)
 
-                    <div className="session-info">
-                      <div className="session-name">
-                        {session.device_info?.name || 'Unknown Device'}
-                        {session.is_current && (
-                          <span className="session-badge">Current</span>
-                        )}
-                        {session.is_primary && (
-                          <span className="session-badge primary">Primary Device</span>
-                        )}
-                      </div>
-                      <div className="session-details">
-                        <span>{session.device_info?.os || 'Unknown OS'}</span>
-                        <span className="session-separator">•</span>
-                        <span>{session.ip_address}</span>
-                      </div>
-                      <div className="session-time">
-                        Last active: {formatTimeAgo(session.seconds_ago)}
-                      </div>
-                    </div>
+                return (
+                  <>
+                    {/* ГЛАВНОЕ УСТРОЙСТВО (если оно же текущее - показываем одну карточку) */}
+                    {primarySession && primarySession.is_current && (
+                      <div className="sessions-group">
+                        <h5 className="sessions-group-title">Primary Device (Current Session)</h5>
+                        <div className="session-item primary current">
+                          <div className="session-icon">
+                            {getDeviceIcon(primarySession.device_info?.type || 'desktop')}
+                          </div>
 
-                    {!session.is_current && !session.is_primary && (
-                      <button
-                        className="session-delete"
-                        onClick={() => handleDeleteSession(session.id)}
-                        title="Terminate session"
-                      >
-                        <Trash2 size={18} />
-                      </button>
+                          <div className="session-info">
+                            <div className="session-name">
+                              {primarySession.device_info?.name || 'Unknown Device'}
+                              <span className="session-badge primary">Primary Device</span>
+                              <span className="session-badge">Current</span>
+                            </div>
+                            <div className="session-details">
+                              <span>{primarySession.device_info?.os || 'Unknown OS'}</span>
+                              <span className="session-separator">•</span>
+                              <span>{primarySession.ip_address}</span>
+                            </div>
+                            <div className="session-time">
+                              Last active: {formatTimeAgo(primarySession.seconds_ago)}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
                     )}
-                  </div>
-                ))}
-              </div>
 
-              {sessions.filter(s => !s.is_current).length > 0 && (
-                <div className="sessions-actions">
-                  <button
-                    className="settings-btn settings-btn-danger"
-                    onClick={handleDeleteOtherSessions}
-                  >
-                    <LogOut size={16} />
-                    Sign Out All Other Devices
-                  </button>
-                </div>
-              )}
+                    {/* ГЛАВНОЕ УСТРОЙСТВО (если оно НЕ текущее) */}
+                    {primarySession && !primarySession.is_current && (
+                      <div className="sessions-group">
+                        <h5 className="sessions-group-title">Primary Device</h5>
+                        <div className="session-item primary">
+                          <div className="session-icon">
+                            {getDeviceIcon(primarySession.device_info?.type || 'desktop')}
+                          </div>
+
+                          <div className="session-info">
+                            <div className="session-name">
+                              {primarySession.device_info?.name || 'Unknown Device'}
+                              <span className="session-badge primary">Primary Device</span>
+                            </div>
+                            <div className="session-details">
+                              <span>{primarySession.device_info?.os || 'Unknown OS'}</span>
+                              <span className="session-separator">•</span>
+                              <span>{primarySession.ip_address}</span>
+                            </div>
+                            <div className="session-time">
+                              Last active: {formatTimeAgo(primarySession.seconds_ago)}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* ТЕКУЩАЯ СЕССИЯ (только если она НЕ primary) */}
+                    {currentSession && !currentSession.is_primary && (
+                      <div className="sessions-group">
+                        <h5 className="sessions-group-title">Current Session</h5>
+                        <div className="session-item current">
+                          <div className="session-icon">
+                            {getDeviceIcon(currentSession.device_info?.type || 'desktop')}
+                          </div>
+
+                          <div className="session-info">
+                            <div className="session-name">
+                              {currentSession.device_info?.name || 'Unknown Device'}
+                              <span className="session-badge">Current</span>
+                            </div>
+                            <div className="session-details">
+                              <span>{currentSession.device_info?.os || 'Unknown OS'}</span>
+                              <span className="session-separator">•</span>
+                              <span>{currentSession.ip_address}</span>
+                            </div>
+                            <div className="session-time">
+                              Last active: {formatTimeAgo(currentSession.seconds_ago)}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* ОСТАЛЬНЫЕ СЕССИИ */}
+                    {otherSessions.length > 0 && (
+                      <div className="sessions-group">
+                        <h5 className="sessions-group-title">Other Sessions</h5>
+                        <div className="sessions-list">
+                          {otherSessions.map((session) => (
+                            <div key={session.id} className="session-item">
+                              <div className="session-icon">
+                                {getDeviceIcon(session.device_info?.type || 'desktop')}
+                              </div>
+
+                              <div className="session-info">
+                                <div className="session-name">
+                                  {session.device_info?.name || 'Unknown Device'}
+                                </div>
+                                <div className="session-details">
+                                  <span>{session.device_info?.os || 'Unknown OS'}</span>
+                                  <span className="session-separator">•</span>
+                                  <span>{session.ip_address}</span>
+                                </div>
+                                <div className="session-time">
+                                  Last active: {formatTimeAgo(session.seconds_ago)}
+                                </div>
+                              </div>
+
+                              <button
+                                className="session-delete"
+                                onClick={() => handleDeleteSession(session.id)}
+                                title="Terminate session"
+                              >
+                                <Trash2 size={18} />
+                              </button>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* КНОПКА ВЫХОДА СО ВСЕХ ДРУГИХ УСТРОЙСТВ */}
+                    {(otherSessions.length > 0 || (primarySession && !primarySession.is_current)) && (
+                      <div className="sessions-actions">
+                        <button
+                          className="settings-btn settings-btn-danger"
+                          onClick={handleDeleteOtherSessions}
+                        >
+                          <LogOut size={16} />
+                          Sign Out All Other Devices
+                        </button>
+                      </div>
+                    )}
+                  </>
+                )
+              })()}
             </>
           )}
         </div>

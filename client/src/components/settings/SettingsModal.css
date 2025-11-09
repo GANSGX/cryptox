@@ -17,9 +17,9 @@
 }
 
 .settings-overlay.visible {
-  background: rgba(0, 0, 0, 0.65);
-  backdrop-filter: blur(16px) saturate(1.15);
-  -webkit-backdrop-filter: blur(16px) saturate(1.15);
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(24px) saturate(1.2);
+  -webkit-backdrop-filter: blur(24px) saturate(1.2);
   pointer-events: all;
 }
 
@@ -33,22 +33,29 @@
   height: 85vh;
   max-height: 720px;
 
-  /* TRUE Liquid Glass - полупрозрачность (iOS 26 style) */
-  background: rgba(20, 20, 32, 0.35);
-  backdrop-filter: blur(80px) saturate(200%) brightness(1.1);
-  -webkit-backdrop-filter: blur(80px) saturate(200%) brightness(1.1);
+  /* Улучшенный Liquid Glass с mesh gradient фоном */
+  background:
+    linear-gradient(
+      135deg,
+      rgba(20, 20, 32, 0.5) 0%,
+      rgba(25, 25, 38, 0.45) 100%
+    );
+  backdrop-filter: blur(140px) saturate(150%) brightness(1.08);
+  -webkit-backdrop-filter: blur(140px) saturate(150%) brightness(1.08);
 
-  /* Тонкая полупрозрачная граница */
-  border: 1px solid rgba(255, 255, 255, 0.15);
+  /* Тонкая полупрозрачная граница с градиентом */
+  border: 1px solid;
+  border-color: rgba(255, 255, 255, 0.15);
 
   border-radius: 32px;
 
-  /* Мягкие многослойные тени (уменьшенная яркость) */
+  /* Объемные многослойные тени */
   box-shadow:
-    0 8px 32px rgba(0, 0, 0, 0.25),
-    0 24px 80px rgba(0, 0, 0, 0.35),
-    inset 0 1px 0 rgba(255, 255, 255, 0.12),
-    inset 0 -1px 0 rgba(0, 0, 0, 0.2);
+    0 8px 32px rgba(0, 0, 0, 0.3),
+    0 24px 80px rgba(0, 0, 0, 0.4),
+    0 0 0 1px rgba(255, 255, 255, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.15),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.15);
 
   z-index: 301;
   display: flex;
@@ -61,7 +68,7 @@
     transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
-/* Внутреннее свечение */
+/* Mesh gradient фон для интересного визуала */
 .settings-modal::before {
   content: '';
   position: absolute;
@@ -70,26 +77,50 @@
   right: 0;
   bottom: 0;
   border-radius: 32px;
-  background: radial-gradient(
-    circle at 50% 0%,
-    rgba(255, 255, 255, 0.04) 0%,
-    transparent 50%
-  );
+  background:
+    radial-gradient(
+      circle at 20% 20%,
+      rgba(100, 140, 255, 0.04) 0%,
+      transparent 50%
+    ),
+    radial-gradient(
+      circle at 80% 80%,
+      rgba(255, 100, 180, 0.04) 0%,
+      transparent 50%
+    ),
+    radial-gradient(
+      circle at 50% 50%,
+      rgba(140, 255, 200, 0.03) 0%,
+      transparent 60%
+    );
   pointer-events: none;
+  opacity: 0.6;
+  animation: meshMove 20s ease-in-out infinite alternate;
 }
 
-/* Тонкий градиентный highlight сверху */
+@keyframes meshMove {
+  0% {
+    transform: scale(1) rotate(0deg);
+    opacity: 0.5;
+  }
+  100% {
+    transform: scale(1.05) rotate(2deg);
+    opacity: 0.7;
+  }
+}
+
+/* Тонкий светящийся border top */
 .settings-modal::after {
   content: '';
   position: absolute;
   top: 0;
-  left: 5%;
-  right: 5%;
+  left: 10%;
+  right: 10%;
   height: 1px;
   background: linear-gradient(
     90deg,
     transparent 0%,
-    rgba(255, 255, 255, 0.3) 50%,
+    rgba(255, 255, 255, 0.15) 50%,
     transparent 100%
   );
   pointer-events: none;
@@ -109,16 +140,23 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  /* Полупрозрачный header с blur */
-  background: rgba(30, 30, 46, 0.3);
-  backdrop-filter: blur(40px) saturate(180%);
-  -webkit-backdrop-filter: blur(40px) saturate(180%);
+  /* Улучшенный liquid glass header */
+  background: linear-gradient(
+    135deg,
+    rgba(30, 30, 46, 0.4) 0%,
+    rgba(35, 35, 52, 0.35) 100%
+  );
+  backdrop-filter: blur(80px) saturate(160%);
+  -webkit-backdrop-filter: blur(80px) saturate(160%);
   position: relative;
   z-index: 2;
+  box-shadow:
+    0 4px 16px rgba(0, 0, 0, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
 }
 
-/* Тонкий highlight сверху */
-.settings-header::before {
+/* Убрали highlight сверху - чистый вид */
+/* .settings-header::before {
   content: '';
   position: absolute;
   top: 0;
@@ -131,7 +169,7 @@
     rgba(255, 255, 255, 0.2) 50%,
     transparent 100%
   );
-}
+} */
 
 .settings-header h2 {
   font-size: 26px;
@@ -161,22 +199,7 @@
   overflow: hidden;
 }
 
-/* Shimmer effect on hover */
-.settings-close-button::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(
-    90deg,
-    transparent 0%,
-    rgba(255, 255, 255, 0.15) 50%,
-    transparent 100%
-  );
-  transition: left 0.5s ease;
-}
+/* Убрали shimmer - чистый вид */
 
 .settings-close-button:hover {
   background: rgba(255, 255, 255, 0.12);
@@ -185,11 +208,7 @@
   border-color: rgba(255, 255, 255, 0.25);
   color: var(--text-primary);
   transform: rotate(90deg) scale(1.05);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
-}
-
-.settings-close-button:hover::before {
-  left: 100%;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
 }
 
 .settings-close-button:active {
@@ -214,14 +233,18 @@
   scroll-behavior: smooth;
   position: relative;
 
-  /* Полупрозрачный фон с blur (еще более прозрачный) */
-  background: rgba(15, 15, 25, 0.15);
-  backdrop-filter: blur(40px) saturate(180%);
-  -webkit-backdrop-filter: blur(40px) saturate(180%);
+  /* Улучшенный liquid glass фон */
+  background: linear-gradient(
+    135deg,
+    rgba(15, 15, 25, 0.2) 0%,
+    rgba(18, 18, 28, 0.15) 100%
+  );
+  backdrop-filter: blur(80px) saturate(150%);
+  -webkit-backdrop-filter: blur(80px) saturate(150%);
 }
 
-/* Анимированный градиентный фон */
-.settings-main::before {
+/* Анимированный градиентный фон - УБРАН */
+/* .settings-main::before {
   content: '';
   position: absolute;
   top: 0;
@@ -241,9 +264,9 @@
     );
   pointer-events: none;
   animation: gradientShift 15s ease-in-out infinite alternate;
-}
+} */
 
-@keyframes gradientShift {
+/* @keyframes gradientShift {
   0% {
     opacity: 0.5;
     transform: scale(1) rotate(0deg);
@@ -252,7 +275,7 @@
     opacity: 0.8;
     transform: scale(1.1) rotate(5deg);
   }
-}
+} */
 
 /* Fade in animation for content */
 .settings-main > * {
@@ -344,18 +367,23 @@
   width: 260px;
   padding: 20px 16px;
   border-right: 1px solid rgba(255, 255, 255, 0.12);
-  /* Полупрозрачный sidebar с blur */
-  background: rgba(18, 18, 28, 0.3);
-  backdrop-filter: blur(40px) saturate(180%);
-  -webkit-backdrop-filter: blur(40px) saturate(180%);
+  /* Улучшенный liquid glass sidebar */
+  background: linear-gradient(
+    135deg,
+    rgba(18, 18, 28, 0.35) 0%,
+    rgba(22, 22, 32, 0.3) 100%
+  );
+  backdrop-filter: blur(80px) saturate(160%);
+  -webkit-backdrop-filter: blur(80px) saturate(160%);
   display: flex;
   flex-direction: column;
   gap: 6px;
   position: relative;
+  box-shadow: inset -1px 0 0 rgba(255, 255, 255, 0.05);
 }
 
-/* Тонкое свечение слева */
-.settings-sidebar::before {
+/* Убрали свечение слева - чистый вид */
+/* .settings-sidebar::before {
   content: '';
   position: absolute;
   left: 0;
@@ -368,7 +396,7 @@
     rgba(255, 255, 255, 0.1) 50%,
     transparent 100%
   );
-}
+} */
 
 .settings-sidebar-item {
   display: flex;
@@ -376,10 +404,10 @@
   gap: 14px;
   padding: 16px 18px;
   border-radius: 16px;
-  /* Полупрозрачный item */
-  background: rgba(255, 255, 255, 0.02);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
+  /* Улучшенный liquid glass item */
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(40px) saturate(140%);
+  -webkit-backdrop-filter: blur(40px) saturate(140%);
   border: 1px solid transparent;
   color: var(--text-secondary);
   font-size: 15px;
@@ -389,55 +417,44 @@
   text-align: left;
   position: relative;
   overflow: hidden;
+  box-shadow:
+    0 2px 8px rgba(0, 0, 0, 0.05),
+    inset 0 1px 0 rgba(255, 255, 255, 0.04);
 }
 
-/* Тонкий highlight */
-.settings-sidebar-item::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 1px;
-  background: linear-gradient(
-    90deg,
-    transparent 0%,
-    rgba(255, 255, 255, 0.08) 50%,
-    transparent 100%
-  );
-  opacity: 0;
-  transition: opacity 0.3s ease;
-}
+/* Убрали highlight - чистый вид */
 
 .settings-sidebar-item:hover {
   background: rgba(255, 255, 255, 0.06);
-  backdrop-filter: blur(30px);
-  -webkit-backdrop-filter: blur(30px);
+  backdrop-filter: blur(50px) saturate(150%);
+  -webkit-backdrop-filter: blur(50px) saturate(150%);
   border-color: rgba(255, 255, 255, 0.15);
   color: var(--text-primary);
   transform: translateX(4px);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
-}
-
-.settings-sidebar-item:hover::before {
-  opacity: 1;
+  box-shadow:
+    0 4px 16px rgba(0, 0, 0, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
 }
 
 .settings-sidebar-item.active {
-  /* Полупрозрачный с оранжевым тоном */
-  background: rgba(255, 120, 60, 0.12);
-  backdrop-filter: blur(30px) saturate(150%);
-  -webkit-backdrop-filter: blur(30px) saturate(150%);
-  border-color: rgba(255, 120, 60, 0.35);
-  color: #ff783c;
+  /* Насыщенный liquid glass с теплым оттенком */
+  background: linear-gradient(
+    135deg,
+    rgba(255, 140, 100, 0.1) 0%,
+    rgba(255, 160, 120, 0.08) 100%
+  );
+  backdrop-filter: blur(50px) saturate(160%);
+  -webkit-backdrop-filter: blur(50px) saturate(160%);
+  border-color: rgba(255, 140, 100, 0.25);
+  color: rgba(255, 160, 120, 0.98);
   box-shadow:
-    0 4px 20px rgba(255, 120, 60, 0.2),
-    inset 0 1px 0 rgba(255, 255, 255, 0.1),
-    inset 0 -1px 0 rgba(0, 0, 0, 0.08);
+    0 4px 20px rgba(255, 140, 100, 0.12),
+    0 0 0 1px rgba(255, 140, 100, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.15);
   position: relative;
 }
 
-/* Тонкая активная полоска */
+/* Активная полоска с мягким свечением */
 .settings-sidebar-item.active::after {
   content: '';
   position: absolute;
@@ -448,11 +465,12 @@
   height: 50%;
   background: linear-gradient(
     180deg,
-    #ff783c,
-    #ff8a54
+    rgba(255, 140, 100, 0.8) 0%,
+    rgba(255, 160, 120, 0.9) 50%,
+    rgba(255, 140, 100, 0.8) 100%
   );
   border-radius: 0 3px 3px 0;
-  box-shadow: 0 0 12px rgba(255, 120, 60, 0.5);
+  box-shadow: 0 0 8px rgba(255, 140, 100, 0.3);
 }
 
 .settings-sidebar-item svg {
@@ -462,7 +480,7 @@
 
 .settings-sidebar-item.active svg {
   transform: scale(1.1);
-  filter: drop-shadow(0 2px 4px rgba(255, 120, 60, 0.4));
+  filter: none;
 }
 
 /* ========================================
