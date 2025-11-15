@@ -12,6 +12,7 @@ export interface RegisterRequest {
     email: string
     password: string
     public_key: string
+    deviceFingerprint?: string // Опциональный fingerprint браузера
 }
 
 export interface RegisterResponse {
@@ -28,6 +29,7 @@ export interface RegisterResponse {
 export interface LoginRequest {
     username: string
     password: string
+    deviceFingerprint?: string // Опциональный fingerprint браузера
 }
 
 export interface LoginResponse {

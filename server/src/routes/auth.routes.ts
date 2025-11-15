@@ -5,6 +5,7 @@ import { CryptoService } from '../services/crypto.service.js'
 import { JwtService } from '../services/jwt.service.js'
 import { EmailService } from '../services/email.service.js'
 import { RedisService } from '../services/redis.service.js'
+import { authMiddleware } from '../middleware/auth.middleware.js'
 import {
   isValidUsername,
   isValidEmail,
@@ -31,7 +32,7 @@ export async function authRoutes(fastify: FastifyInstance) {
     Body: RegisterRequest
     Reply: ApiResponse<RegisterResponse>
   }>('/register', async (request, reply) => {
-    const { username, email, password, public_key } = request.body
+    const { username, email, password, public_key, deviceFingerprint } = request.body
 
     // Валидация входных данных
     if (!username || !email || !password || !public_key) {
@@ -102,6 +103,48 @@ export async function authRoutes(fastify: FastifyInstance) {
       email: user.email,
     })
 
+    // Создаем первую сессию (всегда is_primary = true при регистрации)
+    try {
+      const userAgent = request.headers['user-agent'] || 'Unknown'
+      let os = 'Unknown'
+
+      if (userAgent) {
+        if (userAgent.includes('Windows')) {
+          os = 'Windows'
+        } else if (userAgent.includes('Mac')) {
+          os = 'macOS'
+        } else if (userAgent.includes('Android')) {
+          os = 'Android'
+        } else if (userAgent.includes('iPhone') || userAgent.includes('iPad')) {
+          os = 'iOS'
+        } else if (userAgent.includes('Linux')) {
+          os = 'Linux'
+        }
+      }
+
+      const deviceInfo = {
+        type: 'browser',
+        name: userAgent.includes('YaBrowser') || userAgent.includes('YaBro') ? 'Yandex' :
+          userAgent.includes('Edg') ? 'Edge' :
+            userAgent.includes('Firefox') ? 'Firefox' :
+              userAgent.includes('Chrome') ? 'Chrome' :
+                userAgent.includes('Safari') ? 'Safari' : 'Browser',
+        os: os,
+      }
+
+      const deviceInfoStr = JSON.stringify(deviceInfo)
+
+      await pool.query(
+        `INSERT INTO sessions (username, device_info, ip_address, jwt_token, device_fingerprint, is_primary, created_at, last_active, expires_at)
+         VALUES ($1, $2, $3, $4, $5, true, NOW(), NOW(), NOW() + INTERVAL '30 days')`,
+        [user.username, deviceInfoStr, request.ip, token, deviceFingerprint || null]
+      )
+
+      console.log('✅ First session created for new user')
+    } catch (error) {
+      fastify.log.error({ error }, 'Failed to create first session')
+    }
+
     // Ответ
     return reply.code(201).send({
       success: true,
@@ -128,7 +171,7 @@ export async function authRoutes(fastify: FastifyInstance) {
     try {
       console.log('🔍 Login attempt:', request.body.username)
 
-      const { username, password } = request.body
+      const { username, password, deviceFingerprint } = request.body
 
       // Валидация входных данных
       if (!username || !password) {
@@ -231,45 +274,134 @@ export async function authRoutes(fastify: FastifyInstance) {
 
         const deviceInfoStr = JSON.stringify(deviceInfo)
 
-        // Проверяем количество активных сессий
-        const sessionsCount = await pool.query(
-          'SELECT COUNT(*) as count FROM sessions WHERE username = $1 AND expires_at > NOW()',
-          [username]
-        )
+        // ===== НОВАЯ ЛОГИКА С FINGERPRINT =====
+        if (deviceFingerprint) {
+          // Проверяем, есть ли активная сессия с таким fingerprint
+          const existingSession = await pool.query(
+            `SELECT id, is_primary FROM sessions
+             WHERE username = $1 AND device_fingerprint = $2 AND expires_at > NOW()
+             LIMIT 1`,
+            [username, deviceFingerprint]
+          )
 
-        const currentSessionsCount = parseInt(sessionsCount.rows[0].count)
+          if (existingSession.rows.length > 0) {
+            // Сессия с таким fingerprint существует - ОБНОВЛЯЕМ её
+            const session = existingSession.rows[0]
+            console.log('♻️  Updating existing session:', session.id)
 
-        // Определяем, будет ли это первая (главная) сессия
-        const isPrimary = currentSessionsCount === 0
+            await pool.query(
+              `UPDATE sessions
+               SET jwt_token = $1, last_active = NOW(), expires_at = NOW() + INTERVAL '30 days', device_info = $2, ip_address = $3
+               WHERE id = $4`,
+              [token, deviceInfoStr, request.ip, session.id]
+            )
 
-        // Если уже есть 10 или больше сессий - удаляем самые старые (НО НЕ ГЛАВНУЮ!)
-        if (currentSessionsCount >= 10) {
+            console.log('✅ Session updated, is_primary:', session.is_primary)
+          } else {
+            // Сессии с таким fingerprint НЕТ - проверяем was_primary
+            // Была ли раньше primary сессия с таким fingerprint (даже истекшая)?
+            const wasPrimaryCheck = await pool.query(
+              `SELECT COUNT(*) as count FROM sessions
+               WHERE username = $1 AND device_fingerprint = $2 AND is_primary = TRUE`,
+              [username, deviceFingerprint]
+            )
+
+            const wasPrimary = parseInt(wasPrimaryCheck.rows[0].count) > 0
+
+            // Проверяем есть ли АКТИВНОЕ главное устройство (у других fingerprint)
+            const activePrimaryCheck = await pool.query(
+              `SELECT COUNT(*) as count FROM sessions
+               WHERE username = $1 AND is_primary = TRUE AND expires_at > NOW()`,
+              [username]
+            )
+
+            const hasActivePrimary = parseInt(activePrimaryCheck.rows[0].count) > 0
+
+            // Если была primary ИЛИ нет активной primary - делаем новую primary
+            const isPrimary = wasPrimary || !hasActivePrimary
+
+            console.log('🆕 Creating new session, is_primary:', isPrimary, '(wasPrimary:', wasPrimary, ', hasActivePrimary:', hasActivePrimary, ')')
+
+            // Удаляем истекшие сессии с таким же fingerprint
+            await pool.query(
+              `DELETE FROM sessions
+               WHERE username = $1 AND device_fingerprint = $2 AND expires_at <= NOW()`,
+              [username, deviceFingerprint]
+            )
+
+            // Удаляем старые сессии если их больше 10
+            const sessionsCount = await pool.query(
+              'SELECT COUNT(*) as count FROM sessions WHERE username = $1 AND expires_at > NOW()',
+              [username]
+            )
+            const currentSessionsCount = parseInt(sessionsCount.rows[0].count)
+
+            if (currentSessionsCount >= 10) {
+              await pool.query(
+                `DELETE FROM sessions
+                 WHERE id IN (
+                   SELECT id FROM sessions
+                   WHERE username = $1 AND expires_at > NOW() AND is_primary = FALSE
+                   ORDER BY last_active ASC
+                   LIMIT $2
+                 )`,
+                [username, currentSessionsCount - 9]
+              )
+            }
+
+            // Создаем новую сессию
+            await pool.query(
+              `INSERT INTO sessions (username, device_info, ip_address, jwt_token, device_fingerprint, is_primary, created_at, last_active, expires_at)
+               VALUES ($1, $2, $3, $4, $5, $6, NOW(), NOW(), NOW() + INTERVAL '30 days')`,
+              [username, deviceInfoStr, request.ip, token, deviceFingerprint, isPrimary]
+            )
+          }
+        } else {
+          // ===== FALLBACK: Старая логика БЕЗ fingerprint =====
+          console.log('⚠️  No fingerprint provided, using legacy session creation')
+
+          const primaryCheck = await pool.query(
+            'SELECT COUNT(*) as count FROM sessions WHERE username = $1 AND is_primary = TRUE AND expires_at > NOW()',
+            [username]
+          )
+          const hasActivePrimaryDevice = parseInt(primaryCheck.rows[0].count) > 0
+
+          if (!hasActivePrimaryDevice) {
+            await pool.query(
+              'DELETE FROM sessions WHERE username = $1 AND is_primary = TRUE AND expires_at <= NOW()',
+              [username]
+            )
+          }
+
+          const isPrimary = !hasActivePrimaryDevice
+
+          const sessionsCount = await pool.query(
+            'SELECT COUNT(*) as count FROM sessions WHERE username = $1 AND expires_at > NOW()',
+            [username]
+          )
+          const currentSessionsCount = parseInt(sessionsCount.rows[0].count)
+
+          if (currentSessionsCount >= 10) {
+            await pool.query(
+              `DELETE FROM sessions
+               WHERE id IN (
+                 SELECT id FROM sessions
+                 WHERE username = $1 AND expires_at > NOW() AND is_primary = FALSE
+                 ORDER BY last_active ASC
+                 LIMIT $2
+               )`,
+              [username, currentSessionsCount - 9]
+            )
+          }
+
           await pool.query(
-            `DELETE FROM sessions
-             WHERE id IN (
-               SELECT id FROM sessions
-               WHERE username = $1 AND expires_at > NOW() AND is_primary = FALSE
-               ORDER BY last_active ASC
-               LIMIT $2
-             )`,
-            [username, currentSessionsCount - 9] // Оставляем только 9, чтобы новая стала 10-й
+            `INSERT INTO sessions (username, device_info, ip_address, jwt_token, device_fingerprint, is_primary, created_at, last_active, expires_at)
+             VALUES ($1, $2, $3, $4, $5, $6, NOW(), NOW(), NOW() + INTERVAL '30 days')`,
+            [username, deviceInfoStr, request.ip, token, null, isPrimary]
           )
         }
 
-        // Создаем новую сессию (is_primary = true если это первая сессия)
-        await pool.query(
-          `INSERT INTO sessions (username, device_info, ip_address, jwt_token, is_primary, created_at, last_active, expires_at)
-           VALUES ($1, $2, $3, $4, $5, NOW(), NOW(), NOW() + INTERVAL '30 days')`,
-          [
-            username,
-            deviceInfoStr,
-            request.ip,
-            token,
-            isPrimary,
-          ]
-        )
-
-        // Уведомляем все устройства пользователя о новой сессии
+        // Уведомляем все устройства пользователя об обновлении сессий
         if (fastify.io) {
           fastify.io.to(username).emit('sessions:updated')
         }
@@ -700,6 +832,326 @@ export async function authRoutes(fastify: FastifyInstance) {
       })
     } catch (error) {
       console.error('❌ change-email error:', error)
+      return reply.code(500).send({
+        success: false,
+        error: 'Internal server error',
+      })
+    }
+  })
+
+  /**
+   * POST /forgot-password
+   * Запрос на восстановление пароля
+   * ВАЖНО: Всегда возвращает успех, даже если email не найден (защита от enumeration)
+   */
+  fastify.post<{
+    Body: { email: string }
+  }>('/forgot-password', async (request, reply) => {
+    try {
+      const { email } = request.body
+
+      // Валидация email
+      if (!email || !isValidEmail(email)) {
+        // Даже при невалидном email возвращаем общее сообщение
+        return reply.code(200).send({
+          success: true,
+          message: 'If a user with this email exists, a password recovery email has been sent.',
+        })
+      }
+
+      // Проверка rate limiting (максимум 5 попыток в час)
+      const attempts = await RedisService.getPasswordResetAttempts(email)
+      if (attempts >= 5) {
+        return reply.code(429).send({
+          success: false,
+          error: 'Too many password reset requests. Please try again later.',
+        })
+      }
+
+      // Проверка cooldown (1 минута между запросами)
+      const hasCooldown = await RedisService.checkPasswordResetCooldown(email)
+      if (hasCooldown) {
+        return reply.code(429).send({
+          success: false,
+          error: 'Please wait before requesting another password reset email.',
+        })
+      }
+
+      // Поиск пользователя по email
+      const result = await pool.query(
+        'SELECT username, email_verified FROM users WHERE email = $1',
+        [email]
+      )
+
+      // Инкремент попыток (даже если пользователь не найден)
+      await RedisService.incrementPasswordResetAttempts(email)
+
+      // ВСЕГДА возвращаем успех (защита от enumeration)
+      // Но отправляем письмо только если пользователь найден И email подтвержден
+      if (result.rows.length > 0 && result.rows[0].email_verified) {
+        const username = result.rows[0].username
+
+        // Создаем токен восстановления (UUID, expires через 1 час)
+        const tokenResult = await pool.query(
+          `INSERT INTO password_recovery (username, expires_at)
+           VALUES ($1, NOW() + INTERVAL '1 hour')
+           RETURNING token`,
+          [username]
+        )
+
+        const token = tokenResult.rows[0].token
+
+        // Отправляем письмо
+        const emailSent = await EmailService.sendPasswordRecovery(email, token)
+
+        if (emailSent) {
+          // Устанавливаем cooldown только при успешной отправке
+          await RedisService.setPasswordResetCooldown(email)
+        }
+      }
+
+      // ВСЕГДА возвращаем одинаковый ответ
+      return reply.code(200).send({
+        success: true,
+        message: 'If a user with this email exists, a password recovery email has been sent.',
+      })
+    } catch (error) {
+      console.error('❌ forgot-password error:', error)
+      return reply.code(500).send({
+        success: false,
+        error: 'Internal server error',
+      })
+    }
+  })
+
+  /**
+   * POST /reset-password
+   * Сброс пароля по токену из email
+   */
+  fastify.post<{
+    Body: { token: string; newPassword: string }
+  }>('/reset-password', async (request, reply) => {
+    try {
+      const { token, newPassword } = request.body
+
+      // Валидация
+      if (!token || !newPassword) {
+        return reply.code(400).send({
+          success: false,
+          error: 'Missing required fields',
+        })
+      }
+
+      // Валидация пароля
+      if (!isValidPassword(newPassword)) {
+        return reply.code(400).send({
+          success: false,
+          error: 'Password must be at least 8 characters',
+        })
+      }
+
+      // Проверка токена в БД
+      const tokenResult = await pool.query(
+        `SELECT username, used, expires_at
+         FROM password_recovery
+         WHERE token = $1`,
+        [token]
+      )
+
+      if (tokenResult.rows.length === 0) {
+        return reply.code(400).send({
+          success: false,
+          error: 'Invalid or expired recovery token',
+        })
+      }
+
+      const recovery = tokenResult.rows[0]
+
+      // Проверка что токен не использован
+      if (recovery.used) {
+        return reply.code(400).send({
+          success: false,
+          error: 'This recovery token has already been used',
+        })
+      }
+
+      // Проверка что токен не истёк
+      if (new Date(recovery.expires_at) < new Date()) {
+        return reply.code(400).send({
+          success: false,
+          error: 'Recovery token has expired',
+        })
+      }
+
+      const username = recovery.username
+
+      // Получаем email пользователя (нужен для emailRecoveryKey)
+      const userResult = await pool.query(
+        'SELECT email FROM users WHERE username = $1',
+        [username]
+      )
+
+      if (userResult.rows.length === 0) {
+        return reply.code(404).send({
+          success: false,
+          error: 'User not found',
+        })
+      }
+
+      const email = userResult.rows[0].email
+
+      // Генерируем новые ключи с новым паролем
+      const keys = await CryptoService.generateUserKeys(newPassword, email)
+
+      // Обновляем ТОЛЬКО salt и auth_token (encrypted_master_key остается без изменений!)
+      await pool.query(
+        `UPDATE users
+         SET salt = $1, auth_token = $2
+         WHERE username = $3`,
+        [keys.salt, keys.authToken, username]
+      )
+
+      // Помечаем токен как использованный
+      await pool.query(
+        'UPDATE password_recovery SET used = true WHERE token = $1',
+        [token]
+      )
+
+      // Удаляем ВСЕ сессии пользователя (т.к. пароль изменён)
+      await pool.query(
+        'DELETE FROM sessions WHERE username = $1',
+        [username]
+      )
+
+      // Уведомляем через Socket.IO о завершении всех сессий
+      if (fastify.io) {
+        fastify.io.to(username).emit('session:terminated', {
+          message: 'Your password has been changed. Please log in again.',
+        })
+      }
+
+      return reply.code(200).send({
+        success: true,
+        message: 'Password has been reset successfully. Please log in with your new password.',
+      })
+    } catch (error) {
+      console.error('❌ reset-password error:', error)
+      return reply.code(500).send({
+        success: false,
+        error: 'Internal server error',
+      })
+    }
+  })
+
+  /**
+   * POST /change-password
+   * Смена пароля изнутри приложения (требует аутентификации)
+   */
+  fastify.post<{
+    Body: { currentPassword: string; newPassword: string }
+  }>('/change-password', {
+    preHandler: authMiddleware
+  }, async (request, reply) => {
+    try {
+      const { currentPassword, newPassword } = request.body
+      const username = (request as any).user.username
+      const currentToken = request.headers.authorization?.replace('Bearer ', '')
+
+      // Валидация
+      if (!currentPassword || !newPassword) {
+        return reply.code(400).send({
+          success: false,
+          error: 'Missing required fields',
+        })
+      }
+
+      // Валидация нового пароля
+      if (!isValidPassword(newPassword)) {
+        return reply.code(400).send({
+          success: false,
+          error: 'New password must be at least 8 characters',
+        })
+      }
+
+      // Проверка что пароли разные
+      if (currentPassword === newPassword) {
+        return reply.code(400).send({
+          success: false,
+          error: 'New password must be different from current password',
+        })
+      }
+
+      // Получаем пользователя
+      const userResult = await pool.query(
+        'SELECT email, salt, auth_token FROM users WHERE username = $1',
+        [username]
+      )
+
+      if (userResult.rows.length === 0) {
+        return reply.code(404).send({
+          success: false,
+          error: 'User not found',
+        })
+      }
+
+      const user = userResult.rows[0]
+
+      // Проверяем текущий пароль
+      const isPasswordValid = await CryptoService.verifyAuthToken(
+        currentPassword,
+        user.salt,
+        user.auth_token
+      )
+
+      if (!isPasswordValid) {
+        return reply.code(401).send({
+          success: false,
+          error: 'Current password is incorrect',
+        })
+      }
+
+      // Генерируем новые ключи с новым паролем
+      const keys = await CryptoService.generateUserKeys(newPassword, user.email)
+
+      // Обновляем ТОЛЬКО salt и auth_token (encrypted_master_key остается без изменений!)
+      await pool.query(
+        `UPDATE users
+         SET salt = $1, auth_token = $2
+         WHERE username = $3`,
+        [keys.salt, keys.authToken, username]
+      )
+
+      // Получаем ID сессий которые будут удалены (все КРОМЕ текущей)
+      const sessionsToDelete = await pool.query(
+        'SELECT id FROM sessions WHERE username = $1 AND jwt_token != $2',
+        [username, currentToken]
+      )
+
+      // Удаляем все сессии КРОМЕ текущей
+      await pool.query(
+        'DELETE FROM sessions WHERE username = $1 AND jwt_token != $2',
+        [username, currentToken]
+      )
+
+      // Уведомляем другие устройства о завершении сессий
+      if (fastify.io) {
+        sessionsToDelete.rows.forEach((session) => {
+          fastify.io.to(username).emit('session:terminated', {
+            sessionId: session.id,
+            message: 'Your password has been changed from another device',
+          })
+        })
+
+        // Уведомляем все устройства об обновлении списка сессий
+        fastify.io.to(username).emit('sessions:updated')
+      }
+
+      return reply.code(200).send({
+        success: true,
+        message: 'Password changed successfully',
+      })
+    } catch (error) {
+      console.error('❌ change-password error:', error)
       return reply.code(500).send({
         success: false,
         error: 'Internal server error',

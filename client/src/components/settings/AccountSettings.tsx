@@ -1,14 +1,16 @@
 import { useState } from 'react'
-import { Mail, CheckCircle, XCircle, Edit2 } from 'lucide-react'
+import { Mail, CheckCircle, XCircle, Edit2, Key } from 'lucide-react'
 import { useAuthStore } from '@/store/authStore'
 import { ChangeEmailModal } from './ChangeEmailModal'
 import { VerifyEmailModal } from './VerifyEmailModal'
+import { ChangePasswordModal } from './ChangePasswordModal'
 import './AccountSettings.css'
 
 export function AccountSettings() {
   const { user, checkAuth } = useAuthStore()
   const [showChangeEmail, setShowChangeEmail] = useState(false)
   const [showVerifyEmail, setShowVerifyEmail] = useState(false)
+  const [showChangePassword, setShowChangePassword] = useState(false)
 
   const isEmailVerified = user?.email_verified || false
 
@@ -20,6 +22,11 @@ export function AccountSettings() {
   const handleEmailVerified = () => {
     // Обновляем данные пользователя после верификации
     checkAuth()
+  }
+
+  const handlePasswordChanged = () => {
+    // Показываем уведомление об успешной смене пароля
+    alert('Password changed successfully! All other devices have been signed out.')
   }
 
   return (
@@ -88,6 +95,27 @@ export function AccountSettings() {
         </div>
       </div>
 
+      {/* Password Section */}
+      <div className="settings-block">
+        <div className="settings-block-header">
+          <h4>Password</h4>
+        </div>
+        <div className="settings-block-content">
+          <div className="settings-info-row">
+            <span className="settings-label">Manage your account password</span>
+          </div>
+          <div className="settings-actions" style={{ marginTop: '16px' }}>
+            <button
+              className="settings-btn settings-btn-secondary"
+              onClick={() => setShowChangePassword(true)}
+            >
+              <Key size={16} />
+              Change Password
+            </button>
+          </div>
+        </div>
+      </div>
+
       {/* Change Email Modal */}
       <ChangeEmailModal
         isOpen={showChangeEmail}
@@ -100,6 +128,13 @@ export function AccountSettings() {
         isOpen={showVerifyEmail}
         onClose={() => setShowVerifyEmail(false)}
         onSuccess={handleEmailVerified}
+      />
+
+      {/* Change Password Modal */}
+      <ChangePasswordModal
+        isOpen={showChangePassword}
+        onClose={() => setShowChangePassword(false)}
+        onSuccess={handlePasswordChanged}
       />
     </div>
   )

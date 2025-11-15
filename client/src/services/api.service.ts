@@ -270,6 +270,36 @@ class ApiService {
       method: 'DELETE',
     })
   }
+
+  /**
+   * Запрос на восстановление пароля (по email)
+   */
+  async forgotPassword(email: string): Promise<ApiResponse> {
+    return this.request('/auth/forgot-password', {
+      method: 'POST',
+      body: JSON.stringify({ email }),
+    })
+  }
+
+  /**
+   * Сброс пароля по токену из email
+   */
+  async resetPassword(token: string, newPassword: string): Promise<ApiResponse> {
+    return this.request('/auth/reset-password', {
+      method: 'POST',
+      body: JSON.stringify({ token, newPassword }),
+    })
+  }
+
+  /**
+   * Смена пароля (требует аутентификации)
+   */
+  async changePassword(currentPassword: string, newPassword: string): Promise<ApiResponse> {
+    return this.request('/auth/change-password', {
+      method: 'POST',
+      body: JSON.stringify({ currentPassword, newPassword }),
+    })
+  }
 }
 
 export const apiService = new ApiService()

@@ -2,6 +2,7 @@ import { create } from 'zustand'
 import { apiService } from '@/services/api.service'
 import { socketService } from '@/services/socket.service'
 import { cryptoService } from '@/services/crypto.service'
+import { fingerprintService } from '@/services/fingerprint.service'
 import type { User } from '@/types/user.types'
 
 interface AuthState {
@@ -31,7 +32,10 @@ export const useAuthStore = create<AuthState>((set) => ({
     set({ isLoading: true, error: null })
 
     try {
-      const response = await apiService.login({ username, password })
+      // Генерируем fingerprint устройства
+      const deviceFingerprint = await fingerprintService.getFingerprint()
+
+      const response = await apiService.login({ username, password, deviceFingerprint })
 
       if (!response.success || !response.data) {
         set({ error: response.error || 'Login failed', isLoading: false })
@@ -74,6 +78,9 @@ export const useAuthStore = create<AuthState>((set) => ({
     set({ isLoading: true, error: null })
 
     try {
+      // Генерируем fingerprint устройства
+      const deviceFingerprint = await fingerprintService.getFingerprint()
+
       // Для MVP используем заглушку для public_key
       const public_key = `${username}_public_key_${Date.now()}`
 
@@ -82,6 +89,7 @@ export const useAuthStore = create<AuthState>((set) => ({
         email,
         password,
         public_key,
+        deviceFingerprint,
       })
 
       if (!response.success || !response.data) {

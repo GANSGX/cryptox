@@ -125,4 +125,50 @@ export class RedisService {
     const key = `change_email_verified:${username}`
     await redis.del(key)
   }
+
+  /**
+   * Password Reset Rate Limiting (по EMAIL!)
+   * Максимум 5 попыток в час
+   */
+
+  /**
+   * Получение количества попыток сброса пароля по email
+   */
+  static async getPasswordResetAttempts(email: string): Promise<number> {
+    const key = `password_reset_attempts:${email}`
+    const attempts = await redis.get(key)
+    return attempts ? parseInt(attempts, 10) : 0
+  }
+
+  /**
+   * Инкремент попыток сброса пароля (TTL 1 час)
+   */
+  static async incrementPasswordResetAttempts(email: string): Promise<number> {
+    const key = `password_reset_attempts:${email}`
+    const attempts = await redis.incr(key)
+
+    // Если первая попытка — установить TTL 1 час
+    if (attempts === 1) {
+      await redis.expire(key, 3600) // 3600 секунд = 1 час
+    }
+
+    return attempts
+  }
+
+  /**
+   * Cooldown для повторной отправки письма восстановления (1 минута)
+   */
+  static async setPasswordResetCooldown(email: string): Promise<void> {
+    const key = `password_reset_cooldown:${email}`
+    await redis.setex(key, 60, '1') // 60 секунд = 1 минута
+  }
+
+  /**
+   * Проверка cooldown для сброса пароля
+   */
+  static async checkPasswordResetCooldown(email: string): Promise<boolean> {
+    const key = `password_reset_cooldown:${email}`
+    const exists = await redis.exists(key)
+    return exists === 1
+  }
 }

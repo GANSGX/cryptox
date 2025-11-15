@@ -5,6 +5,7 @@ import { Globe } from 'lucide-react'
 import { useAuthStore } from '@/store/authStore'
 import { isValidUsername, isValidPassword, isValidEmail } from '@/utils/crypto'
 import LiquidEther from '@/components/ui/LiquidEther'
+import { ForgotPasswordModal } from '@/components/auth/ForgotPasswordModal'
 
 export function Login() {
   const { t, i18n } = useTranslation()
@@ -15,6 +16,7 @@ export function Login() {
 
   const [isRegister, setIsRegister] = useState(false)
   const [isTransitioning, setIsTransitioning] = useState(false)
+  const [isForgotPasswordOpen, setIsForgotPasswordOpen] = useState(false)
   const [formData, setFormData] = useState({
     username: '',
     email: '',
@@ -225,10 +227,18 @@ export function Login() {
 
         {!isRegister && (
           <div className="auth-footer" style={{ marginTop: '12px' }}>
-            <span className="auth-link">{t('auth.forgotPassword')}</span>
+            <span className="auth-link" onClick={() => setIsForgotPasswordOpen(true)}>
+              {t('auth.forgotPassword')}
+            </span>
           </div>
         )}
       </div>
+
+      {/* Forgot Password Modal */}
+      <ForgotPasswordModal
+        isOpen={isForgotPasswordOpen}
+        onClose={() => setIsForgotPasswordOpen(false)}
+      />
     </div>
   )
 }
