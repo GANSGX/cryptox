@@ -41,15 +41,29 @@ function App() {
           // Если нашей текущей сессии нет в списке - нас выкинули!
           if (!currentSession) {
             console.log('❌ Current session not found - logging out!')
-            alert(data.message)
-            logout()
-            window.location.href = '/login'
+
+            // Устанавливаем красивое сообщение об ошибке
+            const errorMessage = data.message || 'Your session was terminated by the primary device'
+
+            // Очищаем все данные (токен, user, сессия)
+            await logout()
+
+            // После logout устанавливаем ошибку которая покажется на странице логина
+            setTimeout(() => {
+              useAuthStore.setState({ error: errorMessage })
+            }, 100)
           } else {
             console.log('✅ Current session still active')
           }
         }
       } catch (error) {
         console.error('Error checking sessions after termination:', error)
+        // Если ошибка при проверке сессий, значит токен невалиден - выкидываем
+        const errorMessage = data.message || 'Your session was terminated by the primary device'
+        await logout()
+        setTimeout(() => {
+          useAuthStore.setState({ error: errorMessage })
+        }, 100)
       }
     }
 

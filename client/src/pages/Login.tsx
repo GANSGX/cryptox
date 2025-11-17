@@ -21,7 +21,6 @@ export function Login() {
   const [isTransitioning, setIsTransitioning] = useState(false)
   const [isForgotPasswordOpen, setIsForgotPasswordOpen] = useState(false)
   const [verificationCode, setVerificationCode] = useState('')
-  const [rejectionError, setRejectionError] = useState('')
   const [formData, setFormData] = useState({
     username: '',
     email: '',
@@ -53,12 +52,13 @@ export function Login() {
 
     const handleDeviceRejected = () => {
       console.log('❌ Device rejected by primary device')
-      setRejectionError('Device approval was rejected. Please try again.')
-      clearError()
-      // Возвращаемся к форме логина через 3 секунды
-      setTimeout(() => {
-        window.location.reload()
-      }, 3000)
+      // Очищаем pending approval и возвращаемся к форме логина
+      useAuthStore.setState({
+        pendingApproval: null,
+        error: 'Primary device denied access to your account'
+      })
+      setVerificationCode('')
+      socketService.disconnect()
     }
 
     socketService.on('device:rejected', handleDeviceRejected)
@@ -131,6 +131,14 @@ export function Login() {
     if (success) {
       navigate('/chat', { replace: true })
     }
+  }
+
+  const handleCancelApproval = () => {
+    // Очищаем pending approval и возвращаемся к форме логина
+    useAuthStore.setState({ pendingApproval: null })
+    setVerificationCode('')
+    clearError()
+    socketService.disconnect()
   }
 
   const toggleMode = () => {
@@ -214,12 +222,6 @@ export function Login() {
               </p>
             </div>
 
-            {rejectionError && (
-              <div className="alert alert-error" style={{ marginBottom: '20px' }}>
-                {rejectionError}
-              </div>
-            )}
-
             <form onSubmit={handleVerifyCode}>
               <VerificationCodeInput
                 value={verificationCode}
@@ -236,9 +238,38 @@ export function Login() {
               >
                 {isLoading ? <span className="loading"></span> : 'Verify Code'}
               </button>
+
+              <button
+                type="button"
+                onClick={handleCancelApproval}
+                disabled={isLoading}
+                style={{
+                  marginTop: '12px',
+                  width: '100%',
+                  padding: '12px',
+                  fontSize: '16px',
+                  fontWeight: '600',
+                  border: '2px solid rgba(255, 255, 255, 0.2)',
+                  borderRadius: '12px',
+                  background: 'rgba(255, 255, 255, 0.05)',
+                  color: 'rgba(255, 255, 255, 0.8)',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s ease',
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.background = 'rgba(255, 255, 255, 0.1)'
+                  e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.3)'
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.background = 'rgba(255, 255, 255, 0.05)'
+                  e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.2)'
+                }}
+              >
+                Cancel
+              </button>
             </form>
 
-            <div className="auth-footer" style={{ marginTop: '20px' }}>
+            <div className="auth-footer" style={{ marginTop: '20px', color: '#888' }}>
               Waiting for approval...
             </div>
           </div>
