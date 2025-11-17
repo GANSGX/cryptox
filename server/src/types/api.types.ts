@@ -106,3 +106,59 @@ export interface GetMessagesResponse {
   total: number
   has_more: boolean
 }
+
+// Типы для Device Approval
+export interface PendingLoginResponse {
+  status: 'pending_approval'
+  pending_session_id: string
+  message: string
+}
+
+export interface ApproveDeviceRequest {
+  pending_session_id: string
+}
+
+export interface ApproveDeviceResponse {
+  approval_code: string
+  message: string
+}
+
+export interface RejectDeviceRequest {
+  pending_session_id: string
+}
+
+export interface VerifyDeviceCodeRequest {
+  pending_session_id: string
+  code: string
+}
+
+export interface VerifyDeviceCodeResponse {
+  token: string
+  user: {
+    username: string
+    email: string
+    email_verified: boolean
+  }
+}
+
+// Socket.IO события для Device Approval
+export interface DeviceApprovalRequiredEvent {
+  pending_session_id: string
+  device_info: {
+    type: string
+    name: string
+    os: string
+  }
+  ip_address: string
+  timestamp: string
+}
+
+export interface DeviceApprovedEvent {
+  pending_session_id: string
+  approval_code: string
+}
+
+export interface DeviceRejectedEvent {
+  pending_session_id: string
+  message: string
+}

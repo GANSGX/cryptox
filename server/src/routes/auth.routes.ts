@@ -308,6 +308,15 @@ export async function authRoutes(fastify: FastifyInstance) {
 
             const wasPrimary = parseInt(wasPrimaryCheck.rows[0].count) > 0
 
+            // Проверяем было ли ВООБЩЕ это устройство (любая сессия с этим fingerprint)
+            const wasKnownDeviceCheck = await pool.query(
+              `SELECT COUNT(*) as count FROM sessions
+               WHERE username = $1 AND device_fingerprint = $2`,
+              [username, deviceFingerprint]
+            )
+
+            const wasKnownDevice = parseInt(wasKnownDeviceCheck.rows[0].count) > 0
+
             // Проверяем есть ли АКТИВНОЕ главное устройство (у других fingerprint)
             const activePrimaryCheck = await pool.query(
               `SELECT COUNT(*) as count FROM sessions
@@ -316,6 +325,47 @@ export async function authRoutes(fastify: FastifyInstance) {
             )
 
             const hasActivePrimary = parseInt(activePrimaryCheck.rows[0].count) > 0
+
+            // ===== DEVICE APPROVAL LOGIC =====
+            // Если устройство СОВСЕМ НОВОЕ (никогда не было) И есть primary устройство → требуется подтверждение
+            if (!wasKnownDevice && hasActivePrimary) {
+              console.log('🚨 NEW DEVICE detected, requiring approval from primary device')
+
+              // Генерируем 6-значный код
+              const approvalCode = Math.floor(100000 + Math.random() * 900000).toString()
+
+              // Создаем pending_session
+              const pendingSession = await pool.query(
+                `INSERT INTO pending_sessions (username, device_fingerprint, device_info, ip_address, approval_code, status, created_at, expires_at)
+                 VALUES ($1, $2, $3, $4, $5, 'pending', NOW(), NOW() + INTERVAL '5 minutes')
+                 RETURNING id`,
+                [username, deviceFingerprint, deviceInfoStr, request.ip, approvalCode]
+              )
+
+              const pendingSessionId = pendingSession.rows[0].id
+
+              console.log('✅ Pending session created:', pendingSessionId, 'code:', approvalCode)
+
+              // Отправляем Socket.IO уведомление на primary device
+              fastify.io.to(username).emit('device:approval_required', {
+                pending_session_id: pendingSessionId,
+                device_info: deviceInfo,
+                ip_address: request.ip,
+                timestamp: new Date().toISOString(),
+              })
+
+              console.log('📢 Sent device approval notification to primary device')
+
+              // Возвращаем клиенту статус "pending_approval"
+              return reply.send({
+                success: true,
+                data: {
+                  status: 'pending_approval',
+                  pending_session_id: pendingSessionId,
+                  message: 'Device approval required. Check your primary device.',
+                },
+              })
+            }
 
             // Если была primary ИЛИ нет активной primary - делаем новую primary
             const isPrimary = wasPrimary || !hasActivePrimary
@@ -1152,6 +1202,213 @@ export async function authRoutes(fastify: FastifyInstance) {
       })
     } catch (error) {
       console.error('❌ change-password error:', error)
+      return reply.code(500).send({
+        success: false,
+        error: 'Internal server error',
+      })
+    }
+  })
+
+  // ===== DEVICE APPROVAL ENDPOINTS =====
+
+  /**
+   * POST /auth/approve-device
+   * Approve new device login (called from primary device)
+   */
+  fastify.post<{
+    Body: { pending_session_id: string }
+  }>('/approve-device', { preHandler: authMiddleware }, async (request, reply) => {
+    try {
+      const { pending_session_id } = request.body
+      const payload = request.user as JwtPayload
+
+      if (!pending_session_id) {
+        return reply.code(400).send({
+          success: false,
+          error: 'pending_session_id is required',
+        })
+      }
+
+      // Проверяем что pending_session принадлежит этому пользователю
+      const pendingSession = await pool.query(
+        `SELECT * FROM pending_sessions
+         WHERE id = $1 AND username = $2 AND status = 'pending' AND expires_at > NOW()`,
+        [pending_session_id, payload.username]
+      )
+
+      if (pendingSession.rows.length === 0) {
+        return reply.code(404).send({
+          success: false,
+          error: 'Pending session not found or expired',
+        })
+      }
+
+      const session = pendingSession.rows[0]
+
+      // Обновляем статус на 'approved'
+      await pool.query(
+        `UPDATE pending_sessions SET status = 'approved' WHERE id = $1`,
+        [pending_session_id]
+      )
+
+      console.log('✅ Device approved, code:', session.approval_code)
+
+      // Код отправляется ТОЛЬКО на primary device (в response)
+      // Новое устройство НЕ получает код автоматически - пользователь вводит вручную
+      return reply.send({
+        success: true,
+        data: {
+          approval_code: session.approval_code,
+          message: 'Device approved. Show this code to new device.',
+        },
+      })
+    } catch (error) {
+      console.error('❌ approve-device error:', error)
+      return reply.code(500).send({
+        success: false,
+        error: 'Internal server error',
+      })
+    }
+  })
+
+  /**
+   * POST /auth/reject-device
+   * Reject new device login (called from primary device)
+   */
+  fastify.post<{
+    Body: { pending_session_id: string }
+  }>('/reject-device', { preHandler: authMiddleware }, async (request, reply) => {
+    try {
+      const { pending_session_id } = request.body
+      const payload = request.user as JwtPayload
+
+      if (!pending_session_id) {
+        return reply.code(400).send({
+          success: false,
+          error: 'pending_session_id is required',
+        })
+      }
+
+      // Проверяем что pending_session принадлежит этому пользователю
+      const pendingSession = await pool.query(
+        `SELECT * FROM pending_sessions
+         WHERE id = $1 AND username = $2 AND status = 'pending' AND expires_at > NOW()`,
+        [pending_session_id, payload.username]
+      )
+
+      if (pendingSession.rows.length === 0) {
+        return reply.code(404).send({
+          success: false,
+          error: 'Pending session not found or expired',
+        })
+      }
+
+      // Обновляем статус на 'rejected'
+      await pool.query(
+        `UPDATE pending_sessions SET status = 'rejected' WHERE id = $1`,
+        [pending_session_id]
+      )
+
+      // Отправляем Socket.IO уведомление новому устройству
+      fastify.io.to(pending_session_id).emit('device:rejected', {
+        pending_session_id: pending_session_id,
+        message: 'Device login rejected by primary device',
+      })
+
+      console.log('❌ Device rejected:', pending_session_id)
+
+      return reply.send({
+        success: true,
+        message: 'Device login rejected',
+      })
+    } catch (error) {
+      console.error('❌ reject-device error:', error)
+      return reply.code(500).send({
+        success: false,
+        error: 'Internal server error',
+      })
+    }
+  })
+
+  /**
+   * POST /auth/verify-device-code
+   * Verify approval code and create session (called from new device)
+   */
+  fastify.post<{
+    Body: { pending_session_id: string; code: string }
+  }>('/verify-device-code', async (request, reply) => {
+    try {
+      const { pending_session_id, code } = request.body
+
+      if (!pending_session_id || !code) {
+        return reply.code(400).send({
+          success: false,
+          error: 'pending_session_id and code are required',
+        })
+      }
+
+      // Проверяем pending_session
+      const pendingSession = await pool.query(
+        `SELECT * FROM pending_sessions
+         WHERE id = $1 AND status = 'approved' AND expires_at > NOW()`,
+        [pending_session_id]
+      )
+
+      if (pendingSession.rows.length === 0) {
+        return reply.code(404).send({
+          success: false,
+          error: 'Pending session not found, not approved, or expired',
+        })
+      }
+
+      const session = pendingSession.rows[0]
+
+      // Проверяем код
+      if (session.approval_code !== code) {
+        return reply.code(401).send({
+          success: false,
+          error: 'Invalid approval code',
+        })
+      }
+
+      // Код верный! Создаем полноценную сессию
+      const username = session.username
+
+      // Получаем user data
+      const userResult = await pool.query('SELECT * FROM users WHERE username = $1', [username])
+      const user = userResult.rows[0]
+
+      // Генерируем JWT
+      const token = JwtService.generate({
+        username: user.username,
+        email: user.email,
+      })
+
+      // Создаем сессию
+      await pool.query(
+        `INSERT INTO sessions (username, device_info, ip_address, jwt_token, device_fingerprint, is_primary, created_at, last_active, expires_at)
+         VALUES ($1, $2, $3, $4, $5, false, NOW(), NOW(), NOW() + INTERVAL '30 days')`,
+        [username, session.device_info, session.ip_address, token, session.device_fingerprint]
+      )
+
+      // Удаляем pending_session
+      await pool.query('DELETE FROM pending_sessions WHERE id = $1', [pending_session_id])
+
+      console.log('✅ Device verified and session created for:', username)
+
+      return reply.send({
+        success: true,
+        data: {
+          token,
+          user: {
+            username: user.username,
+            email: user.email,
+            email_verified: user.email_verified,
+          },
+        },
+      })
+    } catch (error) {
+      console.error('❌ verify-device-code error:', error)
       return reply.code(500).send({
         success: false,
         error: 'Internal server error',

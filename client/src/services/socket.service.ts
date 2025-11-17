@@ -35,6 +35,37 @@ class SocketService {
   }
 
   /**
+   * Подключение для pending approval (БЕЗ токена, с pending_session_id)
+   */
+  connectForPendingApproval(pending_session_id: string) {
+    if (this.socket?.connected) {
+      this.disconnect()
+    }
+
+    this.socket = io('http://localhost:3001', {
+      auth: {
+        pending_session_id,
+      },
+    })
+
+    this.socket.on('connect', () => {
+      console.log('✅ Socket.io connected for pending approval:', this.socket?.id)
+    })
+
+    this.socket.on('disconnect', (reason) => {
+      console.log('❌ Socket.io disconnected:', reason)
+    })
+
+    this.socket.on('connect_error', (error) => {
+      console.error('🔴 Socket.io connection error:', error.message)
+    })
+
+    this.socket.on('connected', (data) => {
+      console.log('✅ Server confirmation:', data)
+    })
+  }
+
+  /**
    * Отключение
    */
   disconnect() {
@@ -161,6 +192,20 @@ class SocketService {
    */
   offSessionTerminated(callback: (data: { sessionId: string; message: string }) => void) {
     this.socket?.off('session:terminated', callback)
+  }
+
+  /**
+   * Подписка на произвольное событие
+   */
+  on(event: string, callback: (...args: any[]) => void) {
+    this.socket?.on(event, callback)
+  }
+
+  /**
+   * Отписка от произвольного события
+   */
+  off(event: string, callback: (...args: any[]) => void) {
+    this.socket?.off(event, callback)
   }
 }
 

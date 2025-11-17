@@ -7,6 +7,12 @@ import type {
   SendMessageRequest,
   SendMessageResponse,
   GetMessagesResponse,
+  PendingLoginResponse,
+  ApproveDeviceRequest,
+  ApproveDeviceResponse,
+  RejectDeviceRequest,
+  VerifyDeviceCodeRequest,
+  VerifyDeviceCodeResponse,
 } from '@/types/api.types'
 
 const API_URL = '/api'
@@ -298,6 +304,40 @@ class ApiService {
     return this.request('/auth/change-password', {
       method: 'POST',
       body: JSON.stringify({ currentPassword, newPassword }),
+    })
+  }
+
+  // ===== DEVICE APPROVAL METHODS =====
+
+  /**
+   * Одобрить новое устройство (primary device)
+   */
+  async approveDevice(data: ApproveDeviceRequest): Promise<ApiResponse<ApproveDeviceResponse>> {
+    return this.request<ApproveDeviceResponse>('/auth/approve-device', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    })
+  }
+
+  /**
+   * Отклонить новое устройство (primary device)
+   */
+  async rejectDevice(data: RejectDeviceRequest): Promise<ApiResponse> {
+    return this.request('/auth/reject-device', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    })
+  }
+
+  /**
+   * Проверить 6-значный код (новое устройство)
+   */
+  async verifyDeviceCode(
+    data: VerifyDeviceCodeRequest
+  ): Promise<ApiResponse<VerifyDeviceCodeResponse>> {
+    return this.request<VerifyDeviceCodeResponse>('/auth/verify-device-code', {
+      method: 'POST',
+      body: JSON.stringify(data),
     })
   }
 }

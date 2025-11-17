@@ -10,20 +10,27 @@ interface AuthState {
   token: string | null
   isLoading: boolean
   error: string | null
+  pendingApproval: {
+    pending_session_id: string
+    message: string
+  } | null
 
   // Actions
-  login: (username: string, password: string) => Promise<boolean>
+  login: (username: string, password: string) => Promise<boolean | 'pending_approval'>
   register: (username: string, email: string, password: string) => Promise<boolean>
   logout: () => Promise<void>
   checkAuth: () => Promise<void>
   clearError: () => void
+  verifyDeviceCode: (code: string) => Promise<boolean>
+  clearPendingApproval: () => void
 }
 
-export const useAuthStore = create<AuthState>((set) => ({
+export const useAuthStore = create<AuthState>((set, get) => ({
   user: null,
   token: null,
   isLoading: false,
   error: null,
+  pendingApproval: null,
 
   /**
    * Логин
@@ -40,6 +47,19 @@ export const useAuthStore = create<AuthState>((set) => ({
       if (!response.success || !response.data) {
         set({ error: response.error || 'Login failed', isLoading: false })
         return false
+      }
+
+      // Проверяем: pending_approval или обычный login
+      if ('status' in response.data && response.data.status === 'pending_approval') {
+        console.log('🔒 Device approval required')
+        set({
+          pendingApproval: {
+            pending_session_id: response.data.pending_session_id,
+            message: response.data.message,
+          },
+          isLoading: false,
+        })
+        return 'pending_approval'
       }
 
       const { token, user } = response.data
@@ -191,6 +211,65 @@ export const useAuthStore = create<AuthState>((set) => ({
       set({ user: null, token: null, isLoading: false })
     }
   },
+
+  /**
+   * Проверка 6-значного кода (для нового устройства)
+   */
+  verifyDeviceCode: async (code: string) => {
+    const { pendingApproval } = get()
+
+    if (!pendingApproval) {
+      set({ error: 'No pending approval' })
+      return false
+    }
+
+    set({ isLoading: true, error: null })
+
+    try {
+      const response = await apiService.verifyDeviceCode({
+        pending_session_id: pendingApproval.pending_session_id,
+        code,
+      })
+
+      if (!response.success || !response.data) {
+        set({ error: response.error || 'Invalid code', isLoading: false })
+        return false
+      }
+
+      const { token, user } = response.data
+
+      // Сохраняем токен
+      apiService.setToken(token)
+
+      // Подключаем Socket.io
+      socketService.connect(token)
+
+      // Загружаем session keys
+      cryptoService.loadSessionKeys()
+
+      set({
+        user: {
+          username: user.username,
+          email: user.email,
+          email_verified: user.email_verified || false,
+        },
+        token,
+        pendingApproval: null,
+        isLoading: false,
+        error: null,
+      })
+
+      return true
+    } catch (error) {
+      set({ error: 'Network error', isLoading: false })
+      return false
+    }
+  },
+
+  /**
+   * Очистка pending approval
+   */
+  clearPendingApproval: () => set({ pendingApproval: null }),
 
   /**
    * Очистка ошибки

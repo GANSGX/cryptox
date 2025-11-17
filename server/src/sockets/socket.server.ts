@@ -41,6 +41,16 @@ export function initializeSocketServer(httpServer: HTTPServer) {
   // Middleware для аутентификации
   io.use((socket: AuthenticatedSocket, next) => {
     const token = socket.handshake.auth.token as string
+    const pending_session_id = socket.handshake.auth.pending_session_id as string
+
+    // Разрешаем подключение БЕЗ токена если есть pending_session_id (для device approval)
+    if (pending_session_id) {
+      log.info('Socket connection for pending approval', {
+        socketId: socket.id,
+        pending_session_id,
+      })
+      return next()
+    }
 
     if (!token) {
       log.warn('Socket connection rejected: No token provided', {
@@ -76,15 +86,23 @@ export function initializeSocketServer(httpServer: HTTPServer) {
   // Подключение клиента
   io.on('connection', (socket: AuthenticatedSocket) => {
     const username = socket.user?.username || 'unknown'
+    const pending_session_id = socket.handshake.auth.pending_session_id as string
 
     log.info('Client connected', {
       socketId: socket.id,
       username,
+      pending_session_id,
     })
 
-    // Подписываем пользователя на его личный room (БЕЗ префикса user:)
-    socket.join(username)
-    console.log(`✅ Socket ${socket.id} joined room: ${username}`)
+    // Если есть pending_session_id - join к этому room (для device approval)
+    if (pending_session_id) {
+      socket.join(pending_session_id)
+      console.log(`✅ Socket ${socket.id} joined pending session room: ${pending_session_id}`)
+    } else {
+      // Обычное подключение - подписываем на username room
+      socket.join(username)
+      console.log(`✅ Socket ${socket.id} joined room: ${username}`)
+    }
 
     // Отправляем подтверждение подключения
     socket.emit('connected', {
