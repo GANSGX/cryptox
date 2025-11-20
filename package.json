@@ -5,6 +5,7 @@
   "private": true,
   "scripts": {
     "setup": "bash scripts/setup.sh",
+    "kill-ports": "bash scripts/kill-ports.sh",
     "dev:all": "concurrently \"pnpm docker:up\" \"pnpm dev:server\" \"pnpm dev:client\" -n \"docker,server,client\" -c \"blue,yellow,green\"",
     "dev:server": "cd server && pnpm dev",
     "dev:client": "cd client && pnpm dev",
