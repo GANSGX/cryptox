@@ -5,10 +5,7 @@
   "private": true,
   "scripts": {
     "setup": "bash scripts/setup.sh",
-    "dev:all": "docker-compose -f docker-compose.dev.yml up",
-    "dev:all:build": "docker-compose -f docker-compose.dev.yml up --build",
-    "dev:all:down": "docker-compose -f docker-compose.dev.yml down",
-    "dev:all:clean": "docker-compose -f docker-compose.dev.yml down -v",
+    "dev:all": "concurrently \"pnpm docker:up\" \"pnpm dev:server\" \"pnpm dev:client\" -n \"docker,server,client\" -c \"blue,yellow,green\"",
     "dev:server": "cd server && pnpm dev",
     "dev:client": "cd client && pnpm dev",
     "build": "pnpm -r build",
@@ -31,7 +28,9 @@
   ],
   "author": "Your Name",
   "license": "MIT",
-  "devDependencies": {},
+  "devDependencies": {
+    "concurrently": "^9.2.1"
+  },
   "engines": {
     "node": ">=20.0.0",
     "pnpm": ">=8.0.0"
