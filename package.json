@@ -1,0 +1,39 @@
+{
+  "name": "cryptox",
+  "version": "0.1.0",
+  "description": "Secure messenger with E2E encryption",
+  "private": true,
+  "scripts": {
+    "setup": "bash scripts/setup.sh",
+    "dev:all": "docker-compose -f docker-compose.dev.yml up",
+    "dev:all:build": "docker-compose -f docker-compose.dev.yml up --build",
+    "dev:all:down": "docker-compose -f docker-compose.dev.yml down",
+    "dev:all:clean": "docker-compose -f docker-compose.dev.yml down -v",
+    "dev:server": "cd server && pnpm dev",
+    "dev:client": "cd client && pnpm dev",
+    "build": "pnpm -r build",
+    "test": "pnpm -r test",
+    "test:watch": "pnpm -r test:watch",
+    "test:coverage": "pnpm -r test:coverage",
+    "lint": "pnpm -r lint",
+    "type-check": "pnpm -r type-check",
+    "docker:up": "docker-compose up -d",
+    "docker:down": "docker-compose down",
+    "docker:logs": "docker-compose logs -f",
+    "docker:clean": "docker-compose down -v"
+  },
+  "keywords": [
+    "messenger",
+    "e2e-encryption",
+    "security",
+    "webrtc",
+    "real-time"
+  ],
+  "author": "Your Name",
+  "license": "MIT",
+  "devDependencies": {},
+  "engines": {
+    "node": ">=20.0.0",
+    "pnpm": ">=8.0.0"
+  }
+}
