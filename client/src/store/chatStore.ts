@@ -1,25 +1,29 @@
-import { create } from 'zustand'
-import { apiService } from '@/services/api.service'
-import { socketService } from '@/services/socket.service'
-import { cryptoService } from '@/services/crypto.service'
-import type { Message } from '@/types/message.types'
+import { create } from "zustand";
+import { apiService } from "@/services/api.service";
+import { socketService } from "@/services/socket.service";
+import { cryptoService } from "@/services/crypto.service";
+import type { Message } from "@/types/message.types";
 
 interface ChatState {
-  activeChat: string | null
-  messages: Record<string, Message[]>
-  isLoading: boolean
-  typingUsers: Set<string>
+  activeChat: string | null;
+  messages: Record<string, Message[]>;
+  isLoading: boolean;
+  typingUsers: Set<string>;
 
   // Actions
-  setActiveChat: (username: string) => void
-  loadMessages: (username: string, myUsername: string) => Promise<void>
-  sendMessage: (recipientUsername: string, message: string, myUsername: string) => Promise<void>
-  addMessage: (message: Message) => void
-  startTyping: (chatId: string) => void
-  stopTyping: (chatId: string) => void
-  setUserTyping: (username: string) => void
-  removeUserTyping: (username: string) => void
-  markChatAsRead: (username: string) => Promise<void>
+  setActiveChat: (username: string) => void;
+  loadMessages: (username: string, myUsername: string) => Promise<void>;
+  sendMessage: (
+    recipientUsername: string,
+    message: string,
+    myUsername: string,
+  ) => Promise<void>;
+  addMessage: (message: Message) => void;
+  startTyping: (chatId: string) => void;
+  stopTyping: (chatId: string) => void;
+  setUserTyping: (username: string) => void;
+  removeUserTyping: (username: string) => void;
+  markChatAsRead: (username: string) => Promise<void>;
 }
 
 export const useChatStore = create<ChatState>((set, get) => ({
@@ -32,22 +36,22 @@ export const useChatStore = create<ChatState>((set, get) => ({
    * Установка активного чата
    */
   setActiveChat: (username: string) => {
-    set({ activeChat: username })
+    set({ activeChat: username });
   },
 
   /**
    * Загрузка истории сообщений
    */
   loadMessages: async (username: string, myUsername: string) => {
-    set({ isLoading: true })
+    set({ isLoading: true });
 
     try {
-      const response = await apiService.getMessages(username)
+      const response = await apiService.getMessages(username);
 
       if (!response.success || !response.data) {
-        console.error('Failed to load messages:', response.error)
-        set({ isLoading: false })
-        return
+        console.error("Failed to load messages:", response.error);
+        set({ isLoading: false });
+        return;
       }
 
       // Расшифровываем сообщения
@@ -55,19 +59,24 @@ export const useChatStore = create<ChatState>((set, get) => ({
         const decrypted = cryptoService.decryptMessageFromChat(
           msg.encrypted_content,
           username,
-          myUsername
-        )
+          myUsername,
+        );
 
         return {
           id: msg.id,
           sender_username: msg.sender_username,
           recipient_username: msg.recipient_username,
-          encrypted_content: decrypted || '[Failed to decrypt]',
-          message_type: msg.message_type as 'text' | 'image' | 'video' | 'file' | 'audio',
+          encrypted_content: decrypted || "[Failed to decrypt]",
+          message_type: msg.message_type as
+            | "text"
+            | "image"
+            | "video"
+            | "file"
+            | "audio",
           created_at: msg.created_at,
           read_at: msg.read_at,
-        }
-      })
+        };
+      });
 
       set((state) => ({
         messages: {
@@ -75,34 +84,38 @@ export const useChatStore = create<ChatState>((set, get) => ({
           [username]: decryptedMessages.reverse(), // Сортируем по возрастанию
         },
         isLoading: false,
-      }))
-    } catch (error) {
-      console.error('Load messages error:', error)
-      set({ isLoading: false })
+      }));
+    } catch (err) {
+      console.error("Load messages error:", err);
+      set({ isLoading: false });
     }
   },
 
   /**
    * Отправка сообщения
    */
-  sendMessage: async (recipientUsername: string, message: string, myUsername: string) => {
+  sendMessage: async (
+    recipientUsername: string,
+    message: string,
+    myUsername: string,
+  ) => {
     try {
       // Шифруем сообщение
       const encryptedContent = cryptoService.encryptMessageForChat(
         message,
         recipientUsername,
-        myUsername
-      )
+        myUsername,
+      );
 
       const response = await apiService.sendMessage({
         recipient_username: recipientUsername,
         encrypted_content: encryptedContent,
-        message_type: 'text',
-      })
+        message_type: "text",
+      });
 
       if (!response.success || !response.data) {
-        console.error('Failed to send message:', response.error)
-        return
+        console.error("Failed to send message:", response.error);
+        return;
       }
 
       // Добавляем сообщение в локальный стор
@@ -111,14 +124,14 @@ export const useChatStore = create<ChatState>((set, get) => ({
         sender_username: myUsername,
         recipient_username: recipientUsername,
         encrypted_content: message, // Храним расшифрованное для отображения
-        message_type: 'text',
+        message_type: "text",
         created_at: response.data.created_at,
         read_at: null,
-      }
+      };
 
-      get().addMessage(newMessage)
-    } catch (error) {
-      console.error('Send message error:', error)
+      get().addMessage(newMessage);
+    } catch (err) {
+      console.error("Send message error:", err);
     }
   },
 
@@ -130,31 +143,31 @@ export const useChatStore = create<ChatState>((set, get) => ({
       const chatUsername =
         message.sender_username === state.activeChat
           ? message.sender_username
-          : message.recipient_username
+          : message.recipient_username;
 
-      const existingMessages = state.messages[chatUsername] || []
+      const existingMessages = state.messages[chatUsername] || [];
 
       return {
         messages: {
           ...state.messages,
           [chatUsername]: [...existingMessages, message],
         },
-      }
-    })
+      };
+    });
   },
 
   /**
    * Начало печати
    */
   startTyping: (chatId: string) => {
-    socketService.emitTypingStart(chatId)
+    socketService.emitTypingStart(chatId);
   },
 
   /**
    * Остановка печати
    */
   stopTyping: (chatId: string) => {
-    socketService.emitTypingStop(chatId)
+    socketService.emitTypingStop(chatId);
   },
 
   /**
@@ -162,10 +175,10 @@ export const useChatStore = create<ChatState>((set, get) => ({
    */
   setUserTyping: (username: string) => {
     set((state) => {
-      const newTypingUsers = new Set(state.typingUsers)
-      newTypingUsers.add(username)
-      return { typingUsers: newTypingUsers }
-    })
+      const newTypingUsers = new Set(state.typingUsers);
+      newTypingUsers.add(username);
+      return { typingUsers: newTypingUsers };
+    });
   },
 
   /**
@@ -173,10 +186,10 @@ export const useChatStore = create<ChatState>((set, get) => ({
    */
   removeUserTyping: (username: string) => {
     set((state) => {
-      const newTypingUsers = new Set(state.typingUsers)
-      newTypingUsers.delete(username)
-      return { typingUsers: newTypingUsers }
-    })
+      const newTypingUsers = new Set(state.typingUsers);
+      newTypingUsers.delete(username);
+      return { typingUsers: newTypingUsers };
+    });
   },
 
   /**
@@ -184,9 +197,9 @@ export const useChatStore = create<ChatState>((set, get) => ({
    */
   markChatAsRead: async (username: string) => {
     try {
-      await apiService.markChatAsRead(username)
-    } catch (error) {
-      console.error('Mark as read error:', error)
+      await apiService.markChatAsRead(username);
+    } catch (err) {
+      console.error("Mark as read error:", err);
     }
   },
-}))
+}));

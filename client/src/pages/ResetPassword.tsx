@@ -1,73 +1,73 @@
-import { useState, FormEvent, useEffect, useMemo } from 'react'
-import { useNavigate, useSearchParams } from 'react-router-dom'
-import { isValidPassword } from '@/utils/crypto'
-import { apiService } from '@/services/api.service'
-import LiquidEther from '@/components/ui/LiquidEther'
-import './ResetPassword.css'
+import { useState, FormEvent, useEffect, useMemo } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import { isValidPassword } from "@/utils/crypto";
+import { apiService } from "@/services/api.service";
+import LiquidEther from "@/components/ui/LiquidEther";
+import "./ResetPassword.css";
 
 export function ResetPassword() {
-  const navigate = useNavigate()
-  const [searchParams] = useSearchParams()
-  const token = searchParams.get('token')
+  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const token = searchParams.get("token");
 
-  const backgroundColors = useMemo(() => ['#5227FF', '#FF9FFC', '#B19EEF'], [])
+  const backgroundColors = useMemo(() => ["#5227FF", "#FF9FFC", "#B19EEF"], []);
 
-  const [newPassword, setNewPassword] = useState('')
-  const [confirmPassword, setConfirmPassword] = useState('')
-  const [isLoading, setIsLoading] = useState(false)
-  const [error, setError] = useState('')
-  const [success, setSuccess] = useState(false)
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState(false);
 
   // Если нет токена - редирект на логин
   useEffect(() => {
     if (!token) {
-      navigate('/login', { replace: true })
+      navigate("/login", { replace: true });
     }
-  }, [token, navigate])
+  }, [token, navigate]);
 
   const handleSubmit = async (e: FormEvent) => {
-    e.preventDefault()
-    setError('')
+    e.preventDefault();
+    setError("");
 
     // Валидация
     if (!newPassword || !confirmPassword) {
-      setError('Please fill in all fields')
-      return
+      setError("Please fill in all fields");
+      return;
     }
 
     if (!isValidPassword(newPassword)) {
-      setError('Password must be at least 8 characters')
-      return
+      setError("Password must be at least 8 characters");
+      return;
     }
 
     if (newPassword !== confirmPassword) {
-      setError('Passwords do not match')
-      return
+      setError("Passwords do not match");
+      return;
     }
 
-    setIsLoading(true)
+    setIsLoading(true);
 
     try {
-      const response = await apiService.resetPassword(token!, newPassword)
+      const response = await apiService.resetPassword(token!, newPassword);
 
       if (response.success) {
-        setSuccess(true)
+        setSuccess(true);
         // Редирект на логин через 2 секунды
         setTimeout(() => {
-          navigate('/login', { replace: true })
-        }, 2000)
+          navigate("/login", { replace: true });
+        }, 2000);
       } else {
-        setError(response.error || 'Failed to reset password')
+        setError(response.error || "Failed to reset password");
       }
-    } catch (error) {
-      setError('Network error. Please try again.')
+    } catch {
+      setError("Network error. Please try again.");
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
 
   if (!token) {
-    return null
+    return null;
   }
 
   return (
@@ -75,13 +75,13 @@ export function ResetPassword() {
       {/* Анимированный фон */}
       <div
         style={{
-          position: 'fixed',
+          position: "fixed",
           top: 0,
           left: 0,
-          width: '100%',
-          height: '100%',
+          width: "100%",
+          height: "100%",
           zIndex: 0,
-          pointerEvents: 'none',
+          pointerEvents: "none",
         }}
       >
         <LiquidEther
@@ -99,7 +99,10 @@ export function ResetPassword() {
       </div>
 
       {/* Карточка */}
-      <div className="reset-password-card" style={{ position: 'relative', zIndex: 1 }}>
+      <div
+        className="reset-password-card"
+        style={{ position: "relative", zIndex: 1 }}
+      >
         {/* Logo */}
         <div className="reset-password-logo">
           <div className="logo-icon">
@@ -121,11 +124,7 @@ export function ResetPassword() {
           <>
             <h2 className="reset-password-title">Reset Your Password</h2>
 
-            {error && (
-              <div className="alert alert-error">
-                {error}
-              </div>
-            )}
+            {error && <div className="alert alert-error">{error}</div>}
 
             <form className="reset-password-form" onSubmit={handleSubmit}>
               <div className="form-group">
@@ -153,13 +152,24 @@ export function ResetPassword() {
                 />
               </div>
 
-              <button type="submit" className="btn btn-primary" disabled={isLoading}>
-                {isLoading ? <span className="loading"></span> : 'Reset Password'}
+              <button
+                type="submit"
+                className="btn btn-primary"
+                disabled={isLoading}
+              >
+                {isLoading ? (
+                  <span className="loading"></span>
+                ) : (
+                  "Reset Password"
+                )}
               </button>
             </form>
 
             <div className="reset-password-footer">
-              <span className="reset-password-link" onClick={() => navigate('/login')}>
+              <span
+                className="reset-password-link"
+                onClick={() => navigate("/login")}
+              >
                 Back to Login
               </span>
             </div>
@@ -167,5 +177,5 @@ export function ResetPassword() {
         )}
       </div>
     </div>
-  )
+  );
 }

@@ -1,53 +1,59 @@
-import { useState } from 'react'
-import { apiService } from '@/services/api.service'
-import type { DeviceApprovalRequiredEvent } from '@/types/api.types'
-import './DeviceApprovalModal.css'
+import { useState } from "react";
+import { apiService } from "@/services/api.service";
+import type { DeviceApprovalRequiredEvent } from "@/types/api.types";
+import "./DeviceApprovalModal.css";
 
 interface DeviceApprovalModalProps {
-  event: DeviceApprovalRequiredEvent
-  onClose: () => void
+  event: DeviceApprovalRequiredEvent;
+  onClose: () => void;
 }
 
-export function DeviceApprovalModal({ event, onClose }: DeviceApprovalModalProps) {
-  const [isApproving, setIsApproving] = useState(false)
-  const [approvalCode, setApprovalCode] = useState<string | null>(null)
+export function DeviceApprovalModal({
+  event,
+  onClose,
+}: DeviceApprovalModalProps) {
+  const [isApproving, setIsApproving] = useState(false);
+  const [approvalCode, setApprovalCode] = useState<string | null>(null);
 
   const handleApprove = async () => {
-    setIsApproving(true)
+    setIsApproving(true);
 
     try {
       const response = await apiService.approveDevice({
         pending_session_id: event.pending_session_id,
-      })
+      });
 
       if (response.success && response.data) {
-        setApprovalCode(response.data.approval_code)
+        setApprovalCode(response.data.approval_code);
       }
-    } catch (error) {
-      console.error('Failed to approve device:', error)
+    } catch (err) {
+      console.error("Failed to approve device:", err);
     } finally {
-      setIsApproving(false)
+      setIsApproving(false);
     }
-  }
+  };
 
   const handleReject = async () => {
-    setIsApproving(true)
+    setIsApproving(true);
 
     try {
       await apiService.rejectDevice({
         pending_session_id: event.pending_session_id,
-      })
-      onClose()
-    } catch (error) {
-      console.error('Failed to reject device:', error)
+      });
+      onClose();
+    } catch (err) {
+      console.error("Failed to reject device:", err);
     } finally {
-      setIsApproving(false)
+      setIsApproving(false);
     }
-  }
+  };
 
   return (
     <div className="device-approval-modal-overlay" onClick={onClose}>
-      <div className="device-approval-modal" onClick={(e) => e.stopPropagation()}>
+      <div
+        className="device-approval-modal"
+        onClick={(e) => e.stopPropagation()}
+      >
         {!approvalCode ? (
           // Экран подтверждения
           <>
@@ -93,7 +99,7 @@ export function DeviceApprovalModal({ event, onClose }: DeviceApprovalModalProps
                 onClick={handleApprove}
                 disabled={isApproving}
               >
-                {isApproving ? 'Approving...' : '✅ Approve'}
+                {isApproving ? "Approving..." : "✅ Approve"}
               </button>
             </div>
           </>
@@ -105,10 +111,12 @@ export function DeviceApprovalModal({ event, onClose }: DeviceApprovalModalProps
             </div>
 
             <div className="modal-body">
-              <p className="code-instruction">Show this code to your new device:</p>
+              <p className="code-instruction">
+                Show this code to your new device:
+              </p>
 
               <div className="approval-code">
-                {approvalCode.split('').map((digit, index) => (
+                {approvalCode.split("").map((digit, index) => (
                   <span key={index} className="code-digit">
                     {digit}
                   </span>
@@ -127,5 +135,5 @@ export function DeviceApprovalModal({ event, onClose }: DeviceApprovalModalProps
         )}
       </div>
     </div>
-  )
+  );
 }

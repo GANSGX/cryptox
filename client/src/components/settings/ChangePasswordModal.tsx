@@ -1,104 +1,111 @@
-import { X } from 'lucide-react'
-import { useState, useEffect } from 'react'
-import { createPortal } from 'react-dom'
-import { apiService } from '@/services/api.service'
-import { isValidPassword } from '@/utils/crypto'
-import './ChangePasswordModal.css'
+import { X } from "lucide-react";
+import { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
+import { apiService } from "@/services/api.service";
+import { isValidPassword } from "@/utils/crypto";
+import "./ChangePasswordModal.css";
 
 interface ChangePasswordModalProps {
-  isOpen: boolean
-  onClose: () => void
-  onSuccess: () => void
+  isOpen: boolean;
+  onClose: () => void;
+  onSuccess: () => void;
 }
 
-export function ChangePasswordModal({ isOpen, onClose, onSuccess }: ChangePasswordModalProps) {
-  const [isMounted, setIsMounted] = useState(false)
-  const [isAnimated, setIsAnimated] = useState(false)
+export function ChangePasswordModal({
+  isOpen,
+  onClose,
+  onSuccess,
+}: ChangePasswordModalProps) {
+  const [isMounted, setIsMounted] = useState(false);
+  const [isAnimated, setIsAnimated] = useState(false);
 
-  const [currentPassword, setCurrentPassword] = useState('')
-  const [newPassword, setNewPassword] = useState('')
-  const [confirmPassword, setConfirmPassword] = useState('')
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
 
-  const [isLoading, setIsLoading] = useState(false)
-  const [error, setError] = useState('')
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
 
   // Анимация монтирования
   useEffect(() => {
     if (isOpen) {
-      setIsMounted(true)
+      setIsMounted(true);
       requestAnimationFrame(() => {
         requestAnimationFrame(() => {
-          setIsAnimated(true)
-        })
-      })
+          setIsAnimated(true);
+        });
+      });
     } else if (isMounted) {
-      setIsAnimated(false)
+      setIsAnimated(false);
       const timer = setTimeout(() => {
-        setIsMounted(false)
-        setCurrentPassword('')
-        setNewPassword('')
-        setConfirmPassword('')
-        setError('')
-      }, 300)
-      return () => clearTimeout(timer)
+        setIsMounted(false);
+        setCurrentPassword("");
+        setNewPassword("");
+        setConfirmPassword("");
+        setError("");
+      }, 300);
+      return () => clearTimeout(timer);
     }
-  }, [isOpen, isMounted])
+  }, [isOpen, isMounted]);
 
-  if (!isMounted) return null
+  if (!isMounted) return null;
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setError('')
+    e.preventDefault();
+    setError("");
 
     // Валидация
     if (!currentPassword || !newPassword || !confirmPassword) {
-      setError('Please fill in all fields')
-      return
+      setError("Please fill in all fields");
+      return;
     }
 
     if (!isValidPassword(newPassword)) {
-      setError('New password must be at least 8 characters')
-      return
+      setError("New password must be at least 8 characters");
+      return;
     }
 
     if (newPassword !== confirmPassword) {
-      setError('New passwords do not match')
-      return
+      setError("New passwords do not match");
+      return;
     }
 
     if (currentPassword === newPassword) {
-      setError('New password must be different from current password')
-      return
+      setError("New password must be different from current password");
+      return;
     }
 
-    setIsLoading(true)
+    setIsLoading(true);
 
     try {
-      const response = await apiService.changePassword(currentPassword, newPassword)
+      const response = await apiService.changePassword(
+        currentPassword,
+        newPassword,
+      );
 
       if (response.success) {
-        onSuccess()
-        onClose()
+        onSuccess();
+        onClose();
       } else {
-        setError(response.error || 'Failed to change password')
+        setError(response.error || "Failed to change password");
       }
-    } catch (error) {
-      setError('Network error. Please try again.')
+    } catch {
+      setError("Network error. Please try again.");
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
 
   return createPortal(
     <>
       {/* Overlay */}
       <div
-        className={`change-password-overlay ${isAnimated ? 'visible' : ''}`}
+        className={`change-password-overlay ${isAnimated ? "visible" : ""}`}
         onClick={onClose}
       />
 
       {/* Modal */}
-      <div className={`change-password-modal ${isAnimated ? 'open' : ''}`}>
+      <div className={`change-password-modal ${isAnimated ? "open" : ""}`}>
         {/* Header */}
         <div className="change-password-header">
           <h2>Change Password</h2>
@@ -156,7 +163,8 @@ export function ChangePasswordModal({ isOpen, onClose, onSuccess }: ChangePasswo
             </div>
 
             <div className="change-password-notice">
-              <strong>Note:</strong> Changing your password will sign you out from all other devices.
+              <strong>Note:</strong> Changing your password will sign you out
+              from all other devices.
             </div>
 
             <div className="change-password-actions">
@@ -170,15 +178,20 @@ export function ChangePasswordModal({ isOpen, onClose, onSuccess }: ChangePasswo
               <button
                 type="submit"
                 className="settings-btn settings-btn-primary"
-                disabled={isLoading || !currentPassword || !newPassword || !confirmPassword}
+                disabled={
+                  isLoading ||
+                  !currentPassword ||
+                  !newPassword ||
+                  !confirmPassword
+                }
               >
-                {isLoading ? 'Changing...' : 'Change Password'}
+                {isLoading ? "Changing..." : "Change Password"}
               </button>
             </div>
           </form>
         </div>
       </div>
     </>,
-    document.body
-  )
+    document.body,
+  );
 }

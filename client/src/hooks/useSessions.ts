@@ -1,67 +1,63 @@
-import { useState, useEffect } from 'react'
-import { apiService } from '@/services/api.service'
-import { socketService } from '@/services/socket.service'
+import { useState, useEffect } from "react";
+import { apiService } from "@/services/api.service";
+import { socketService } from "@/services/socket.service";
 
 interface Session {
-  id: string
-  device_info: {
-    type: string
-    name: string
-    os: string
-  }
-  ip_address: string
-  created_at: string
-  last_active: string
-  is_current: boolean
-  is_primary: boolean // Главное устройство (первое, нельзя удалить)
-  seconds_ago: number // Разница в секундах, вычисленная на сервере
+  id: string;
+  device_info: Record<string, unknown>;
+  ip_address: string;
+  created_at: string;
+  last_active: string;
+  is_current: boolean;
+  is_primary: boolean; // Главное устройство (первое, нельзя удалить)
+  seconds_ago: number; // Разница в секундах, вычисленная на сервере
 }
 
 export function useSessions() {
-  const [sessions, setSessions] = useState<Session[]>([])
-  const [isLoading, setIsLoading] = useState(true)
-  const [error, setError] = useState('')
+  const [sessions, setSessions] = useState<Session[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState("");
 
   // Загрузка сессий
   const loadSessions = async () => {
     try {
-      const response = await apiService.getSessions()
+      const response = await apiService.getSessions();
 
       if (response.success && response.sessions) {
-        setSessions(response.sessions)
-        setError('')
+        setSessions(response.sessions);
+        setError("");
       } else {
-        setError(response.error || 'Failed to load sessions')
+        setError(response.error || "Failed to load sessions");
       }
-    } catch (error) {
-      setError('Network error')
+    } catch {
+      setError("Network error");
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
 
   useEffect(() => {
     // Загружаем список при монтировании
-    loadSessions()
+    loadSessions();
 
     // WebSocket: обновление списка сессий
     const handleSessionsUpdated = () => {
-      loadSessions()
-    }
+      loadSessions();
+    };
 
     // Подписываемся только на sessions:updated
-    socketService.onSessionsUpdated(handleSessionsUpdated)
+    socketService.onSessionsUpdated(handleSessionsUpdated);
 
     // Отписываемся при размонтировании
     return () => {
-      socketService.offSessionsUpdated(handleSessionsUpdated)
-    }
-  }, [])
+      socketService.offSessionsUpdated(handleSessionsUpdated);
+    };
+  }, []);
 
   return {
     sessions,
     isLoading,
     error,
     reload: loadSessions,
-  }
+  };
 }

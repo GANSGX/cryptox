@@ -42,12 +42,10 @@
   },
   "lint-staged": {
     "client/**/*.{ts,tsx}": [
-      "cd client && pnpm eslint --fix",
-      "cd client && pnpm prettier --write"
+      "prettier --write"
     ],
     "server/**/*.ts": [
-      "cd server && pnpm eslint --fix",
-      "cd server && pnpm prettier --write"
+      "prettier --write"
     ],
     "*.{json,md,yml,yaml}": [
       "prettier --write"

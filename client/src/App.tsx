@@ -1,101 +1,118 @@
-import { useEffect, useState } from 'react'
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
-import { useAuthStore } from '@/store/authStore'
-import { socketService } from '@/services/socket.service'
-import { apiService } from '@/services/api.service'
-import { Login } from '@/pages/Login'
-import { Chat } from '@/pages/Chat'
-import { ResetPassword } from '@/pages/ResetPassword'
-import { DeviceApprovalModal } from '@/components/auth/DeviceApprovalModal'
-import type { DeviceApprovalRequiredEvent } from '@/types/api.types'
-import '@/i18n/config'
-import '@/styles/index.css'
+import { useEffect, useState } from "react";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { useAuthStore } from "@/store/authStore";
+import { socketService } from "@/services/socket.service";
+import { apiService } from "@/services/api.service";
+import { Login } from "@/pages/Login";
+import { Chat } from "@/pages/Chat";
+import { ResetPassword } from "@/pages/ResetPassword";
+import { DeviceApprovalModal } from "@/components/auth/DeviceApprovalModal";
+import type { DeviceApprovalRequiredEvent } from "@/types/api.types";
+import "@/i18n/config";
+import "@/styles/index.css";
 
 function App() {
-  const { user, checkAuth, isLoading, logout } = useAuthStore()
-  const [deviceApprovalEvent, setDeviceApprovalEvent] = useState<DeviceApprovalRequiredEvent | null>(
-    null
-  )
+  const { user, checkAuth, isLoading, logout } = useAuthStore();
+  const [deviceApprovalEvent, setDeviceApprovalEvent] =
+    useState<DeviceApprovalRequiredEvent | null>(null);
 
   useEffect(() => {
-    checkAuth()
-  }, [checkAuth])
+    checkAuth();
+  }, [checkAuth]);
 
   // ГЛОБАЛЬНАЯ подписка на Socket.IO события
   useEffect(() => {
-    if (!user) return
+    if (!user) return;
 
-    console.log('🎯 App: Setting up global Socket.IO listeners for user:', user.username)
+    console.log(
+      "🎯 App: Setting up global Socket.IO listeners for user:",
+      user.username,
+    );
 
     // Глобальный обработчик: сессия завершена
-    const handleSessionTerminated = async (data: { sessionId: string; message: string }) => {
-      console.log('🚪 GLOBAL: Session terminated event received:', data.sessionId)
+    const handleSessionTerminated = async (data: {
+      sessionId: string;
+      message: string;
+    }) => {
+      console.log(
+        "🚪 GLOBAL: Session terminated event received:",
+        data.sessionId,
+      );
 
       try {
         // Проверяем список сессий
-        const response = await apiService.getSessions()
+        const response = await apiService.getSessions();
 
         if (response.success && response.sessions) {
-          const currentSession = response.sessions.find(s => s.is_current)
+          const currentSession = response.sessions.find((s) => s.is_current);
 
           // Если нашей текущей сессии нет в списке - нас выкинули!
           if (!currentSession) {
-            console.log('❌ Current session not found - logging out!')
+            console.log("❌ Current session not found - logging out!");
 
             // Устанавливаем красивое сообщение об ошибке
-            const errorMessage = data.message || 'Your session was terminated by the primary device'
+            const errorMessage =
+              data.message ||
+              "Your session was terminated by the primary device";
 
             // Очищаем все данные (токен, user, сессия)
-            await logout()
+            await logout();
 
             // После logout устанавливаем ошибку которая покажется на странице логина
             setTimeout(() => {
-              useAuthStore.setState({ error: errorMessage })
-            }, 100)
+              useAuthStore.setState({ error: errorMessage });
+            }, 100);
           } else {
-            console.log('✅ Current session still active')
+            console.log("✅ Current session still active");
           }
         }
-      } catch (error) {
-        console.error('Error checking sessions after termination:', error)
+      } catch (err) {
+        console.error("Error checking sessions after termination:", err);
         // Если ошибка при проверке сессий, значит токен невалиден - выкидываем
-        const errorMessage = data.message || 'Your session was terminated by the primary device'
-        await logout()
+        const errorMessage =
+          data.message || "Your session was terminated by the primary device";
+        await logout();
         setTimeout(() => {
-          useAuthStore.setState({ error: errorMessage })
-        }, 100)
+          useAuthStore.setState({ error: errorMessage });
+        }, 100);
       }
-    }
+    };
 
     // Обработчик: требуется подтверждение нового устройства (для primary device)
-    const handleDeviceApprovalRequired = (data: DeviceApprovalRequiredEvent) => {
-      console.log('🔔 GLOBAL: Device approval required:', data)
-      setDeviceApprovalEvent(data)
-    }
+    const handleDeviceApprovalRequired = (...args: unknown[]) => {
+      const data = args[0] as DeviceApprovalRequiredEvent;
+      console.log("🔔 GLOBAL: Device approval required:", data);
+      setDeviceApprovalEvent(data);
+    };
 
     // Подписываемся на события
-    socketService.onSessionTerminated(handleSessionTerminated)
-    socketService.on('device:approval_required', handleDeviceApprovalRequired)
+    socketService.onSessionTerminated(handleSessionTerminated);
+    socketService.on("device:approval_required", handleDeviceApprovalRequired);
 
     // Отписываемся при размонтировании или выходе
     return () => {
-      console.log('🔌 App: Cleaning up Socket.IO listeners')
-      socketService.offSessionTerminated(handleSessionTerminated)
-      socketService.off('device:approval_required', handleDeviceApprovalRequired)
-    }
-  }, [user, logout])
+      console.log("🔌 App: Cleaning up Socket.IO listeners");
+      socketService.offSessionTerminated(handleSessionTerminated);
+      socketService.off(
+        "device:approval_required",
+        handleDeviceApprovalRequired,
+      );
+    };
+  }, [user, logout]);
 
   if (isLoading) {
     return (
-      <div style={{ 
-        minHeight: '100vh', 
-        display: 'flex', 
-        alignItems: 'center', 
-        justifyContent: 'center' 
-      }}>
+      <div
+        style={{
+          minHeight: "100vh",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
         <div className="loading"></div>
       </div>
-    )
+    );
   }
 
   return (
@@ -110,7 +127,10 @@ function App() {
           path="/chat"
           element={user ? <Chat /> : <Navigate to="/login" replace />}
         />
-        <Route path="*" element={<Navigate to={user ? '/chat' : '/login'} replace />} />
+        <Route
+          path="*"
+          element={<Navigate to={user ? "/chat" : "/login"} replace />}
+        />
       </Routes>
 
       {/* Device Approval Modal (для primary device) */}
@@ -121,7 +141,7 @@ function App() {
         />
       )}
     </BrowserRouter>
-  )
+  );
 }
 
-export default App
+export default App;
