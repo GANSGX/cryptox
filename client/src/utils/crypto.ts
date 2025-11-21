@@ -1,16 +1,30 @@
 import nacl from "tweetnacl";
 
 // Utility functions для работы с Base64 и UTF8
+// Works in both browser and Node.js (including tests)
 function encodeBase64(arr: Uint8Array): string {
-  return btoa(String.fromCharCode.apply(null, Array.from(arr)));
+  if (typeof Buffer !== "undefined") {
+    // Node.js environment (including tests)
+    return Buffer.from(arr).toString("base64");
+  } else {
+    // Browser environment
+    return btoa(String.fromCharCode.apply(null, Array.from(arr)));
+  }
 }
 
 function decodeBase64(str: string): Uint8Array {
-  return Uint8Array.from(atob(str), (c) => c.charCodeAt(0));
+  if (typeof Buffer !== "undefined") {
+    // Node.js environment (including tests)
+    return new Uint8Array(Buffer.from(str, "base64"));
+  } else {
+    // Browser environment
+    return Uint8Array.from(atob(str), (c) => c.charCodeAt(0));
+  }
 }
 
 function encodeUTF8(str: string): Uint8Array {
-  return new TextEncoder().encode(str);
+  // Wrap in new Uint8Array to ensure it's the correct type in all contexts
+  return new Uint8Array(new TextEncoder().encode(str));
 }
 
 function decodeUTF8(arr: Uint8Array): string {

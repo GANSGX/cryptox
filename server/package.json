@@ -10,7 +10,11 @@
     "start": "node dist/server.js",
     "migrate": "tsx src/db/migrate.ts",
     "type-check": "tsc --noEmit",
-    "lint": "echo \"Lint not configured yet\""
+    "lint": "echo \"Lint not configured yet\"",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:ui": "vitest --ui",
+    "test:coverage": "vitest run --coverage"
   },
   "keywords": [
     "cryptox",
@@ -42,7 +46,9 @@
     "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "^24.7.2",
     "@types/pg": "^8.15.5",
+    "@vitest/ui": "^4.0.12",
     "tsx": "^4.20.6",
-    "typescript": "^5.9.3"
+    "typescript": "^5.9.3",
+    "vitest": "^4.0.12"
   }
 }
