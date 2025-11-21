@@ -1,0 +1,27 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+echo "🔍 Running pre-commit checks..."
+
+# Lint staged files
+pnpm exec lint-staged
+
+# Type check (client)
+echo "🔍 Type checking client..."
+cd client && pnpm tsc --noEmit
+if [ $? -ne 0 ]; then
+  echo "❌ Client type check failed!"
+  exit 1
+fi
+cd ..
+
+# Type check (server)
+echo "🔍 Type checking server..."
+cd server && pnpm tsc --noEmit
+if [ $? -ne 0 ]; then
+  echo "❌ Server type check failed!"
+  exit 1
+fi
+cd ..
+
+echo "✅ Pre-commit checks passed!"

@@ -61,3 +61,10 @@ media/
 ДИПЛОМНАЯ РАБОТА*.md
 defend.md
 test-primary-device.md
+TODO.md
+CLAUDE-INSTRUCTIONS.md
+MIGRATION-PLAN.md
+
+# Keep these MD files in git:
+# - README.md
+# - docs/*.md

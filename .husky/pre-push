@@ -1,0 +1,30 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+echo "🧪 Running pre-push checks..."
+
+# Run tests (when they exist)
+# Uncomment when tests are implemented:
+# pnpm test
+# if [ $? -ne 0 ]; then
+#   echo "❌ Tests failed!"
+#   exit 1
+# fi
+
+# Type check everything
+echo "🔍 Type checking..."
+pnpm type-check
+if [ $? -ne 0 ]; then
+  echo "❌ Type check failed!"
+  exit 1
+fi
+
+# Lint everything
+echo "🔍 Linting..."
+pnpm lint
+if [ $? -ne 0 ]; then
+  echo "❌ Lint failed!"
+  exit 1
+fi
+
+echo "✅ Pre-push checks passed! Safe to push."
