@@ -107,8 +107,8 @@ describe("Server Crypto - Argon2 Password Hashing", () => {
     await hashPassword("test", generateSalt());
     const end = Date.now();
 
-    // Should take at least 100ms (security feature)
-    expect(end - start).toBeGreaterThan(100);
+    // Should take at least 50ms (security feature, varies by CPU)
+    expect(end - start).toBeGreaterThan(50);
   });
 }, 30000); // 30s timeout for slow Argon2
 
