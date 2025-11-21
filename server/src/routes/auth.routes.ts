@@ -16,11 +16,13 @@ import type {
   RegisterResponse,
   LoginRequest,
   LoginResponse,
+  PendingLoginResponse,
   SendVerificationCodeRequest,
   VerifyEmailRequest,
   VerifyEmailResponse,
   ApiResponse
 } from '../types/api.types.js'
+import type { JwtPayload } from '../services/jwt.service.js'
 
 export async function authRoutes(fastify: FastifyInstance) {
 
@@ -364,7 +366,7 @@ export async function authRoutes(fastify: FastifyInstance) {
                   pending_session_id: pendingSessionId,
                   message: 'Device approval required. Check your primary device.',
                 },
-              })
+              } as any)
             }
 
             // Если была primary ИЛИ нет активной primary - делаем новую primary
@@ -517,7 +519,7 @@ export async function authRoutes(fastify: FastifyInstance) {
         [token]
       )
 
-      if (result.rowCount > 0) {
+      if (result.rowCount && result.rowCount > 0) {
         // Уведомляем все устройства пользователя об обновлении списка сессий
         if (fastify.io) {
           fastify.io.to(payload.username).emit('sessions:updated')

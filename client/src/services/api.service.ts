@@ -7,7 +7,6 @@ import type {
   SendMessageRequest,
   SendMessageResponse,
   GetMessagesResponse,
-  PendingLoginResponse,
   ApproveDeviceRequest,
   ApproveDeviceResponse,
   RejectDeviceRequest,

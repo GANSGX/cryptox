@@ -12,6 +12,7 @@ export interface RegisterRequest {
   email: string
   password: string
   public_key: string
+  deviceFingerprint?: string
 }
 
 export interface RegisterResponse {
@@ -28,6 +29,7 @@ export interface RegisterResponse {
 export interface LoginRequest {
   username: string
   password: string
+  deviceFingerprint?: string
 }
 
 export interface LoginResponse {
@@ -38,6 +40,9 @@ export interface LoginResponse {
     email_verified: boolean
     last_seen: string
   }
+  status?: 'pending_approval'
+  pending_session_id?: string
+  message?: string
 }
 
 // Типы для сообщений

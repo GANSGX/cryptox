@@ -54,8 +54,8 @@ export const useAuthStore = create<AuthState>((set, get) => ({
         console.log('🔒 Device approval required')
         set({
           pendingApproval: {
-            pending_session_id: response.data.pending_session_id,
-            message: response.data.message,
+            pending_session_id: response.data.pending_session_id || '',
+            message: response.data.message || 'Device approval required',
           },
           isLoading: false,
         })
