@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
+import { describe, it, expect, beforeEach, afterEach } from "vitest";
 import { cryptoService } from "./crypto.service";
 
 describe("CryptoService - Chat ID Creation", () => {
