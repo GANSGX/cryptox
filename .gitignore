@@ -1,5 +1,8 @@
 # Dependencies
 node_modules/
+# Only root lockfile is needed in workspace
+client/pnpm-lock.yaml
+server/pnpm-lock.yaml
 
 # Build output
 dist/
