@@ -8,7 +8,9 @@
     "dev": "tsx watch src/server.ts",
     "build": "tsc",
     "start": "node dist/server.js",
-    "migrate": "tsx src/db/migrate.ts"
+    "migrate": "tsx src/db/migrate.ts",
+    "type-check": "tsc --noEmit",
+    "lint": "echo \"Lint not configured yet\""
   },
   "keywords": [
     "cryptox",
