@@ -77,9 +77,10 @@ export async function authMiddleware(
     }
 
     // Добавляем данные пользователя в request
+    // Нормализуем к lowercase (БД constraint требует lowercase)
     request.user = {
-      username: payload.username,
-      email: payload.email,
+      username: payload.username.toLowerCase(),
+      email: payload.email.toLowerCase(),
     };
 
     // Обновляем last_active для текущей сессии (с debounce 30 секунд)
