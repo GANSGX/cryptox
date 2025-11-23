@@ -1,11 +1,9 @@
 import jwt from "jsonwebtoken";
-import { randomUUID } from "crypto";
 import { env } from "../config/env.js";
 
 export interface JwtPayload {
   username: string;
   email: string;
-  jti?: string; // JWT ID для уникальности
 }
 
 export class JwtService {
@@ -13,13 +11,7 @@ export class JwtService {
    * Генерация JWT токена
    */
   static generate(payload: JwtPayload): string {
-    // Добавляем уникальный jti чтобы каждый токен был уникальным
-    const payloadWithJti = {
-      ...payload,
-      jti: randomUUID(),
-    };
-
-    return jwt.sign(payloadWithJti, env.JWT_SECRET, {
+    return jwt.sign(payload, env.JWT_SECRET, {
       expiresIn: env.JWT_EXPIRES_IN,
     } as jwt.SignOptions);
   }
