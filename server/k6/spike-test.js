@@ -1,17 +1,22 @@
 /**
- * K6 SPIKE TEST
- * Цель: Внезапный ОГРОМНЫЙ скачок нагрузки (DDoS simulation)
+ * 🔥 EXTREME K6 SPIKE TEST (DDoS SIMULATION) 🔥
+ * Цель: Симуляция MASSIVE DDoS атаки - внезапный скачок до 50,000 users!
  *
- * Scenario:
- * - Нормальная нагрузка: 50 users (2 min)
- * - 🔥 SPIKE: 50 → 1000 users за 10 секунд!
- * - Удержание пика: 1000 users (1 min)
- * - Возврат к норме: 1000 → 50 users за 10 секунд
- * - Восстановление: 50 users (2 min)
+ * Scenario (Pentagon-level DDoS):
+ * - Нормальная нагрузка: 100 users (1 min)
+ * - 🔥 SPIKE 1: 100 → 10,000 users за 5 секунд! (Layer 7 DDoS)
+ * - Удержание: 10,000 users (30 sec)
+ * - 🔥🔥 SPIKE 2: 10,000 → 50,000 users за 10 секунд! (EXTREME DDoS)
+ * - Удержание пика: 50,000 users (1 min)
+ * - Быстрый drop: 50,000 → 100 users за 10 секунд
+ * - Восстановление: 100 users (2 min)
  *
- * Total: ~5 minutes
+ * Total: ~5.5 minutes
  *
- * Цель: Проверить как система реагирует на ВНЕЗАПНУЮ нагрузку
+ * Цель: Проверить:
+ * 1. Rate limiting работает при DDoS
+ * 2. Система не падает под massive concurrent load
+ * 3. Recovery time после атаки
  */
 
 import http from 'k6/http';
@@ -21,19 +26,22 @@ import { Rate, Counter } from 'k6/metrics';
 const errorRate = new Rate('errors');
 const spikeErrors = new Counter('spike_phase_errors');
 const recoverySuccess = new Counter('recovery_success');
+const rateLimitHits = new Counter('rate_limit_429');
 
 export const options = {
   stages: [
-    { duration: '2m', target: 50 },      // Baseline
-    { duration: '10s', target: 1000 },   // 🔥 SPIKE!
-    { duration: '1m', target: 1000 },    // Hold spike
-    { duration: '10s', target: 50 },     // Drop
-    { duration: '2m', target: 50 },      // Recovery
+    { duration: '1m', target: 100 },       // Baseline
+    { duration: '5s', target: 10000 },     // 🔥 SPIKE 1!
+    { duration: '30s', target: 10000 },    // Hold
+    { duration: '10s', target: 50000 },    // 🔥🔥 SPIKE 2 (EXTREME)!
+    { duration: '1m', target: 50000 },     // Hold extreme spike
+    { duration: '10s', target: 100 },      // Quick drop
+    { duration: '2m', target: 100 },       // Recovery
   ],
   thresholds: {
-    // Во время spike допускаем временные проблемы
-    http_req_duration: ['p(95)<3000'],
-    errors: ['rate<0.40'], // До 40% ошибок допустимо во время spike
+    // Во время DDoS spike допускаем сильную деградацию
+    http_req_duration: ['p(95)<10000'], // 10 sec timeout допустим
+    errors: ['rate<0.70'], // До 70% ошибок допустимо при DDoS (rate limiting должен работать!)
   },
 };
 

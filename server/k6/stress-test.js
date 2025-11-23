@@ -1,17 +1,18 @@
 /**
- * K6 STRESS TEST
- * Цель: НАЙТИ ПРЕДЕЛ СИСТЕМЫ! Нагружаем до тех пор пока не сломается
+ * 🔥 EXTREME K6 STRESS TEST 🔥
+ * Цель: НАЙТИ ПРЕДЕЛ СИСТЕМЫ! Нагружаем до BREAKING POINT
  *
- * Stages:
- * - 0 → 200 users (2 min)
- * - 200 → 500 users (3 min)
- * - 500 → 1000 users (3 min)
- * - 1000 → 1500 users (2 min) ← Ищем точку отказа
- * - 1500 → 0 users (2 min) ← Recovery
+ * Stages (Pentagon-level stress):
+ * - 0 → 1,000 users (2 min) - Warm up
+ * - 1,000 → 2,500 users (3 min) - Heavy load
+ * - 2,500 → 5,000 users (3 min) - Extreme load
+ * - 5,000 → 10,000 users (3 min) - BREAKING POINT
+ * - 10,000 → 15,000 users (2 min) - BEYOND LIMITS
+ * - 15,000 → 0 users (3 min) - Recovery
  *
- * Total: 12 minutes
+ * Total: 16 minutes
  *
- * Цель: Узнать при какой нагрузке система начинает падать
+ * Цель: Найти АБСОЛЮТНЫЙ ПРЕДЕЛ системы при 10,000+ concurrent users
  */
 
 import http from 'k6/http';
@@ -25,16 +26,17 @@ const authSuccess = new Counter('auth_success');
 
 export const options = {
   stages: [
-    { duration: '2m', target: 200 },
-    { duration: '3m', target: 500 },
-    { duration: '3m', target: 1000 },
-    { duration: '2m', target: 1500 },  // BREAKING POINT
-    { duration: '2m', target: 0 },     // Recovery
+    { duration: '2m', target: 1000 },   // Warm up
+    { duration: '3m', target: 2500 },   // Heavy load
+    { duration: '3m', target: 5000 },   // Extreme load
+    { duration: '3m', target: 10000 },  // BREAKING POINT
+    { duration: '2m', target: 15000 },  // BEYOND LIMITS
+    { duration: '3m', target: 0 },      // Recovery
   ],
   thresholds: {
     // Послабленные требования - хотим увидеть как система ломается
-    http_req_duration: ['p(95)<2000', 'p(99)<5000'], // Допускаем медленные ответы
-    errors: ['rate<0.30'], // До 30% ошибок допустимо при стресс-тесте
+    http_req_duration: ['p(95)<5000', 'p(99)<10000'], // Допускаем очень медленные ответы
+    errors: ['rate<0.50'], // До 50% ошибок допустимо при экстремальном стрессе
   },
 };
 
