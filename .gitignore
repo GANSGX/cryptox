@@ -67,6 +67,12 @@ TODO.md
 CLAUDE-INSTRUCTIONS.md
 MIGRATION-PLAN.md
 
+# Security reports (NEVER commit to git!)
+SECURITY_ISSUES.md
+SECURITY_FIXES.md
+security-report-*.md
+penetration-test-*.md
+
 # Keep these MD files in git:
 # - README.md
 # - docs/*.md
