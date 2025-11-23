@@ -70,6 +70,7 @@ MIGRATION-PLAN.md
 # Security reports (NEVER commit to git!)
 SECURITY_ISSUES.md
 SECURITY_FIXES.md
+ATTACK_TEST_COVERAGE.md
 security-report-*.md
 penetration-test-*.md
 
