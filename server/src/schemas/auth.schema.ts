@@ -3,9 +3,14 @@
  *
  * Strict validation schemas using Zod
  * Prevents ALL injection attacks at schema level
+ * + ReDoS protection with input length limits
  */
 
 import { z } from "zod";
+import {
+  REGEX_INPUT_LIMITS,
+  sanitizeForRegex,
+} from "../utils/redos-protection.js";
 
 // ============================================================================
 // USERNAME VALIDATION
@@ -21,10 +26,19 @@ import { z } from "zod";
 export const usernameSchema = z
   .string()
   .min(3, "Username must be at least 3 characters")
-  .max(30, "Username must be at most 30 characters")
-  .regex(
-    /^[a-z][a-z0-9_]*$/,
-    "Username must start with letter and contain only lowercase letters, numbers, and underscore",
+  .max(REGEX_INPUT_LIMITS.username, "Username too long") // ReDoS: limit length BEFORE regex
+  .transform((val) => sanitizeForRegex(val, REGEX_INPUT_LIMITS.username)) // ReDoS: sanitize input
+  .refine(
+    (val) => {
+      // Length check before regex (ReDoS protection)
+      if (val.length > REGEX_INPUT_LIMITS.username) return false;
+      // Safe regex pattern (no nested quantifiers)
+      return /^[a-z][a-z0-9_]*$/.test(val);
+    },
+    {
+      message:
+        "Username must start with letter and contain only lowercase letters, numbers, and underscore",
+    },
   )
   .refine(
     (val) => {
@@ -71,9 +85,18 @@ export const usernameSchema = z
  */
 export const emailSchema = z
   .string()
-  .email("Invalid email format")
-  .max(255, "Email too long")
+  .max(REGEX_INPUT_LIMITS.email, "Email too long") // ReDoS: limit length BEFORE regex
   .toLowerCase()
+  .transform((val) => sanitizeForRegex(val, REGEX_INPUT_LIMITS.email)) // ReDoS: sanitize
+  .refine(
+    (val) => {
+      // Length check (ReDoS protection)
+      if (val.length > REGEX_INPUT_LIMITS.email) return false;
+      // Simplified safe email pattern (no catastrophic backtracking)
+      return /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(val);
+    },
+    { message: "Invalid email format" },
+  )
   .refine(
     (val) => {
       // Block unusual characters that might be used in injection
@@ -119,7 +142,7 @@ export const emailSchema = z
 export const passwordSchema = z
   .string()
   .min(8, "Password must be at least 8 characters")
-  .max(128, "Password too long")
+  .max(REGEX_INPUT_LIMITS.password, "Password too long") // ReDoS: strict length limit
   .refine(
     (val) => {
       // Password can contain any characters (it will be hashed)

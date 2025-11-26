@@ -1,0 +1,1971 @@
+
+> @cryptox/server@0.1.0 test C:\Projects\cryptox\server
+> vitest run
+
+
+[1m[46m RUN [49m[22m [36mv4.0.12 [39m[90mC:/Projects/cryptox/server[39m
+
+[90mstdout[2m | src/test/unit/services/user.service.test.ts
+[22m[39m[dotenv@17.2.3] injecting env (10) from .env -- tip: ⚙️  specify custom .env file path with { path: '/custom/path/.env' }
+
+[90mstdout[2m | src/test/unit/services/jwt.service.test.ts
+[22m[39m[dotenv@17.2.3] injecting env (10) from .env -- tip: 📡 add observability to secrets: https://dotenvx.com/ops
+
+[90mstdout[2m | src/test/unit/services/user.service.test.ts[2m > [22m[2mUserService[2m > [22m[2musernameExists()[2m > [22m[2mshould return false for non-existent username
+[22m[39m✅ Connected to PostgreSQL
+
+[90mstdout[2m | src/test/unit/services/jwt.service.test.ts[2m > [22m[2mJwtService[2m > [22m[2mgenerate()[2m > [22m[2mshould generate valid JWT token
+[22m[39m{"level":"warn","message":"JWT_SECRET appears to be weak - please use a strong random secret","timestamp":"2025-11-26 20:57:01"}
+
+[90mstdout[2m | src/test/unit/services/jwt.service.test.ts[2m > [22m[2mJwtService[2m > [22m[2mgenerate()[2m > [22m[2mshould include username and email in token
+[22m[39m{"level":"warn","message":"JWT_SECRET appears to be weak - please use a strong random secret","timestamp":"2025-11-26 20:57:01"}
+
+[90mstdout[2m | src/test/unit/services/jwt.service.test.ts[2m > [22m[2mJwtService[2m > [22m[2mgenerate()[2m > [22m[2mshould include jti (unique ID) in token
+[22m[39m{"level":"warn","message":"JWT_SECRET appears to be weak - please use a strong random secret","timestamp":"2025-11-26 20:57:01"}
+{"level":"warn","message":"JWT_SECRET appears to be weak - please use a strong random secret","timestamp":"2025-11-26 20:57:01"}
+
+[90mstdout[2m | src/test/unit/services/jwt.service.test.ts[2m > [22m[2mJwtService[2m > [22m[2mgenerate()[2m > [22m[2mshould generate different tokens for same payload
+[22m[39m{"level":"warn","message":"JWT_SECRET appears to be weak - please use a strong random secret","timestamp":"2025-11-26 20:57:01"}
+{"level":"warn","message":"JWT_SECRET appears to be weak - please use a strong random secret","timestamp":"2025-11-26 20:57:01"}
+
+[90mstdout[2m | src/test/unit/services/jwt.service.test.ts[2m > [22m[2mJwtService[2m > [22m[2mgenerate()[2m > [22m[2mshould include expiration time (exp)
+[22m[39m{"level":"warn","message":"JWT_SECRET appears to be weak - please use a strong random secret","timestamp":"2025-11-26 20:57:01"}
+
+[90mstdout[2m | src/test/unit/services/jwt.service.test.ts[2m > [22m[2mJwtService[2m > [22m[2mgenerate()[2m > [22m[2mshould include issued at time (iat)
+[22m[39m{"level":"warn","message":"JWT_SECRET appears to be weak - please use a strong random secret","timestamp":"2025-11-26 20:57:01"}
+
+[90mstdout[2m | src/test/unit/services/jwt.service.test.ts[2m > [22m[2mJwtService[2m > [22m[2mverify()[2m > [22m[2mshould verify valid token
+[22m[39m{"level":"warn","message":"JWT_SECRET appears to be weak - please use a strong random secret","timestamp":"2025-11-26 20:57:01"}
+{"level":"warn","message":"JWT_SECRET appears to be weak - please use a strong random secret","timestamp":"2025-11-26 20:57:01"}
+
+[90mstdout[2m | src/test/unit/services/jwt.service.test.ts[2m > [22m[2mJwtService[2m > [22m[2mverify()[2m > [22m[2mshould return null for invalid token
+[22m[39m{"level":"warn","message":"JWT_SECRET appears to be weak - please use a strong random secret","timestamp":"2025-11-26 20:57:01"}
+{"level":"warn","message":"JWT verify: Invalid token header","timestamp":"2025-11-26 20:57:01"}
+
+[90mstdout[2m | src/test/unit/services/jwt.service.test.ts[2m > [22m[2mJwtService[2m > [22m[2mverify()[2m > [22m[2mshould return null for malformed token
+[22m[39m{"level":"warn","message":"JWT_SECRET appears to be weak - please use a strong random secret","timestamp":"2025-11-26 20:57:01"}
+{"level":"warn","message":"JWT verify: Token must have 3 parts","timestamp":"2025-11-26 20:57:01"}
+
+[90mstdout[2m | src/test/unit/services/jwt.service.test.ts[2m > [22m[2mJwtService[2m > [22m[2mverify()[2m > [22m[2mshould return null for tampered token
+[22m[39m{"level":"warn","message":"JWT_SECRET appears to be weak - please use a strong random secret","timestamp":"2025-11-26 20:57:01"}
+{"level":"warn","message":"JWT_SECRET appears to be weak - please use a strong random secret","timestamp":"2025-11-26 20:57:01"}
+{"error":"invalid signature","level":"warn","message":"JWT verify: Invalid token","timestamp":"2025-11-26 20:57:01"}
+
+[90mstdout[2m | src/test/unit/services/jwt.service.test.ts[2m > [22m[2mJwtService[2m > [22m[2mverify()[2m > [22m[2mshould return null for empty token
+[22m[39m{"level":"warn","message":"JWT_SECRET appears to be weak - please use a strong random secret","timestamp":"2025-11-26 20:57:01"}
+{"level":"warn","message":"JWT verify: Invalid token format","timestamp":"2025-11-26 20:57:01"}
+
+[90mstdout[2m | src/test/unit/services/jwt.service.test.ts[2m > [22m[2mJwtService[2m > [22m[2mdecode()[2m > [22m[2mshould decode valid token without verification
+[22m[39m{"level":"warn","message":"JWT_SECRET appears to be weak - please use a strong random secret","timestamp":"2025-11-26 20:57:01"}
+
+[90mstdout[2m | src/test/unit/services/jwt.service.test.ts[2m > [22m[2mJwtService[2m > [22m[2mdecode()[2m > [22m[2mshould decode expired token (without verification)
+[22m[39m{"level":"warn","message":"JWT_SECRET appears to be weak - please use a strong random secret","timestamp":"2025-11-26 20:57:01"}
+
+[90mstdout[2m | src/test/unit/services/jwt.service.test.ts[2m > [22m[2mJwtService[2m > [22m[2mSecurity[2m > [22m[2mshould not include sensitive data in payload
+[22m[39m{"level":"warn","message":"JWT_SECRET appears to be weak - please use a strong random secret","timestamp":"2025-11-26 20:57:01"}
+
+[90mstdout[2m | src/test/unit/services/jwt.service.test.ts[2m > [22m[2mJwtService[2m > [22m[2mSecurity[2m > [22m[2mshould sign tokens with secret
+[22m[39m{"level":"warn","message":"JWT_SECRET appears to be weak - please use a strong random secret","timestamp":"2025-11-26 20:57:01"}
+{"level":"warn","message":"JWT_SECRET appears to be weak - please use a strong random secret","timestamp":"2025-11-26 20:57:01"}
+
+[90mstdout[2m | src/test/unit/services/jwt.service.test.ts[2m > [22m[2mJwtService[2m > [22m[2mSecurity[2m > [22m[2mshould handle very long usernames
+[22m[39m{"level":"warn","message":"JWT_SECRET appears to be weak - please use a strong random secret","timestamp":"2025-11-26 20:57:01"}
+
+[90mstdout[2m | src/test/unit/services/jwt.service.test.ts[2m > [22m[2mJwtService[2m > [22m[2mSecurity[2m > [22m[2mshould handle unicode characters in username
+[22m[39m{"level":"warn","message":"JWT_SECRET appears to be weak - please use a strong random secret","timestamp":"2025-11-26 20:57:01"}
+
+ [32m✓[39m src/test/unit/services/jwt.service.test.ts [2m([22m[2m19 tests[22m[2m)[22m[32m 128[2mms[22m[39m
+[90mstdout[2m | src/test/security/dos-redis-disclosure-extreme.test.ts
+[22m[39m[dotenv@17.2.3] injecting env (10) from .env -- tip: 🛠️  run anywhere with `dotenvx run -- yourcommand`
+
+[90mstdout[2m | src/test/security/auth-extreme.test.ts
+[22m[39m[dotenv@17.2.3] injecting env (10) from .env -- tip: ⚙️  override existing env vars with { override: true }
+
+[90mstdout[2m | src/test/security/api-websocket-injection-extreme.test.ts
+[22m[39m[dotenv@17.2.3] injecting env (10) from .env -- tip: 🔑 add access controls to secrets: https://dotenvx.com/ops
+
+[90mstdout[2m | src/test/integration/auth.test.ts
+[22m[39m[dotenv@17.2.3] injecting env (10) from .env -- tip: ⚙️  suppress all logs with { quiet: true }
+
+[90mstdout[2m | src/test/fuzzing/auth-fuzzing.test.ts
+[22m[39m[dotenv@17.2.3] injecting env (10) from .env -- tip: 👥 sync secrets across teammates & machines: https://dotenvx.com/ops
+
+[90mstdout[2m | src/test/security/crypto-database-extreme.test.ts
+[22m[39m[dotenv@17.2.3] injecting env (10) from .env -- tip: 🔑 add access controls to secrets: https://dotenvx.com/ops
+
+[90mstdout[2m | src/test/integration/auth.advanced.test.ts
+[22m[39m[dotenv@17.2.3] injecting env (10) from .env -- tip: ⚙️  suppress all logs with { quiet: true }
+
+ [32m✓[39m src/utils/crypto.test.ts [2m([22m[2m32 tests[22m[2m)[22m[33m 1449[2mms[22m[39m
+     [33m[2m✓[22m[39m should produce different hashes for different salts [33m 437[2mms[22m[39m
+     [33m[2m✓[22m[39m should produce different hashes for different passwords [33m 348[2mms[22m[39m
+[90mstdout[2m | src/test/security/crypto-database-extreme.test.ts
+[22m[39m{"level":"info","message":"✅ Connected to Redis","timestamp":"2025-11-26 20:57:02"}
+
+[90mstdout[2m | src/test/security/crypto-database-extreme.test.ts
+[22m[39m{"level":"info","message":"✅ Redis is ready","timestamp":"2025-11-26 20:57:02"}
+
+[90mstdout[2m | src/test/integration/auth.test.ts
+[22m[39m{"level":"info","message":"✅ Connected to Redis","timestamp":"2025-11-26 20:57:02"}
+
+[90mstdout[2m | src/test/fuzzing/auth-fuzzing.test.ts
+[22m[39m{"level":"info","message":"✅ Connected to Redis","timestamp":"2025-11-26 20:57:02"}
+
+[90mstdout[2m | src/test/integration/auth.advanced.test.ts
+[22m[39m{"level":"info","message":"✅ Connected to Redis","timestamp":"2025-11-26 20:57:02"}
+
+[90mstdout[2m | src/test/security/auth-extreme.test.ts
+[22m[39m{"level":"info","message":"✅ Connected to Redis","timestamp":"2025-11-26 20:57:02"}
+
+[90mstdout[2m | src/test/security/dos-redis-disclosure-extreme.test.ts
+[22m[39m{"level":"info","message":"✅ Connected to Redis","timestamp":"2025-11-26 20:57:02"}
+
+[90mstdout[2m | src/test/integration/auth.test.ts
+[22m[39m{"level":"info","message":"✅ Redis is ready","timestamp":"2025-11-26 20:57:02"}
+
+[90mstdout[2m | src/test/fuzzing/auth-fuzzing.test.ts
+[22m[39m{"level":"info","message":"✅ Redis is ready","timestamp":"2025-11-26 20:57:02"}
+
+[90mstdout[2m | src/test/security/api-websocket-injection-extreme.test.ts
+[22m[39m{"level":"info","message":"✅ Connected to Redis","timestamp":"2025-11-26 20:57:02"}
+
+[90mstdout[2m | src/test/integration/auth.advanced.test.ts
+[22m[39m{"level":"info","message":"✅ Redis is ready","timestamp":"2025-11-26 20:57:02"}
+
+[90mstdout[2m | src/test/security/auth-extreme.test.ts
+[22m[39m{"level":"info","message":"✅ Redis is ready","timestamp":"2025-11-26 20:57:02"}
+
+[90mstdout[2m | src/test/security/dos-redis-disclosure-extreme.test.ts
+[22m[39m{"level":"info","message":"✅ Redis is ready","timestamp":"2025-11-26 20:57:02"}
+
+[90mstdout[2m | src/test/security/api-websocket-injection-extreme.test.ts
+[22m[39m{"level":"info","message":"✅ Redis is ready","timestamp":"2025-11-26 20:57:02"}
+
+(node:21344) [FSTDEP022] FastifyWarning: The router options for ignoreTrailingSlash property access is deprecated. Please use "options.routerOptions" instead for accessing router options. The router options will be removed in `fastify@6`.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:17744) [FSTDEP022] FastifyWarning: The router options for ignoreTrailingSlash property access is deprecated. Please use "options.routerOptions" instead for accessing router options. The router options will be removed in `fastify@6`.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:22460) [FSTDEP022] FastifyWarning: The router options for ignoreTrailingSlash property access is deprecated. Please use "options.routerOptions" instead for accessing router options. The router options will be removed in `fastify@6`.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:19304) [FSTDEP022] FastifyWarning: The router options for ignoreTrailingSlash property access is deprecated. Please use "options.routerOptions" instead for accessing router options. The router options will be removed in `fastify@6`.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:18492) [FSTDEP022] FastifyWarning: The router options for ignoreTrailingSlash property access is deprecated. Please use "options.routerOptions" instead for accessing router options. The router options will be removed in `fastify@6`.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:20668) [FSTDEP022] FastifyWarning: The router options for ignoreTrailingSlash property access is deprecated. Please use "options.routerOptions" instead for accessing router options. The router options will be removed in `fastify@6`.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:3028) [FSTDEP022] FastifyWarning: The router options for ignoreTrailingSlash property access is deprecated. Please use "options.routerOptions" instead for accessing router options. The router options will be removed in `fastify@6`.
+(Use `node --trace-warnings ...` to show where the warning was created)
+[90mstdout[2m | src/test/fuzzing/auth-fuzzing.test.ts[2m > [22m[2mAuth Fuzzing Tests[2m > [22m[2mRegistration Fuzzing[2m > [22m[2mshould handle random binary data
+[22m[39m✅ Connected to PostgreSQL
+
+[90mstdout[2m | src/test/integration/auth.test.ts[2m > [22m[2mAuth API - Integration & Security Tests[2m > [22m[2mPOST /api/auth/register - Registration[2m > [22m[2mshould register new user with valid data
+[22m[39m✅ Connected to PostgreSQL
+
+[90mstdout[2m | src/test/security/dos-redis-disclosure-extreme.test.ts[2m > [22m[2m🔥 EXTREME: DoS & Resource Exhaustion[2m > [22m[2mReDoS (Regular Expression DoS)[2m > [22m[2mshould have timeout for regex operations
+[22m[39m✅ Connected to PostgreSQL
+
+[90mstdout[2m | src/test/security/crypto-database-extreme.test.ts[2m > [22m[2m🔥 EXTREME: Cryptography Security[2m > [22m[2mArgon2id Timing Attacks[2m > [22m[2mshould have consistent timing for password verification (prevent timing attacks)
+[22m[39m✅ Connected to PostgreSQL
+
+[90mstdout[2m | src/test/security/auth-extreme.test.ts[2m > [22m[2m🔥 EXTREME: Authentication & Session Security[2m > [22m[2mJWT Manipulation & Bypass[2m > [22m[2mshould reject JWT with 'none' algorithm (CVE-2015-9235)
+[22m[39m✅ Connected to PostgreSQL
+
+[90mstdout[2m | src/test/security/api-websocket-injection-extreme.test.ts[2m > [22m[2m🔥 EXTREME: WebSocket Security[2m > [22m[2mWebSocket Hijacking[2m > [22m[2mshould require authentication for WebSocket connections
+[22m[39m✅ Connected to PostgreSQL
+
+[90mstdout[2m | src/test/integration/auth.advanced.test.ts[2m > [22m[2mAuth Advanced Security Tests[2m > [22m[2mDevice Approval Workflow[2m > [22m[2mshould create pending approval on first login from new device
+[22m[39m✅ Connected to PostgreSQL
+
+[90mstdout[2m | src/test/security/auth-extreme.test.ts[2m > [22m[2m🔥 EXTREME: Authentication & Session Security[2m > [22m[2mJWT Manipulation & Bypass[2m > [22m[2mshould reject JWT with tampered signature
+[22m[39m✅ Connected to PostgreSQL
+
+[90mstdout[2m | src/test/integration/auth.advanced.test.ts[2m > [22m[2mAuth Advanced Security Tests[2m > [22m[2mDevice Approval Workflow[2m > [22m[2mshould require approval from trusted device
+[22m[39m✅ Connected to PostgreSQL
+
+[90mstdout[2m | src/test/security/api-websocket-injection-extreme.test.ts[2m > [22m[2m🔥 EXTREME: WebSocket Security[2m > [22m[2mWebSocket Hijacking[2m > [22m[2mshould validate JWT on every WebSocket message
+[22m[39m✅ Connected to PostgreSQL
+
+[90mstdout[2m | src/test/unit/services/user.service.test.ts[2m > [22m[2mUserService[2m > [22m[2musernameExists()[2m > [22m[2mshould be case-insensitive
+[22m[39m✅ Connected to PostgreSQL
+
+[90mstdout[2m | src/test/fuzzing/auth-fuzzing.test.ts[2m > [22m[2mAuth Fuzzing Tests[2m > [22m[2mRegistration Fuzzing[2m > [22m[2mshould handle Unicode edge cases
+[22m[39m✅ Connected to PostgreSQL
+
+[90mstdout[2m | src/test/integration/auth.test.ts[2m > [22m[2mAuth API - Integration & Security Tests[2m > [22m[2mPOST /api/auth/register - Registration[2m > [22m[2mshould store auth_token in database (not plaintext password)
+[22m[39m✅ Connected to PostgreSQL
+
+[90mstdout[2m | src/test/security/crypto-database-extreme.test.ts[2m > [22m[2m🔥 EXTREME: Cryptography Security[2m > [22m[2mArgon2id Timing Attacks[2m > [22m[2mshould generate unique salts for each user
+[22m[39m✅ Connected to PostgreSQL
+
+[90mstderr[2m | src/test/security/crypto-database-extreme.test.ts[2m > [22m[2m🔥 EXTREME: Cryptography Security[2m > [22m[2mArgon2id Timing Attacks[2m > [22m[2mshould not store plaintext password anywhere
+[22m[39mWarning: Failed to truncate groups: deadlock detected
+
+[90mstderr[2m | src/test/security/crypto-database-extreme.test.ts[2m > [22m[2m🔥 EXTREME: Cryptography Security[2m > [22m[2mArgon2id Timing Attacks[2m > [22m[2mshould not store plaintext password anywhere
+[22m[39mWarning: Failed to truncate messages: deadlock detected
+
+[90mstdout[2m | src/test/security/crypto-database-extreme.test.ts[2m > [22m[2m🔥 EXTREME: Cryptography Security[2m > [22m[2mArgon2id Timing Attacks[2m > [22m[2mshould not store plaintext password anywhere
+[22m[39m✅ Connected to PostgreSQL
+
+[90mstdout[2m | src/test/security/dos-redis-disclosure-extreme.test.ts[2m > [22m[2m🔥 EXTREME: DoS & Resource Exhaustion[2m > [22m[2mCompression Attacks[2m > [22m[2mshould detect and reject zip bomb attempts
+[22m[39m✅ Connected to PostgreSQL
+
+[90mstdout[2m | src/test/security/crypto-database-extreme.test.ts[2m > [22m[2m🔥 EXTREME: Cryptography Security[2m > [22m[2mAES-GCM Encryption Security[2m > [22m[2mshould use unique IV/nonce for each encryption
+[22m[39m✅ Connected to PostgreSQL
+
+[90mstderr[2m | src/test/integration/auth.advanced.test.ts[2m > [22m[2mAuth Advanced Security Tests[2m > [22m[2mSession Management[2m > [22m[2mshould create session on successful login
+[22m[39mWarning: Failed to truncate groups: deadlock detected
+
+[90mstderr[2m | src/test/security/crypto-database-extreme.test.ts[2m > [22m[2m🔥 EXTREME: Cryptography Security[2m > [22m[2mAES-GCM Encryption Security[2m > [22m[2mshould use unique IV/nonce for each encryption
+[22m[39mWarning: Failed to truncate groups: deadlock detected
+
+[90mstdout[2m | src/test/security/crypto-database-extreme.test.ts[2m > [22m[2m🔥 EXTREME: Cryptography Security[2m > [22m[2mAES-GCM Encryption Security[2m > [22m[2mshould use unique IV/nonce for each encryption
+[22m[39m✅ Connected to PostgreSQL
+
+[90mstderr[2m | src/test/security/crypto-database-extreme.test.ts[2m > [22m[2m🔥 EXTREME: Cryptography Security[2m > [22m[2mAES-GCM Encryption Security[2m > [22m[2mshould use unique IV/nonce for each encryption
+[22m[39mWarning: Failed to truncate messages: deadlock detected
+
+[90mstdout[2m | src/test/integration/auth.test.ts[2m > [22m[2mAuth API - Integration & Security Tests[2m > [22m[2mPOST /api/auth/register - Registration[2m > [22m[2mshould reject invalid username format
+[22m[39m✅ Connected to PostgreSQL
+
+[90mstdout[2m | src/test/integration/auth.advanced.test.ts[2m > [22m[2mAuth Advanced Security Tests[2m > [22m[2mSession Management[2m > [22m[2mshould allow multiple active sessions per user
+[22m[39m✅ Connected to PostgreSQL
+
+[90mstderr[2m | src/test/security/api-websocket-injection-extreme.test.ts[2m > [22m[2m🔥 EXTREME: WebSocket Security
+[22m[39mWarning: Failed to truncate users: Cannot use a pool after calling end on the pool
+
+(node:3028) [FSTDEP022] FastifyWarning: The router options for ignoreTrailingSlash property access is deprecated. Please use "options.routerOptions" instead for accessing router options. The router options will be removed in `fastify@6`.
+(node:3028) [FSTDEP022] FastifyWarning: The router options for ignoreTrailingSlash property access is deprecated. Please use "options.routerOptions" instead for accessing router options. The router options will be removed in `fastify@6`.
+(node:3028) [FSTDEP022] FastifyWarning: The router options for ignoreTrailingSlash property access is deprecated. Please use "options.routerOptions" instead for accessing router options. The router options will be removed in `fastify@6`.
+(node:3028) [FSTDEP022] FastifyWarning: The router options for ignoreTrailingSlash property access is deprecated. Please use "options.routerOptions" instead for accessing router options. The router options will be removed in `fastify@6`.
+ [31m❯[39m src/test/security/api-websocket-injection-extreme.test.ts [2m([22m[2m31 tests[22m[2m | [22m[31m30 failed[39m[2m)[22m[33m 50124[2mms[22m[39m
+[31m       [31m×[31m should require authentication for WebSocket connections[39m[33m 10020[2mms[22m[39m
+[31m       [31m×[31m should validate JWT on every WebSocket message[39m[33m 10015[2mms[22m[39m
+       [33m[2m✓[22m[39m should prevent Cross-Site WebSocket Hijacking (CSWSH) [33m 9675[2mms[22m[39m
+[31m       [31m×[31m should rate limit WebSocket messages (prevent DoS)[39m[33m 10003[2mms[22m[39m
+[31m       [31m×[31m should not allow WebSocket message injection[39m[33m 10013[2mms[22m[39m
+[31m       [31m×[31m should prevent mass assignment of protected fields[39m[32m 1[2mms[22m[39m
+[31m       [31m×[31m should whitelist only allowed fields in API requests[39m[32m 1[2mms[22m[39m
+[31m       [31m×[31m should prevent accessing other users' data via ID[39m[32m 0[2mms[22m[39m
+[31m       [31m×[31m should use non-sequential IDs (prevent enumeration)[39m[32m 1[2mms[22m[39m
+[31m       [31m×[31m should handle duplicate parameters safely[39m[32m 0[2mms[22m[39m
+[31m       [31m×[31m should reject conflicting parameters[39m[32m 0[2mms[22m[39m
+[31m       [31m×[31m should enforce correct HTTP methods[39m[32m 0[2mms[22m[39m
+[31m       [31m×[31m should not allow bypass via X-HTTP-Method-Override[39m[32m 0[2mms[22m[39m
+[31m       [31m×[31m should validate Content-Type header[39m[32m 0[2mms[22m[39m
+[31m       [31m×[31m should not accept XML when expecting JSON[39m[32m 0[2mms[22m[39m
+[31m       [31m×[31m should sanitize XSS in username field[39m[32m 0[2mms[22m[39m
+[31m       [31m×[31m should sanitize XSS in search queries[39m[32m 0[2mms[22m[39m
+[31m       [31m×[31m should sanitize XSS in stored messages[39m[32m 0[2mms[22m[39m
+[31m       [31m×[31m should sanitize XSS in user bios[39m[32m 0[2mms[22m[39m
+[31m       [31m×[31m should not use eval() or similar dangerous functions[39m[32m 0[2mms[22m[39m
+[31m       [31m×[31m should prevent mXSS via HTML mutation[39m[32m 0[2mms[22m[39m
+[31m       [31m×[31m should block command injection in username[39m[32m 1[2mms[22m[39m
+[31m       [31m×[31m should not execute commands from user input[39m[32m 0[2mms[22m[39m
+[31m       [31m×[31m should block path traversal in filenames[39m[32m 0[2mms[22m[39m
+[31m       [31m×[31m should not expose .env or config files[39m[32m 1[2mms[22m[39m
+[31m       [31m×[31m should block NULL bytes in input[39m[32m 0[2mms[22m[39m
+[31m       [31m×[31m should block LDAP injection attempts[39m[32m 0[2mms[22m[39m
+[31m       [31m×[31m should block template injection payloads[39m[32m 0[2mms[22m[39m
+[31m       [31m×[31m should block CRLF injection in headers[39m[32m 1[2mms[22m[39m
+[31m       [31m×[31m should block XXE attacks[39m[32m 0[2mms[22m[39m
+[31m       [31m×[31m should sanitize log entries[39m[32m 0[2mms[22m[39m
+[90mstdout[2m | src/test/security/crypto-database-extreme.test.ts[2m > [22m[2m🔥 EXTREME: Cryptography Security[2m > [22m[2mAES-GCM Encryption Security[2m > [22m[2mshould reject tampered ciphertext (auth tag verification)
+[22m[39m✅ Connected to PostgreSQL
+
+[90mstderr[2m | src/test/security/crypto-database-extreme.test.ts[2m > [22m[2m🔥 EXTREME: Cryptography Security[2m > [22m[2mAES-GCM Encryption Security[2m > [22m[2mshould reject tampered ciphertext (auth tag verification)
+[22m[39mWarning: Failed to truncate groups: deadlock detected
+
+[90mstdout[2m | src/test/security/crypto-database-extreme.test.ts[2m > [22m[2m🔥 EXTREME: Cryptography Security[2m > [22m[2mAES-GCM Encryption Security[2m > [22m[2mshould reject tampered ciphertext (auth tag verification)
+[22m[39m✅ Connected to PostgreSQL
+
+[90mstderr[2m | src/test/security/dos-redis-disclosure-extreme.test.ts[2m > [22m[2m🔥 EXTREME: DoS & Resource Exhaustion[2m > [22m[2mSlowloris Attack[2m > [22m[2mshould timeout slow requests
+[22m[39mWarning: Failed to truncate groups: deadlock detected
+
+[90mstdout[2m | src/test/security/dos-redis-disclosure-extreme.test.ts[2m > [22m[2m🔥 EXTREME: DoS & Resource Exhaustion[2m > [22m[2mSlowloris Attack[2m > [22m[2mshould timeout slow requests
+[22m[39m✅ Connected to PostgreSQL
+
+(node:19304) [FSTDEP022] FastifyWarning: The router options for ignoreTrailingSlash property access is deprecated. Please use "options.routerOptions" instead for accessing router options. The router options will be removed in `fastify@6`.
+ [31m❯[39m src/test/security/crypto-database-extreme.test.ts [2m([22m[2m25 tests[22m[2m | [22m[31m22 failed[39m[2m)[22m[33m 96284[2mms[22m[39m
+[31m       [31m×[31m should have consistent timing for password verification (prevent timing attacks)[39m[33m 11239[2mms[22m[39m
+[31m       [31m×[31m should use sufficient Argon2 parameters (prevent brute force)[39m[33m 10016[2mms[22m[39m
+[31m       [31m×[31m should generate unique salts for each user[39m[33m 10003[2mms[22m[39m
+[31m       [31m×[31m should not store plaintext password anywhere[39m[33m 10012[2mms[22m[39m
+[31m       [31m×[31m should use unique IV/nonce for each encryption[39m[33m 10010[2mms[22m[39m
+[31m       [31m×[31m should reject tampered ciphertext (auth tag verification)[39m[33m 10001[2mms[22m[39m
+[31m       [31m×[31m should use 256-bit keys (AES-256)[39m[33m 10006[2mms[22m[39m
+       [33m[2m✓[22m[39m should prevent nonce reuse attack [33m 8221[2mms[22m[39m
+       [33m[2m✓[22m[39m should never expose encryption keys in API responses [33m 9154[2mms[22m[39m
+       [33m[2m✓[22m[39m should use cryptographically secure random for key generation [33m 7540[2mms[22m[39m
+[31m       [31m×[31m should block classic SQL injection[39m[32m 2[2mms[22m[39m
+[31m       [31m×[31m should block UNION-based SQL injection[39m[32m 1[2mms[22m[39m
+[31m       [31m×[31m should block blind SQL injection (boolean-based)[39m[32m 0[2mms[22m[39m
+[31m       [31m×[31m should block time-based blind SQL injection[39m[32m 0[2mms[22m[39m
+[31m       [31m×[31m should block second-order SQL injection[39m[32m 0[2mms[22m[39m
+[31m       [31m×[31m should use parameterized queries (not string concatenation)[39m[32m 0[2mms[22m[39m
+[31m       [31m×[31m should handle connection pool exhaustion[39m[32m 0[2mms[22m[39m
+[31m       [31m×[31m should prevent query bombing (heavy queries)[39m[32m 0[2mms[22m[39m
+[31m       [31m×[31m should limit result set size (prevent memory exhaustion)[39m[32m 0[2mms[22m[39m
+[31m       [31m×[31m should prevent privilege escalation via mass assignment[39m[32m 0[2mms[22m[39m
+[31m       [31m×[31m should not allow direct database manipulation via payloads[39m[32m 0[2mms[22m[39m
+[31m       [31m×[31m should not expose sensitive data in error messages[39m[32m 0[2mms[22m[39m
+[31m       [31m×[31m should not expose database version in headers[39m[32m 1[2mms[22m[39m
+[31m       [31m×[31m should not leak user existence through timing[39m[32m 0[2mms[22m[39m
+[31m       [31m×[31m should not expose backup files via web server[39m[32m 0[2mms[22m[39m
+[90mstdout[2m | src/test/security/auth-extreme.test.ts[2m > [22m[2m🔥 EXTREME: Authentication & Session Security[2m > [22m[2mTiming Attacks & Username Enumeration[2m > [22m[2mshould have consistent response time for existing vs non-existing users
+[22m[39m🔍 Login attempt: existinguser
+
+[90mstdout[2m | src/test/security/auth-extreme.test.ts[2m > [22m[2m🔥 EXTREME: Authentication & Session Security[2m > [22m[2mTiming Attacks & Username Enumeration[2m > [22m[2mshould have consistent response time for existing vs non-existing users
+[22m[39m📦 User from DB: not found
+
+[90mstdout[2m | src/test/security/auth-extreme.test.ts[2m > [22m[2m🔥 EXTREME: Authentication & Session Security[2m > [22m[2mTiming Attacks & Username Enumeration[2m > [22m[2mshould have consistent response time for existing vs non-existing users
+[22m[39m🔍 Login attempt: nonexistinguser
+
+[90mstdout[2m | src/test/security/auth-extreme.test.ts[2m > [22m[2m🔥 EXTREME: Authentication & Session Security[2m > [22m[2mTiming Attacks & Username Enumeration[2m > [22m[2mshould have consistent response time for existing vs non-existing users
+[22m[39m📦 User from DB: not found
+
+(node:17744) [FSTDEP022] FastifyWarning: The router options for ignoreTrailingSlash property access is deprecated. Please use "options.routerOptions" instead for accessing router options. The router options will be removed in `fastify@6`.
+(node:17744) [FSTDEP022] FastifyWarning: The router options for ignoreTrailingSlash property access is deprecated. Please use "options.routerOptions" instead for accessing router options. The router options will be removed in `fastify@6`.
+ [31m❯[39m src/test/security/dos-redis-disclosure-extreme.test.ts [2m([22m[2m29 tests[22m[2m | [22m[31m22 failed[39m[2m)[22m[33m 106037[2mms[22m[39m
+[31m       [31m×[31m should have timeout for regex operations[39m[33m 8202[2mms[22m[39m
+       [33m[2m✓[22m[39m should reject extremely large payloads [33m 9301[2mms[22m[39m
+       [33m[2m✓[22m[39m should handle deeply nested JSON [33m 9041[2mms[22m[39m
+[31m       [31m×[31m should limit array size in requests[39m[33m 10013[2mms[22m[39m
+[31m       [31m×[31m should detect and reject zip bomb attempts[39m[33m 10003[2mms[22m[39m
+[31m       [31m×[31m should prevent billion laughs (XML entity expansion)[39m[33m 10013[2mms[22m[39m
+[31m       [31m×[31m should timeout slow requests[39m[33m 10009[2mms[22m[39m
+       [33m[2m✓[22m[39m should limit concurrent connections per IP [33m 9901[2mms[22m[39m
+       [33m[2m✓[22m[39m should handle hash collision attacks [33m 7543[2mms[22m[39m
+       [33m[2m✓[22m[39m should rate limit excessive requests [33m 8117[2mms[22m[39m
+       [33m[2m✓[22m[39m should rate limit per IP (not globally) [33m 7600[2mms[22m[39m
+       [33m[2m✓[22m[39m should use sliding window for rate limiting [33m 6188[2mms[22m[39m
+[31m       [31m×[31m should not allow Redis command injection via keys[39m[32m 2[2mms[22m[39m
+[31m       [31m×[31m should sanitize Redis key names[39m[32m 1[2mms[22m[39m
+[31m       [31m×[31m should not expose Redis KEYS command[39m[32m 0[2mms[22m[39m
+[31m       [31m×[31m should set TTL on session keys (prevent memory leak)[39m[32m 0[2mms[22m[39m
+[31m       [31m×[31m should use password for Redis connection[39m[32m 0[2mms[22m[39m
+[31m       [31m×[31m should not expose stack traces in production[39m[32m 0[2mms[22m[39m
+[31m       [31m×[31m should not expose database errors[39m[32m 0[2mms[22m[39m
+[31m       [31m×[31m should use generic error messages[39m[32m 0[2mms[22m[39m
+[31m       [31m×[31m should not expose server version in headers[39m[32m 0[2mms[22m[39m
+[31m       [31m×[31m should not expose package.json[39m[32m 0[2mms[22m[39m
+[31m       [31m×[31m should not expose .git directory[39m[32m 0[2mms[22m[39m
+[31m       [31m×[31m should not expose .env files[39m[32m 0[2mms[22m[39m
+[31m       [31m×[31m should not expose backup files[39m[32m 0[2mms[22m[39m
+[31m       [31m×[31m should not expose debug endpoints in production[39m[32m 0[2mms[22m[39m
+[31m       [31m×[31m should not allow directory listing[39m[32m 0[2mms[22m[39m
+[31m       [31m×[31m should have constant-time string comparison for secrets[39m[32m 1[2mms[22m[39m
+[31m       [31m×[31m should not leak information via response time[39m[32m 0[2mms[22m[39m
+[90mstdout[2m | src/test/security/auth-extreme.test.ts[2m > [22m[2m🔥 EXTREME: Authentication & Session Security[2m > [22m[2mTiming Attacks & Username Enumeration[2m > [22m[2mshould not reveal if username exists in error messages
+[22m[39m🔍 Login attempt: alice
+
+[90mstdout[2m | src/test/security/auth-extreme.test.ts[2m > [22m[2m🔥 EXTREME: Authentication & Session Security[2m > [22m[2mTiming Attacks & Username Enumeration[2m > [22m[2mshould not reveal if username exists in error messages
+[22m[39m📦 User from DB: not found
+
+[90mstdout[2m | src/test/security/auth-extreme.test.ts[2m > [22m[2m🔥 EXTREME: Authentication & Session Security[2m > [22m[2mTiming Attacks & Username Enumeration[2m > [22m[2mshould not reveal if username exists in error messages
+[22m[39m🔍 Login attempt: bob
+
+[90mstdout[2m | src/test/security/auth-extreme.test.ts[2m > [22m[2m🔥 EXTREME: Authentication & Session Security[2m > [22m[2mTiming Attacks & Username Enumeration[2m > [22m[2mshould not reveal if username exists in error messages
+[22m[39m📦 User from DB: not found
+
+[90mstdout[2m | src/test/integration/auth.test.ts[2m > [22m[2mAuth API - Integration & Security Tests[2m > [22m[2mPOST /api/auth/login - Login[2m > [22m[2mshould login with correct credentials
+[22m[39m🔍 Login attempt: alice
+
+[90mstdout[2m | src/test/integration/auth.test.ts[2m > [22m[2mAuth API - Integration & Security Tests[2m > [22m[2mPOST /api/auth/login - Login[2m > [22m[2mshould login with correct credentials
+[22m[39m📦 User from DB: not found
+
+[90mstdout[2m | src/test/fuzzing/auth-fuzzing.test.ts[2m > [22m[2mAuth Fuzzing Tests[2m > [22m[2mJWT Fuzzing[2m > [22m[2mshould handle malformed JWT tokens
+[22m[39m{"level":"warn","message":"JWT_SECRET appears to be weak - please use a strong random secret","timestamp":"2025-11-26 20:58:59"}
+{"level":"warn","message":"JWT verify: Invalid token header","timestamp":"2025-11-26 20:58:59"}
+
+[90mstdout[2m | src/test/fuzzing/auth-fuzzing.test.ts[2m > [22m[2mAuth Fuzzing Tests[2m > [22m[2mJWT Fuzzing[2m > [22m[2mshould handle malformed JWT tokens
+[22m[39m{"level":"warn","message":"JWT_SECRET appears to be weak - please use a strong random secret","timestamp":"2025-11-26 20:58:59"}
+{"level":"warn","message":"JWT verify: Token must have 3 parts","timestamp":"2025-11-26 20:58:59"}
+
+[90mstdout[2m | src/test/fuzzing/auth-fuzzing.test.ts[2m > [22m[2mAuth Fuzzing Tests[2m > [22m[2mJWT Fuzzing[2m > [22m[2mshould handle malformed JWT tokens
+[22m[39m{"level":"warn","message":"JWT_SECRET appears to be weak - please use a strong random secret","timestamp":"2025-11-26 20:58:59"}
+{"level":"warn","message":"JWT verify: Invalid token format","timestamp":"2025-11-26 20:58:59"}
+
+[90mstdout[2m | src/test/fuzzing/auth-fuzzing.test.ts[2m > [22m[2mAuth Fuzzing Tests[2m > [22m[2mJWT Fuzzing[2m > [22m[2mshould handle malformed JWT tokens
+[22m[39m{"level":"warn","message":"JWT_SECRET appears to be weak - please use a strong random secret","timestamp":"2025-11-26 20:58:59"}
+{"level":"warn","message":"JWT verify: Token must have 3 parts","timestamp":"2025-11-26 20:58:59"}
+
+[90mstdout[2m | src/test/fuzzing/auth-fuzzing.test.ts[2m > [22m[2mAuth Fuzzing Tests[2m > [22m[2mJWT Fuzzing[2m > [22m[2mshould handle malformed JWT tokens
+[22m[39m{"level":"warn","message":"JWT_SECRET appears to be weak - please use a strong random secret","timestamp":"2025-11-26 20:58:59"}
+{"level":"warn","message":"JWT verify: Token must have 3 parts","timestamp":"2025-11-26 20:58:59"}
+
+[90mstdout[2m | src/test/fuzzing/auth-fuzzing.test.ts[2m > [22m[2mAuth Fuzzing Tests[2m > [22m[2mJWT Fuzzing[2m > [22m[2mshould handle malformed JWT tokens
+[22m[39m{"level":"warn","message":"JWT_SECRET appears to be weak - please use a strong random secret","timestamp":"2025-11-26 20:58:59"}
+{"level":"warn","message":"JWT verify: Token must have 3 parts","timestamp":"2025-11-26 20:58:59"}
+
+[90mstdout[2m | src/test/fuzzing/auth-fuzzing.test.ts[2m > [22m[2mAuth Fuzzing Tests[2m > [22m[2mJWT Fuzzing[2m > [22m[2mshould handle malformed JWT tokens
+[22m[39m{"level":"warn","message":"JWT_SECRET appears to be weak - please use a strong random secret","timestamp":"2025-11-26 20:58:59"}
+{"level":"warn","message":"JWT verify: Invalid token header","timestamp":"2025-11-26 20:58:59"}
+
+[90mstdout[2m | src/test/integration/auth.test.ts[2m > [22m[2mAuth API - Integration & Security Tests[2m > [22m[2mPOST /api/auth/login - Login[2m > [22m[2mshould reject wrong password with 401
+[22m[39m🔍 Login attempt: alice
+
+[90mstdout[2m | src/test/integration/auth.test.ts[2m > [22m[2mAuth API - Integration & Security Tests[2m > [22m[2mPOST /api/auth/login - Login[2m > [22m[2mshould reject wrong password with 401
+[22m[39m📦 User from DB: not found
+
+[90mstdout[2m | src/test/unit/services/user.service.test.ts[2m > [22m[2mUserService[2m > [22m[2mcreateUser()[2m > [22m[2mshould throw error for duplicate email
+[22m[39m✅ Connected to PostgreSQL
+
+[90mstdout[2m | src/test/fuzzing/auth-fuzzing.test.ts[2m > [22m[2mAuth Fuzzing Tests[2m > [22m[2mJWT Fuzzing[2m > [22m[2mshould handle extremely long JWT tokens
+[22m[39m{"level":"warn","message":"JWT_SECRET appears to be weak - please use a strong random secret","timestamp":"2025-11-26 20:59:05"}
+{"error":"Unexpected token '\u0000', \"\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\"... is not valid JSON","level":"error","message":"JWT verify: Unexpected error","timestamp":"2025-11-26 20:59:05"}
+
+[90mstdout[2m | src/test/integration/auth.test.ts[2m > [22m[2mAuth API - Integration & Security Tests[2m > [22m[2mPOST /api/auth/login - Login[2m > [22m[2mshould reject non-existent user with 401
+[22m[39m🔍 Login attempt: nonexistent
+
+[90mstdout[2m | src/test/integration/auth.test.ts[2m > [22m[2mAuth API - Integration & Security Tests[2m > [22m[2mPOST /api/auth/login - Login[2m > [22m[2mshould reject non-existent user with 401
+[22m[39m📦 User from DB: not found
+
+[90mstdout[2m | src/test/unit/services/user.service.test.ts[2m > [22m[2mUserService[2m > [22m[2mgetUserByUsername()[2m > [22m[2mshould return user for existing username
+[22m[39m✅ Connected to PostgreSQL
+
+[90mstdout[2m | src/test/integration/auth.test.ts[2m > [22m[2mAuth API - Integration & Security Tests[2m > [22m[2mPOST /api/auth/login - Login[2m > [22m[2mshould take similar time for invalid username and wrong password
+[22m[39m🔍 Login attempt: nonexistent
+
+[90mstdout[2m | src/test/integration/auth.test.ts[2m > [22m[2mAuth API - Integration & Security Tests[2m > [22m[2mPOST /api/auth/login - Login[2m > [22m[2mshould take similar time for invalid username and wrong password
+[22m[39m📦 User from DB: not found
+
+ [31m❯[39m src/test/fuzzing/auth-fuzzing.test.ts [2m([22m[2m17 tests[22m[2m | [22m[31m13 failed[39m[2m)[22m[33m 134690[2mms[22m[39m
+       [33m[2m✓[22m[39m should handle random binary data [33m 4586[2mms[22m[39m
+[31m       [31m×[31m should handle extremely long strings (buffer overflow attempt)[39m[33m 10006[2mms[22m[39m
+[31m       [31m×[31m should handle Unicode edge cases[39m[33m 9907[2mms[22m[39m
+[31m       [31m×[31m should handle malformed JSON[39m[33m 10012[2mms[22m[39m
+[31m       [31m×[31m should handle circular JSON references[39m[33m 10013[2mms[22m[39m
+[31m       [31m×[31m should handle deeply nested JSON (DoS attempt)[39m[33m 10004[2mms[22m[39m
+[31m       [31m×[31m should handle special JavaScript values[39m[33m 10004[2mms[22m[39m
+[31m       [31m×[31m should handle polyglot payloads (multi-language injection)[39m[33m 10015[2mms[22m[39m
+[31m       [31m×[31m should handle format string attacks[39m[33m 7430[2mms[22m[39m
+[31m       [31m×[31m should handle negative numbers and large integers[39m[33m 8879[2mms[22m[39m
+[31m       [31m×[31m should handle random credentials safely[39m[33m 7753[2mms[22m[39m
+[31m       [31m×[31m should handle control characters in credentials[39m[33m 6203[2mms[22m[39m
+       [33m[2m✓[22m[39m should handle very long credentials (memory exhaustion attempt) [33m 6864[2mms[22m[39m
+       [33m[2m✓[22m[39m should handle malformed JWT tokens [33m 5647[2mms[22m[39m
+       [33m[2m✓[22m[39m should handle extremely long JWT tokens [33m 5767[2mms[22m[39m
+[31m       [31m×[31m should handle malformed headers[39m[33m 5648[2mms[22m[39m
+[31m       [31m×[31m should handle various Content-Types safely[39m[33m 5896[2mms[22m[39m
+[90mstderr[2m | src/test/integration/auth.advanced.test.ts[2m > [22m[2mAuth Advanced Security Tests[2m > [22m[2mResource Exhaustion & DoS Protection[2m > [22m[2mshould reject extremely large payloads
+[22m[39mWarning: Failed to truncate messages: deadlock detected
+
+[90mstdout[2m | src/test/integration/auth.advanced.test.ts[2m > [22m[2mAuth Advanced Security Tests[2m > [22m[2mResource Exhaustion & DoS Protection[2m > [22m[2mshould reject extremely large payloads
+[22m[39m✅ Connected to PostgreSQL
+
+[90mstderr[2m | src/test/security/auth-extreme.test.ts[2m > [22m[2m🔥 EXTREME: Authentication & Session Security[2m > [22m[2mPassword Reset Security[2m > [22m[2mshould expire reset tokens after reasonable time
+[22m[39mWarning: Failed to truncate messages: deadlock detected
+
+[90mstdout[2m | src/test/security/auth-extreme.test.ts[2m > [22m[2m🔥 EXTREME: Authentication & Session Security[2m > [22m[2mPassword Reset Security[2m > [22m[2mshould expire reset tokens after reasonable time
+[22m[39m✅ Connected to PostgreSQL
+
+[90mstderr[2m | src/test/unit/services/user.service.test.ts[2m > [22m[2mUserService[2m > [22m[2mgetUserByUsername()[2m > [22m[2mshould be case-insensitive
+[22m[39mWarning: Failed to truncate messages: deadlock detected
+
+[90mstdout[2m | src/test/unit/services/user.service.test.ts[2m > [22m[2mUserService[2m > [22m[2mgetUserByUsername()[2m > [22m[2mshould be case-insensitive
+[22m[39m✅ Connected to PostgreSQL
+
+[90mstderr[2m | src/test/integration/auth.test.ts[2m > [22m[2mAuth API - Integration & Security Tests[2m > [22m[2mPOST /api/auth/login - Login[2m > [22m[2mshould reject missing password
+[22m[39mWarning: Failed to truncate messages: deadlock detected
+
+[90mstdout[2m | src/test/integration/auth.test.ts[2m > [22m[2mAuth API - Integration & Security Tests[2m > [22m[2mPOST /api/auth/login - Login[2m > [22m[2mshould reject missing password
+[22m[39m✅ Connected to PostgreSQL
+
+[90mstderr[2m | src/test/integration/auth.advanced.test.ts[2m > [22m[2mAuth Advanced Security Tests[2m > [22m[2mResource Exhaustion & DoS Protection[2m > [22m[2mshould handle deeply nested JSON
+[22m[39mWarning: Failed to truncate messages: deadlock detected
+
+[90mstdout[2m | src/test/integration/auth.advanced.test.ts[2m > [22m[2mAuth Advanced Security Tests[2m > [22m[2mResource Exhaustion & DoS Protection[2m > [22m[2mshould handle deeply nested JSON
+[22m[39m✅ Connected to PostgreSQL
+
+[90mstderr[2m | src/test/security/auth-extreme.test.ts[2m > [22m[2m🔥 EXTREME: Authentication & Session Security[2m > [22m[2mPassword Reset Security[2m > [22m[2mshould invalidate reset token after use
+[22m[39mWarning: Failed to truncate messages: deadlock detected
+
+[90mstdout[2m | src/test/security/auth-extreme.test.ts[2m > [22m[2m🔥 EXTREME: Authentication & Session Security[2m > [22m[2mPassword Reset Security[2m > [22m[2mshould invalidate reset token after use
+[22m[39m✅ Connected to PostgreSQL
+
+[90mstderr[2m | src/test/unit/services/user.service.test.ts[2m > [22m[2mUserService[2m > [22m[2mgetUserByUsername()[2m > [22m[2mshould not expose sensitive data in wrong places
+[22m[39mWarning: Failed to truncate messages: deadlock detected
+
+[90mstdout[2m | src/test/unit/services/user.service.test.ts[2m > [22m[2mUserService[2m > [22m[2mgetUserByUsername()[2m > [22m[2mshould not expose sensitive data in wrong places
+[22m[39m✅ Connected to PostgreSQL
+
+[90mstderr[2m | src/test/integration/auth.test.ts[2m > [22m[2mAuth API - Integration & Security Tests[2m > [22m[2mRate Limiting - DoS Protection[2m > [22m[2mshould allow 100 requests per minute (global)
+[22m[39mWarning: Failed to truncate messages: deadlock detected
+
+[90mstdout[2m | src/test/integration/auth.test.ts[2m > [22m[2mAuth API - Integration & Security Tests[2m > [22m[2mRate Limiting - DoS Protection[2m > [22m[2mshould allow 100 requests per minute (global)
+[22m[39m✅ Connected to PostgreSQL
+
+[90mstderr[2m | src/test/integration/auth.advanced.test.ts[2m > [22m[2mAuth Advanced Security Tests[2m > [22m[2mResource Exhaustion & DoS Protection[2m > [22m[2mshould handle very long password gracefully
+[22m[39mWarning: Failed to truncate messages: deadlock detected
+
+[90mstdout[2m | src/test/integration/auth.advanced.test.ts[2m > [22m[2mAuth Advanced Security Tests[2m > [22m[2mResource Exhaustion & DoS Protection[2m > [22m[2mshould handle very long password gracefully
+[22m[39m✅ Connected to PostgreSQL
+
+[90mstderr[2m | src/test/security/auth-extreme.test.ts[2m > [22m[2m🔥 EXTREME: Authentication & Session Security[2m > [22m[2mPassword Reset Security[2m > [22m[2mshould not reveal if email exists during password reset
+[22m[39mWarning: Failed to truncate messages: deadlock detected
+
+[90mstdout[2m | src/test/security/auth-extreme.test.ts[2m > [22m[2m🔥 EXTREME: Authentication & Session Security[2m > [22m[2mPassword Reset Security[2m > [22m[2mshould not reveal if email exists during password reset
+[22m[39m✅ Connected to PostgreSQL
+
+[90mstderr[2m | src/test/unit/services/user.service.test.ts[2m > [22m[2mUserService[2m > [22m[2mgetUserByEmail()[2m > [22m[2mshould return user for existing email
+[22m[39mWarning: Failed to truncate messages: deadlock detected
+
+[90mstdout[2m | src/test/unit/services/user.service.test.ts[2m > [22m[2mUserService[2m > [22m[2mgetUserByEmail()[2m > [22m[2mshould return user for existing email
+[22m[39m✅ Connected to PostgreSQL
+
+[90mstderr[2m | src/test/integration/auth.test.ts[2m > [22m[2mAuth API - Integration & Security Tests[2m > [22m[2mJWT Token Security[2m > [22m[2mshould reject invalid JWT format
+[22m[39mWarning: Failed to truncate messages: deadlock detected
+
+[90mstdout[2m | src/test/integration/auth.test.ts[2m > [22m[2mAuth API - Integration & Security Tests[2m > [22m[2mJWT Token Security[2m > [22m[2mshould reject invalid JWT format
+[22m[39m✅ Connected to PostgreSQL
+
+[90mstderr[2m | src/test/integration/auth.advanced.test.ts[2m > [22m[2mAuth Advanced Security Tests[2m > [22m[2mInformation Disclosure Prevention[2m > [22m[2mshould not reveal if username exists in error message
+[22m[39mWarning: Failed to truncate messages: deadlock detected
+
+[90mstdout[2m | src/test/integration/auth.advanced.test.ts[2m > [22m[2mAuth Advanced Security Tests[2m > [22m[2mInformation Disclosure Prevention[2m > [22m[2mshould not reveal if username exists in error message
+[22m[39m✅ Connected to PostgreSQL
+
+[90mstdout[2m | src/test/integration/auth.test.ts[2m > [22m[2mAuth API - Integration & Security Tests[2m > [22m[2mJWT Token Security[2m > [22m[2mshould reject invalid JWT format
+[22m[39m{"level":"warn","message":"JWT_SECRET appears to be weak - please use a strong random secret","timestamp":"2025-11-26 20:59:47"}
+{"level":"warn","message":"JWT verify: Invalid token header","timestamp":"2025-11-26 20:59:47"}
+
+[90mstderr[2m | src/test/security/auth-extreme.test.ts[2m > [22m[2m🔥 EXTREME: Authentication & Session Security[2m > [22m[2mAccount Takeover Prevention[2m > [22m[2mshould prevent account takeover via session hijacking
+[22m[39mWarning: Failed to truncate messages: deadlock detected
+
+[90mstdout[2m | src/test/security/auth-extreme.test.ts[2m > [22m[2m🔥 EXTREME: Authentication & Session Security[2m > [22m[2mAccount Takeover Prevention[2m > [22m[2mshould prevent account takeover via session hijacking
+[22m[39m✅ Connected to PostgreSQL
+
+[90mstderr[2m | src/test/unit/services/user.service.test.ts[2m > [22m[2mUserService[2m > [22m[2mgetUserByEmail()[2m > [22m[2mshould return null for non-existent email
+[22m[39mWarning: Failed to truncate messages: deadlock detected
+
+[90mstdout[2m | src/test/unit/services/user.service.test.ts[2m > [22m[2mUserService[2m > [22m[2mgetUserByEmail()[2m > [22m[2mshould return null for non-existent email
+[22m[39m✅ Connected to PostgreSQL
+
+[90mstderr[2m | src/test/integration/auth.test.ts[2m > [22m[2mAuth API - Integration & Security Tests[2m > [22m[2mJWT Token Security[2m > [22m[2mshould reject missing Bearer prefix
+[22m[39mWarning: Failed to truncate messages: deadlock detected
+
+[90mstdout[2m | src/test/integration/auth.test.ts[2m > [22m[2mAuth API - Integration & Security Tests[2m > [22m[2mJWT Token Security[2m > [22m[2mshould reject missing Bearer prefix
+[22m[39m✅ Connected to PostgreSQL
+
+[90mstderr[2m | src/test/integration/auth.advanced.test.ts[2m > [22m[2mAuth Advanced Security Tests[2m > [22m[2mInformation Disclosure Prevention[2m > [22m[2mshould not expose password hash in any response
+[22m[39mWarning: Failed to truncate messages: deadlock detected
+
+[90mstdout[2m | src/test/integration/auth.advanced.test.ts[2m > [22m[2mAuth Advanced Security Tests[2m > [22m[2mInformation Disclosure Prevention[2m > [22m[2mshould not expose password hash in any response
+[22m[39m✅ Connected to PostgreSQL
+
+[90mstderr[2m | src/test/security/auth-extreme.test.ts[2m > [22m[2m🔥 EXTREME: Authentication & Session Security[2m > [22m[2mAccount Takeover Prevention[2m > [22m[2mshould prevent account takeover via CSRF
+[22m[39mWarning: Failed to truncate messages: deadlock detected
+
+[90mstdout[2m | src/test/security/auth-extreme.test.ts[2m > [22m[2m🔥 EXTREME: Authentication & Session Security[2m > [22m[2mAccount Takeover Prevention[2m > [22m[2mshould prevent account takeover via CSRF
+[22m[39m✅ Connected to PostgreSQL
+
+[90mstderr[2m | src/test/unit/services/user.service.test.ts[2m > [22m[2mUserService[2m > [22m[2mgetUserByEmail()[2m > [22m[2mshould be case-insensitive
+[22m[39mWarning: Failed to truncate messages: deadlock detected
+
+[90mstdout[2m | src/test/unit/services/user.service.test.ts[2m > [22m[2mUserService[2m > [22m[2mgetUserByEmail()[2m > [22m[2mshould be case-insensitive
+[22m[39m✅ Connected to PostgreSQL
+
+[90mstderr[2m | src/test/integration/auth.test.ts[2m > [22m[2mAuth API - Integration & Security Tests[2m > [22m[2mJWT Token Security[2m > [22m[2mshould reject tampered JWT token
+[22m[39mWarning: Failed to truncate messages: deadlock detected
+
+[90mstdout[2m | src/test/integration/auth.test.ts[2m > [22m[2mAuth API - Integration & Security Tests[2m > [22m[2mJWT Token Security[2m > [22m[2mshould reject tampered JWT token
+[22m[39m✅ Connected to PostgreSQL
+
+[90mstderr[2m | src/test/integration/auth.advanced.test.ts[2m > [22m[2mAuth Advanced Security Tests[2m > [22m[2mInformation Disclosure Prevention[2m > [22m[2mshould not expose internal database IDs
+[22m[39mWarning: Failed to truncate messages: deadlock detected
+
+[90mstdout[2m | src/test/integration/auth.advanced.test.ts[2m > [22m[2mAuth Advanced Security Tests[2m > [22m[2mInformation Disclosure Prevention[2m > [22m[2mshould not expose internal database IDs
+[22m[39m✅ Connected to PostgreSQL
+
+[90mstderr[2m | src/test/security/auth-extreme.test.ts[2m > [22m[2m🔥 EXTREME: Authentication & Session Security[2m > [22m[2mAccount Takeover Prevention[2m > [22m[2mshould prevent account takeover via XSS → cookie theft
+[22m[39mWarning: Failed to truncate messages: deadlock detected
+
+[90mstdout[2m | src/test/security/auth-extreme.test.ts[2m > [22m[2m🔥 EXTREME: Authentication & Session Security[2m > [22m[2mAccount Takeover Prevention[2m > [22m[2mshould prevent account takeover via XSS → cookie theft
+[22m[39m✅ Connected to PostgreSQL
+
+[90mstderr[2m | src/test/unit/services/user.service.test.ts[2m > [22m[2mUserService[2m > [22m[2msearchUsers()[2m > [22m[2mshould find users by partial username
+[22m[39mWarning: Failed to truncate messages: deadlock detected
+
+[90mstdout[2m | src/test/unit/services/user.service.test.ts[2m > [22m[2mUserService[2m > [22m[2msearchUsers()[2m > [22m[2mshould find users by partial username
+[22m[39m✅ Connected to PostgreSQL
+
+[90mstderr[2m | src/test/integration/auth.test.ts[2m > [22m[2mAuth API - Integration & Security Tests[2m > [22m[2mJWT Token Security[2m > [22m[2mshould reject missing Authorization header
+[22m[39mWarning: Failed to truncate messages: deadlock detected
+
+[90mstdout[2m | src/test/integration/auth.test.ts[2m > [22m[2mAuth API - Integration & Security Tests[2m > [22m[2mJWT Token Security[2m > [22m[2mshould reject missing Authorization header
+[22m[39m✅ Connected to PostgreSQL
+
+[90mstderr[2m | src/test/integration/auth.advanced.test.ts[2m > [22m[2mAuth Advanced Security Tests[2m > [22m[2mSession Security[2m > [22m[2mshould generate new token on each login (session fixation prevention)
+[22m[39mWarning: Failed to truncate messages: deadlock detected
+
+[90mstdout[2m | src/test/integration/auth.advanced.test.ts[2m > [22m[2mAuth Advanced Security Tests[2m > [22m[2mSession Security[2m > [22m[2mshould generate new token on each login (session fixation prevention)
+[22m[39m✅ Connected to PostgreSQL
+
+[90mstderr[2m | src/test/security/auth-extreme.test.ts[2m > [22m[2m🔥 EXTREME: Authentication & Session Security[2m > [22m[2mAuthentication Bypass[2m > [22m[2mshould require authentication for protected endpoints
+[22m[39mWarning: Failed to truncate messages: deadlock detected
+
+[90mstdout[2m | src/test/security/auth-extreme.test.ts[2m > [22m[2m🔥 EXTREME: Authentication & Session Security[2m > [22m[2mAuthentication Bypass[2m > [22m[2mshould require authentication for protected endpoints
+[22m[39m✅ Connected to PostgreSQL
+
+[90mstderr[2m | src/test/unit/services/user.service.test.ts[2m > [22m[2mUserService[2m > [22m[2msearchUsers()[2m > [22m[2mshould find users by exact username
+[22m[39mWarning: Failed to truncate messages: deadlock detected
+
+[90mstdout[2m | src/test/unit/services/user.service.test.ts[2m > [22m[2mUserService[2m > [22m[2msearchUsers()[2m > [22m[2mshould find users by exact username
+[22m[39m✅ Connected to PostgreSQL
+
+[90mstderr[2m | src/test/integration/auth.test.ts[2m > [22m[2mAuth API - Integration & Security Tests[2m > [22m[2mAccess Control - Authorization[2m > [22m[2mshould allow authenticated user to access protected route
+[22m[39mWarning: Failed to truncate messages: deadlock detected
+
+[90mstdout[2m | src/test/integration/auth.test.ts[2m > [22m[2mAuth API - Integration & Security Tests[2m > [22m[2mAccess Control - Authorization[2m > [22m[2mshould allow authenticated user to access protected route
+[22m[39m✅ Connected to PostgreSQL
+
+[90mstderr[2m | src/test/integration/auth.advanced.test.ts[2m > [22m[2mAuth Advanced Security Tests[2m > [22m[2mSession Security[2m > [22m[2mshould not accept token from another user
+[22m[39mWarning: Failed to truncate messages: deadlock detected
+
+[90mstdout[2m | src/test/integration/auth.advanced.test.ts[2m > [22m[2mAuth Advanced Security Tests[2m > [22m[2mSession Security[2m > [22m[2mshould not accept token from another user
+[22m[39m✅ Connected to PostgreSQL
+
+[90mstderr[2m | src/test/security/auth-extreme.test.ts[2m > [22m[2m🔥 EXTREME: Authentication & Session Security[2m > [22m[2mAuthentication Bypass[2m > [22m[2mshould reject empty/malformed Authorization header
+[22m[39mWarning: Failed to truncate messages: deadlock detected
+
+[90mstdout[2m | src/test/security/auth-extreme.test.ts[2m > [22m[2m🔥 EXTREME: Authentication & Session Security[2m > [22m[2mAuthentication Bypass[2m > [22m[2mshould reject empty/malformed Authorization header
+[22m[39m✅ Connected to PostgreSQL
+
+[90mstderr[2m | src/test/unit/services/user.service.test.ts[2m > [22m[2mUserService[2m > [22m[2msearchUsers()[2m > [22m[2mshould return empty array for no matches
+[22m[39mWarning: Failed to truncate messages: deadlock detected
+
+[90mstdout[2m | src/test/unit/services/user.service.test.ts[2m > [22m[2mUserService[2m > [22m[2msearchUsers()[2m > [22m[2mshould return empty array for no matches
+[22m[39m✅ Connected to PostgreSQL
+
+[90mstdout[2m | src/test/security/auth-extreme.test.ts[2m > [22m[2m🔥 EXTREME: Authentication & Session Security[2m > [22m[2mAuthentication Bypass[2m > [22m[2mshould reject empty/malformed Authorization header
+[22m[39m{"level":"warn","message":"JWT_SECRET appears to be weak - please use a strong random secret","timestamp":"2025-11-26 21:00:23"}
+{"level":"warn","message":"JWT verify: Invalid token format","timestamp":"2025-11-26 21:00:23"}
+
+[90mstdout[2m | src/test/security/auth-extreme.test.ts[2m > [22m[2m🔥 EXTREME: Authentication & Session Security[2m > [22m[2mAuthentication Bypass[2m > [22m[2mshould reject empty/malformed Authorization header
+[22m[39m{"level":"warn","message":"JWT_SECRET appears to be weak - please use a strong random secret","timestamp":"2025-11-26 21:00:23"}
+{"level":"warn","message":"JWT verify: Token must have 3 parts","timestamp":"2025-11-26 21:00:23"}
+
+[90mstderr[2m | src/test/integration/auth.test.ts[2m > [22m[2mAuth API - Integration & Security Tests[2m > [22m[2mAccess Control - Authorization[2m > [22m[2mshould block unauthenticated user from protected route
+[22m[39mWarning: Failed to truncate messages: deadlock detected
+
+[90mstdout[2m | src/test/integration/auth.test.ts[2m > [22m[2mAuth API - Integration & Security Tests[2m > [22m[2mAccess Control - Authorization[2m > [22m[2mshould block unauthenticated user from protected route
+[22m[39m✅ Connected to PostgreSQL
+
+[90mstderr[2m | src/test/integration/auth.advanced.test.ts[2m > [22m[2mAuth Advanced Security Tests[2m > [22m[2mSession Security[2m > [22m[2mshould invalidate old token after password change
+[22m[39mWarning: Failed to truncate messages: deadlock detected
+
+[90mstdout[2m | src/test/integration/auth.advanced.test.ts[2m > [22m[2mAuth Advanced Security Tests[2m > [22m[2mSession Security[2m > [22m[2mshould invalidate old token after password change
+[22m[39m✅ Connected to PostgreSQL
+
+[90mstderr[2m | src/test/security/auth-extreme.test.ts[2m > [22m[2m🔥 EXTREME: Authentication & Session Security[2m > [22m[2mAuthentication Bypass[2m > [22m[2mshould not allow authentication bypass via parameter pollution
+[22m[39mWarning: Failed to truncate messages: deadlock detected
+
+[90mstdout[2m | src/test/security/auth-extreme.test.ts[2m > [22m[2m🔥 EXTREME: Authentication & Session Security[2m > [22m[2mAuthentication Bypass[2m > [22m[2mshould not allow authentication bypass via parameter pollution
+[22m[39m✅ Connected to PostgreSQL
+
+ [31m❯[39m src/test/integration/auth.advanced.test.ts [2m([22m[2m27 tests[22m[2m | [22m[31m18 failed[39m[2m | [22m[33m1 skipped[39m[2m)[22m[33m 207072[2mms[22m[39m
+[31m       [31m×[31m should create pending approval on first login from new device[39m[33m 10024[2mms[22m[39m
+       [33m[2m✓[22m[39m should require approval from trusted device [33m 9498[2mms[22m[39m
+       [33m[2m✓[22m[39m should reject login from blocked device [33m 8884[2mms[22m[39m
+[31m       [31m×[31m should limit number of pending approvals per user[39m[33m 10008[2mms[22m[39m
+[31m       [31m×[31m should create session on successful login[39m[33m 10005[2mms[22m[39m
+       [2m[90m↓[39m[22m should invalidate session on logout
+[31m       [31m×[31m should allow multiple active sessions per user[39m[33m 10005[2mms[22m[39m
+[31m       [31m×[31m should revoke all sessions on password change[39m[33m 10002[2mms[22m[39m
+[31m       [31m×[31m should handle concurrent registrations of same username[39m[33m 10004[2mms[22m[39m
+[31m       [31m×[31m should handle concurrent logins from same user[39m[33m 9086[2mms[22m[39m
+[31m       [31m×[31m should handle concurrent requests with same JWT token[39m[33m 7093[2mms[22m[39m
+       [33m[2m✓[22m[39m should block NoSQL injection attempts [33m 8332[2mms[22m[39m
+[31m       [31m×[31m should block LDAP injection in username[39m[33m 5181[2mms[22m[39m
+[31m       [31m×[31m should block command injection attempts[39m[33m 5805[2mms[22m[39m
+[31m       [31m×[31m should block path traversal in inputs[39m[33m 5776[2mms[22m[39m
+[31m       [31m×[31m should block NULL byte injection[39m[33m 5616[2mms[22m[39m
+[31m       [31m×[31m should block CRLF injection in headers[39m[33m 5808[2mms[22m[39m
+       [33m[2m✓[22m[39m should not allow setting admin role through registration [33m 5394[2mms[22m[39m
+[31m       [31m×[31m should reject extremely large payloads[39m[33m 6156[2mms[22m[39m
+       [33m[2m✓[22m[39m should handle deeply nested JSON [33m 7892[2mms[22m[39m
+[31m       [31m×[31m should handle very long password gracefully[39m[33m 7967[2mms[22m[39m
+       [33m[2m✓[22m[39m should not reveal if username exists in error message [33m 8077[2mms[22m[39m
+       [33m[2m✓[22m[39m should not expose password hash in any response [33m 8118[2mms[22m[39m
+[31m       [31m×[31m should not expose internal database IDs[39m[33m 8161[2mms[22m[39m
+[31m       [31m×[31m should generate new token on each login (session fixation prevention)[39m[33m 8111[2mms[22m[39m
+[31m       [31m×[31m should not accept token from another user[39m[33m 7988[2mms[22m[39m
+       [33m[2m✓[22m[39m should invalidate old token after password change [33m 8028[2mms[22m[39m
+[90mstderr[2m | src/test/security/auth-extreme.test.ts[2m > [22m[2m🔥 EXTREME: Authentication & Session Security[2m > [22m[2mMulti-Factor Authentication (MFA)[2m > [22m[2mshould support 2FA for additional security
+[22m[39mWarning: Failed to truncate messages: deadlock detected
+
+[90mstdout[2m | src/test/security/auth-extreme.test.ts[2m > [22m[2m🔥 EXTREME: Authentication & Session Security[2m > [22m[2mMulti-Factor Authentication (MFA)[2m > [22m[2mshould support 2FA for additional security
+[22m[39m✅ Connected to PostgreSQL
+
+[90mstderr[2m | src/test/security/auth-extreme.test.ts[2m > [22m[2m🔥 EXTREME: Authentication & Session Security[2m > [22m[2mMulti-Factor Authentication (MFA)[2m > [22m[2mshould prevent 2FA bypass attacks
+[22m[39mWarning: Failed to truncate messages: deadlock detected
+
+[90mstdout[2m | src/test/security/auth-extreme.test.ts[2m > [22m[2m🔥 EXTREME: Authentication & Session Security[2m > [22m[2mMulti-Factor Authentication (MFA)[2m > [22m[2mshould prevent 2FA bypass attacks
+[22m[39m✅ Connected to PostgreSQL
+
+ [31m❯[39m src/test/security/auth-extreme.test.ts [2m([22m[2m29 tests[22m[2m | [22m[31m16 failed[39m[2m)[22m[33m 223997[2mms[22m[39m
+[31m       [31m×[31m should reject JWT with 'none' algorithm (CVE-2015-9235)[39m[33m 10018[2mms[22m[39m
+[31m       [31m×[31m should reject JWT with tampered signature[39m[33m 8331[2mms[22m[39m
+[31m       [31m×[31m should reject JWT with tampered payload[39m[33m 9039[2mms[22m[39m
+[31m       [31m×[31m should reject JWT with weak/guessable secret[39m[33m 10004[2mms[22m[39m
+[31m       [31m×[31m should reject expired JWT tokens[39m[33m 10002[2mms[22m[39m
+[31m       [31m×[31m should reject JWT with future 'nbf' (not before) claim[39m[33m 10015[2mms[22m[39m
+[31m       [31m×[31m should reject JWT with missing required claims[39m[33m 10007[2mms[22m[39m
+[31m       [31m×[31m should generate different tokens for each login (prevent session fixation)[39m[33m 10010[2mms[22m[39m
+[31m       [31m×[31m should not accept token from another user (session hijacking)[39m[33m 9074[2mms[22m[39m
+       [33m[2m✓[22m[39m should invalidate token if user is deleted [33m 7003[2mms[22m[39m
+[31m       [31m×[31m should have consistent response time for existing vs non-existing users[39m[33m 9436[2mms[22m[39m
+[31m       [31m×[31m should not reveal if username exists in error messages[39m[33m 6615[2mms[22m[39m
+       [33m[2m✓[22m[39m should rate limit login attempts [33m 5757[2mms[22m[39m
+       [33m[2m✓[22m[39m should implement account lockout after N failed attempts [33m 5506[2mms[22m[39m
+[31m       [31m×[31m should detect and block credential stuffing attacks[39m[33m 5633[2mms[22m[39m
+       [33m[2m✓[22m[39m should generate cryptographically secure reset tokens [33m 5788[2mms[22m[39m
+       [33m[2m✓[22m[39m should have unpredictable reset tokens (no sequential pattern) [33m 5222[2mms[22m[39m
+       [33m[2m✓[22m[39m should expire reset tokens after reasonable time [33m 7188[2mms[22m[39m
+       [33m[2m✓[22m[39m should invalidate reset token after use [33m 7883[2mms[22m[39m
+       [33m[2m✓[22m[39m should not reveal if email exists during password reset [33m 8139[2mms[22m[39m
+[31m       [31m×[31m should prevent account takeover via session hijacking[39m[33m 8022[2mms[22m[39m
+       [33m[2m✓[22m[39m should prevent account takeover via CSRF [33m 8080[2mms[22m[39m
+[31m       [31m×[31m should prevent account takeover via XSS → cookie theft[39m[33m 8165[2mms[22m[39m
+       [33m[2m✓[22m[39m should require authentication for protected endpoints [33m 8071[2mms[22m[39m
+       [33m[2m✓[22m[39m should reject empty/malformed Authorization header [33m 8139[2mms[22m[39m
+[31m       [31m×[31m should not allow authentication bypass via parameter pollution[39m[33m 7096[2mms[22m[39m
+[31m       [31m×[31m should not allow SQL injection in authentication[39m[33m 4133[2mms[22m[39m
+       [33m[2m✓[22m[39m should support 2FA for additional security [33m 5687[2mms[22m[39m
+       [33m[2m✓[22m[39m should prevent 2FA bypass attacks [33m 5873[2mms[22m[39m
+ [31m❯[39m src/test/unit/services/user.service.test.ts [2m([22m[2m32 tests[22m[2m | [22m[31m6 failed[39m[2m)[22m[33m 233666[2mms[22m[39m
+       [33m[2m✓[22m[39m should return false for non-existent username [33m 2904[2mms[22m[39m
+[31m       [31m×[31m should return true for existing username[39m[33m 10010[2mms[22m[39m
+[31m       [31m×[31m should be case-insensitive[39m[33m 10002[2mms[22m[39m
+       [33m[2m✓[22m[39m should handle empty string [33m 11226[2mms[22m[39m
+[31m       [31m×[31m should handle very long username[39m[33m 10010[2mms[22m[39m
+[31m       [31m×[31m should handle special characters safely (no SQL injection)[39m[33m 10009[2mms[22m[39m
+[31m       [31m×[31m should return false for non-existent email[39m[33m 10012[2mms[22m[39m
+[31m       [31m×[31m should return true for existing email[39m[33m 10009[2mms[22m[39m
+       [33m[2m✓[22m[39m should be case-insensitive [33m 7978[2mms[22m[39m
+       [33m[2m✓[22m[39m should handle SQL injection attempts [33m 10427[2mms[22m[39m
+       [33m[2m✓[22m[39m should create user with valid data [33m 6539[2mms[22m[39m
+       [33m[2m✓[22m[39m should normalize username to lowercase [33m 7418[2mms[22m[39m
+       [33m[2m✓[22m[39m should normalize email to lowercase [33m 5748[2mms[22m[39m
+       [33m[2m✓[22m[39m should set default values [33m 5533[2mms[22m[39m
+       [33m[2m✓[22m[39m should throw error for duplicate username [33m 5849[2mms[22m[39m
+       [33m[2m✓[22m[39m should throw error for duplicate email [33m 5648[2mms[22m[39m
+       [33m[2m✓[22m[39m should return user for existing username [33m 5878[2mms[22m[39m
+       [33m[2m✓[22m[39m should return null for non-existent username [33m 5119[2mms[22m[39m
+       [33m[2m✓[22m[39m should be case-insensitive [33m 8055[2mms[22m[39m
+       [33m[2m✓[22m[39m should not expose sensitive data in wrong places [33m 7883[2mms[22m[39m
+       [33m[2m✓[22m[39m should return user for existing email [33m 8144[2mms[22m[39m
+       [33m[2m✓[22m[39m should return null for non-existent email [33m 8001[2mms[22m[39m
+       [33m[2m✓[22m[39m should be case-insensitive [33m 8232[2mms[22m[39m
+       [33m[2m✓[22m[39m should find users by partial username [33m 8077[2mms[22m[39m
+       [33m[2m✓[22m[39m should find users by exact username [33m 8052[2mms[22m[39m
+       [33m[2m✓[22m[39m should return empty array for no matches [33m 8089[2mms[22m[39m
+       [33m[2m✓[22m[39m should be case-insensitive [33m 5883[2mms[22m[39m
+       [33m[2m✓[22m[39m should respect limit parameter [33m 4841[2mms[22m[39m
+       [33m[2m✓[22m[39m should not return sensitive data [33m 5872[2mms[22m[39m
+       [33m[2m✓[22m[39m should handle SQL injection attempts safely [33m 5709[2mms[22m[39m
+       [33m[2m✓[22m[39m should update last_seen timestamp [33m 3043[2mms[22m[39m
+       [33m[2m✓[22m[39m should not throw error for non-existent user [33m 3460[2mms[22m[39m
+ [31m❯[39m src/test/integration/auth.test.ts [2m([22m[2m35 tests[22m[2m | [22m[31m23 failed[39m[2m | [22m[33m1 skipped[39m[2m)[22m[33m 236994[2mms[22m[39m
+[31m       [31m×[31m should register new user with valid data[39m[33m 6114[2mms[22m[39m
+[31m       [31m×[31m should return JWT token with correct structure[39m[33m 10013[2mms[22m[39m
+[31m       [31m×[31m should store auth_token in database (not plaintext password)[39m[33m 11269[2mms[22m[39m
+[31m       [31m×[31m should reject duplicate username with 409[39m[33m 9975[2mms[22m[39m
+[31m       [31m×[31m should reject duplicate email with 409[39m[33m 10008[2mms[22m[39m
+[31m       [31m×[31m should reject invalid username format[39m[33m 10015[2mms[22m[39m
+[31m       [31m×[31m should reject invalid email format[39m[33m 10007[2mms[22m[39m
+[31m       [31m×[31m should reject short password (< 8 chars)[39m[33m 9810[2mms[22m[39m
+[31m       [31m×[31m should reject missing fields[39m[33m 8366[2mms[22m[39m
+       [33m[2m✓[22m[39m should block SQL injection in username [33m 7209[2mms[22m[39m
+[31m       [31m×[31m should sanitize XSS in username[39m[33m 8073[2mms[22m[39m
+[31m       [31m×[31m should normalize email to lowercase[39m[33m 6292[2mms[22m[39m
+[31m       [31m×[31m should login with correct credentials[39m[33m 5671[2mms[22m[39m
+       [33m[2m✓[22m[39m should reject wrong password with 401 [33m 5619[2mms[22m[39m
+       [33m[2m✓[22m[39m should reject non-existent user with 401 [33m 5775[2mms[22m[39m
+       [33m[2m✓[22m[39m should take similar time for invalid username and wrong password [33m 5731[2mms[22m[39m
+[31m       [31m×[31m should block SQL injection in login[39m[33m 5686[2mms[22m[39m
+[31m       [31m×[31m should reject missing username[39m[33m 5050[2mms[22m[39m
+[31m       [31m×[31m should reject missing password[39m[33m 7948[2mms[22m[39m
+       [33m[2m✓[22m[39m should allow 100 requests per minute (global) [33m 7914[2mms[22m[39m
+       [2m[90m↓[39m[22m should block request 1001 with 429 (Too Many Requests)
+       [33m[2m✓[22m[39m should reject invalid JWT format [33m 8099[2mms[22m[39m
+[31m       [31m×[31m should reject missing Bearer prefix[39m[33m 7996[2mms[22m[39m
+[31m       [31m×[31m should reject tampered JWT token[39m[33m 8232[2mms[22m[39m
+       [33m[2m✓[22m[39m should reject missing Authorization header [33m 8082[2mms[22m[39m
+[31m       [31m×[31m should allow authenticated user to access protected route[39m[33m 8066[2mms[22m[39m
+       [33m[2m✓[22m[39m should block unauthenticated user from protected route [33m 8057[2mms[22m[39m
+[31m       [31m×[31m should handle malformed JSON payload[39m[33m 4940[2mms[22m[39m
+[31m       [31m×[31m should handle empty payload[39m[33m 5073[2mms[22m[39m
+[31m       [31m×[31m should handle very long username (DoS attempt)[39m[33m 5947[2mms[22m[39m
+[31m       [31m×[31m should handle unicode in username[39m[33m 5522[2mms[22m[39m
+[31m       [31m×[31m should handle null values[39m[33m 3649[2mms[22m[39m
+       [33m[2m✓[22m[39m should include security headers in response [33m 3003[2mms[22m[39m
+       [33m[2m✓[22m[39m should not expose server version [33m 1927[2mms[22m[39m
+       [33m[2m✓[22m[39m should not expose stack trace in error [33m 1811[2mms[22m[39m
+
+[31m⎯⎯⎯⎯⎯⎯[39m[1m[41m Failed Suites 7 [49m[22m[31m⎯⎯⎯⎯⎯⎯⎯[39m
+
+[41m[1m FAIL [22m[49m src/test/security/api-websocket-injection-extreme.test.ts[2m > [22m🔥 EXTREME: API Security
+[31m[1mError[22m: Called end on pool more than once[39m
+[90m [2m❯[22m BoundPool.end ../node_modules/.pnpm/pg-pool@3.10.1_pg@8.16.3/node_modules/pg-pool/index.js:[2m453:19[22m[39m
+[36m [2m❯[22m closeDatabase src/test/helpers/db.helper.ts:[2m89:14[22m[39m
+    [90m 87| [39m */[39m
+    [90m 88| [39m[35mexport[39m [35masync[39m [35mfunction[39m [34mcloseDatabase[39m()[33m:[39m [33mPromise[39m[33m<[39m[35mvoid[39m[33m>[39m {
+    [90m 89| [39m  [35mawait[39m pool[33m.[39m[34mend[39m()[33m;[39m
+    [90m   | [39m             [31m^[39m
+    [90m 90| [39m}
+    [90m 91| [39m
+[90m [2m❯[22m src/test/security/api-websocket-injection-extreme.test.ts:[2m101:11[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/157]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m src/test/security/api-websocket-injection-extreme.test.ts[2m > [22m🔥 EXTREME: XSS (Cross-Site Scripting)
+[31m[1mError[22m: Called end on pool more than once[39m
+[90m [2m❯[22m BoundPool.end ../node_modules/.pnpm/pg-pool@3.10.1_pg@8.16.3/node_modules/pg-pool/index.js:[2m453:19[22m[39m
+[36m [2m❯[22m closeDatabase src/test/helpers/db.helper.ts:[2m89:14[22m[39m
+    [90m 87| [39m */[39m
+    [90m 88| [39m[35mexport[39m [35masync[39m [35mfunction[39m [34mcloseDatabase[39m()[33m:[39m [33mPromise[39m[33m<[39m[35mvoid[39m[33m>[39m {
+    [90m 89| [39m  [35mawait[39m pool[33m.[39m[34mend[39m()[33m;[39m
+    [90m   | [39m             [31m^[39m
+    [90m 90| [39m}
+    [90m 91| [39m
+[90m [2m❯[22m src/test/security/api-websocket-injection-extreme.test.ts:[2m340:11[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/157]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m src/test/security/api-websocket-injection-extreme.test.ts[2m > [22m🔥 EXTREME: Command & Path Injection
+[31m[1mError[22m: Called end on pool more than once[39m
+[90m [2m❯[22m BoundPool.end ../node_modules/.pnpm/pg-pool@3.10.1_pg@8.16.3/node_modules/pg-pool/index.js:[2m453:19[22m[39m
+[36m [2m❯[22m closeDatabase src/test/helpers/db.helper.ts:[2m89:14[22m[39m
+    [90m 87| [39m */[39m
+    [90m 88| [39m[35mexport[39m [35masync[39m [35mfunction[39m [34mcloseDatabase[39m()[33m:[39m [33mPromise[39m[33m<[39m[35mvoid[39m[33m>[39m {
+    [90m 89| [39m  [35mawait[39m pool[33m.[39m[34mend[39m()[33m;[39m
+    [90m   | [39m             [31m^[39m
+    [90m 90| [39m}
+    [90m 91| [39m
+[90m [2m❯[22m src/test/security/api-websocket-injection-extreme.test.ts:[2m477:11[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/157]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m src/test/security/api-websocket-injection-extreme.test.ts[2m > [22m🔥 EXTREME: Advanced Injection Attacks
+[31m[1mError[22m: Called end on pool more than once[39m
+[90m [2m❯[22m BoundPool.end ../node_modules/.pnpm/pg-pool@3.10.1_pg@8.16.3/node_modules/pg-pool/index.js:[2m453:19[22m[39m
+[36m [2m❯[22m closeDatabase src/test/helpers/db.helper.ts:[2m89:14[22m[39m
+    [90m 87| [39m */[39m
+    [90m 88| [39m[35mexport[39m [35masync[39m [35mfunction[39m [34mcloseDatabase[39m()[33m:[39m [33mPromise[39m[33m<[39m[35mvoid[39m[33m>[39m {
+    [90m 89| [39m  [35mawait[39m pool[33m.[39m[34mend[39m()[33m;[39m
+    [90m   | [39m             [31m^[39m
+    [90m 90| [39m}
+    [90m 91| [39m
+[90m [2m❯[22m src/test/security/api-websocket-injection-extreme.test.ts:[2m615:11[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/157]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m src/test/security/crypto-database-extreme.test.ts[2m > [22m🔥 EXTREME: Database Security
+[31m[1mError[22m: Called end on pool more than once[39m
+[90m [2m❯[22m BoundPool.end ../node_modules/.pnpm/pg-pool@3.10.1_pg@8.16.3/node_modules/pg-pool/index.js:[2m453:19[22m[39m
+[36m [2m❯[22m closeDatabase src/test/helpers/db.helper.ts:[2m89:14[22m[39m
+    [90m 87| [39m */[39m
+    [90m 88| [39m[35mexport[39m [35masync[39m [35mfunction[39m [34mcloseDatabase[39m()[33m:[39m [33mPromise[39m[33m<[39m[35mvoid[39m[33m>[39m {
+    [90m 89| [39m  [35mawait[39m pool[33m.[39m[34mend[39m()[33m;[39m
+    [90m   | [39m             [31m^[39m
+    [90m 90| [39m}
+    [90m 91| [39m
+[90m [2m❯[22m src/test/security/crypto-database-extreme.test.ts:[2m295:11[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/157]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m src/test/security/dos-redis-disclosure-extreme.test.ts[2m > [22m🔥 EXTREME: Redis Security
+[31m[1mError[22m: Called end on pool more than once[39m
+[90m [2m❯[22m BoundPool.end ../node_modules/.pnpm/pg-pool@3.10.1_pg@8.16.3/node_modules/pg-pool/index.js:[2m453:19[22m[39m
+[36m [2m❯[22m closeDatabase src/test/helpers/db.helper.ts:[2m89:14[22m[39m
+    [90m 87| [39m */[39m
+    [90m 88| [39m[35mexport[39m [35masync[39m [35mfunction[39m [34mcloseDatabase[39m()[33m:[39m [33mPromise[39m[33m<[39m[35mvoid[39m[33m>[39m {
+    [90m 89| [39m  [35mawait[39m pool[33m.[39m[34mend[39m()[33m;[39m
+    [90m   | [39m             [31m^[39m
+    [90m 90| [39m}
+    [90m 91| [39m
+[90m [2m❯[22m src/test/security/dos-redis-disclosure-extreme.test.ts:[2m296:11[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/157]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m src/test/security/dos-redis-disclosure-extreme.test.ts[2m > [22m🔥 EXTREME: Information Disclosure
+[31m[1mError[22m: Called end on pool more than once[39m
+[90m [2m❯[22m BoundPool.end ../node_modules/.pnpm/pg-pool@3.10.1_pg@8.16.3/node_modules/pg-pool/index.js:[2m453:19[22m[39m
+[36m [2m❯[22m closeDatabase src/test/helpers/db.helper.ts:[2m89:14[22m[39m
+    [90m 87| [39m */[39m
+    [90m 88| [39m[35mexport[39m [35masync[39m [35mfunction[39m [34mcloseDatabase[39m()[33m:[39m [33mPromise[39m[33m<[39m[35mvoid[39m[33m>[39m {
+    [90m 89| [39m  [35mawait[39m pool[33m.[39m[34mend[39m()[33m;[39m
+    [90m   | [39m             [31m^[39m
+    [90m 90| [39m}
+    [90m 91| [39m
+[90m [2m❯[22m src/test/security/dos-redis-disclosure-extreme.test.ts:[2m391:11[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/157]⎯[22m[39m
+
+
+[31m⎯⎯⎯⎯⎯⎯[39m[1m[41m Failed Tests 150 [49m[22m[31m⎯⎯⎯⎯⎯⎯[39m
+
+[41m[1m FAIL [22m[49m src/test/fuzzing/auth-fuzzing.test.ts[2m > [22mAuth Fuzzing Tests[2m > [22mRegistration Fuzzing[2m > [22mshould handle extremely long strings (buffer overflow attempt)
+[41m[1m FAIL [22m[49m src/test/fuzzing/auth-fuzzing.test.ts[2m > [22mAuth Fuzzing Tests[2m > [22mRegistration Fuzzing[2m > [22mshould handle malformed JSON
+[41m[1m FAIL [22m[49m src/test/fuzzing/auth-fuzzing.test.ts[2m > [22mAuth Fuzzing Tests[2m > [22mRegistration Fuzzing[2m > [22mshould handle circular JSON references
+[41m[1m FAIL [22m[49m src/test/fuzzing/auth-fuzzing.test.ts[2m > [22mAuth Fuzzing Tests[2m > [22mRegistration Fuzzing[2m > [22mshould handle deeply nested JSON (DoS attempt)
+[41m[1m FAIL [22m[49m src/test/fuzzing/auth-fuzzing.test.ts[2m > [22mAuth Fuzzing Tests[2m > [22mRegistration Fuzzing[2m > [22mshould handle special JavaScript values
+[41m[1m FAIL [22m[49m src/test/fuzzing/auth-fuzzing.test.ts[2m > [22mAuth Fuzzing Tests[2m > [22mRegistration Fuzzing[2m > [22mshould handle polyglot payloads (multi-language injection)
+[31m[1mError[22m: Hook timed out in 10000ms.
+If this is a long-running hook, pass a timeout value as the last argument or configure it globally with "hookTimeout".[39m
+[36m [2m❯[22m src/test/fuzzing/auth-fuzzing.test.ts:[2m23:3[22m[39m
+    [90m 21| [39m  })[33m;[39m
+    [90m 22| [39m
+    [90m 23| [39m  [34mbeforeEach[39m([35masync[39m () [33m=>[39m {
+    [90m   | [39m  [31m^[39m
+    [90m 24| [39m    [35mawait[39m [34mclearDatabase[39m()[33m;[39m
+    [90m 25| [39m  })[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[8/157]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m src/test/fuzzing/auth-fuzzing.test.ts[2m > [22mAuth Fuzzing Tests[2m > [22mRegistration Fuzzing[2m > [22mshould handle Unicode edge cases
+[31m[1mAssertionError[22m: expected 500 not to be 500 // Object.is equality[39m
+[36m [2m❯[22m src/test/fuzzing/auth-fuzzing.test.ts:[2m97:41[22m[39m
+    [90m 95| [39m        })[33m;[39m
+    [90m 96| [39m
+    [90m 97| [39m        [34mexpect[39m(response[33m.[39mstatusCode)[33m.[39mnot[33m.[39m[34mtoBe[39m([34m500[39m)[33m;[39m
+    [90m   | [39m                                        [31m^[39m
+    [90m 98| [39m      }
+    [90m 99| [39m    })[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[9/157]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m src/test/fuzzing/auth-fuzzing.test.ts[2m > [22mAuth Fuzzing Tests[2m > [22mRegistration Fuzzing[2m > [22mshould handle format string attacks
+[31m[1mAssertionError[22m: expected 500 not to be 500 // Object.is equality[39m
+[36m [2m❯[22m src/test/fuzzing/auth-fuzzing.test.ts:[2m238:41[22m[39m
+    [90m236| [39m        })[33m;[39m
+    [90m237| [39m
+    [90m238| [39m        [34mexpect[39m(response[33m.[39mstatusCode)[33m.[39mnot[33m.[39m[34mtoBe[39m([34m500[39m)[33m;[39m
+    [90m   | [39m                                        [31m^[39m
+    [90m239| [39m      }
+    [90m240| [39m    })[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[10/157]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m src/test/fuzzing/auth-fuzzing.test.ts[2m > [22mAuth Fuzzing Tests[2m > [22mRegistration Fuzzing[2m > [22mshould handle negative numbers and large integers
+[31m[1mAssertionError[22m: expected 500 not to be 500 // Object.is equality[39m
+[36m [2m❯[22m src/test/fuzzing/auth-fuzzing.test.ts:[2m264:41[22m[39m
+    [90m262| [39m        })[33m;[39m
+    [90m263| [39m
+    [90m264| [39m        [34mexpect[39m(response[33m.[39mstatusCode)[33m.[39mnot[33m.[39m[34mtoBe[39m([34m500[39m)[33m;[39m
+    [90m   | [39m                                        [31m^[39m
+    [90m265| [39m      }
+    [90m266| [39m    })[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[11/157]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m src/test/fuzzing/auth-fuzzing.test.ts[2m > [22mAuth Fuzzing Tests[2m > [22mLogin Fuzzing[2m > [22mshould handle random credentials safely
+[31m[1mAssertionError[22m: expected 500 not to be 500 // Object.is equality[39m
+[36m [2m❯[22m src/test/fuzzing/auth-fuzzing.test.ts:[2m285:41[22m[39m
+    [90m283| [39m
+    [90m284| [39m        [90m// Не должно быть 500[39m
+    [90m285| [39m        [34mexpect[39m(response[33m.[39mstatusCode)[33m.[39mnot[33m.[39m[34mtoBe[39m([34m500[39m)[33m;[39m
+    [90m   | [39m                                        [31m^[39m
+    [90m286| [39m        [34mexpect[39m([[34m401[39m[33m,[39m [34m400[39m])[33m.[39m[34mtoContain[39m(response[33m.[39mstatusCode)[33m;[39m
+    [90m287| [39m      }
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[12/157]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m src/test/fuzzing/auth-fuzzing.test.ts[2m > [22mAuth Fuzzing Tests[2m > [22mLogin Fuzzing[2m > [22mshould handle control characters in credentials
+[31m[1mAssertionError[22m: expected 500 not to be 500 // Object.is equality[39m
+[36m [2m❯[22m src/test/fuzzing/auth-fuzzing.test.ts:[2m318:41[22m[39m
+    [90m316| [39m        })[33m;[39m
+    [90m317| [39m
+    [90m318| [39m        [34mexpect[39m(response[33m.[39mstatusCode)[33m.[39mnot[33m.[39m[34mtoBe[39m([34m500[39m)[33m;[39m
+    [90m   | [39m                                        [31m^[39m
+    [90m319| [39m      }
+    [90m320| [39m    })[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[13/157]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m src/test/fuzzing/auth-fuzzing.test.ts[2m > [22mAuth Fuzzing Tests[2m > [22mHTTP Header Fuzzing[2m > [22mshould handle malformed headers
+[31m[1mAssertionError[22m: expected 500 not to be 500 // Object.is equality[39m
+[36m [2m❯[22m src/test/fuzzing/auth-fuzzing.test.ts:[2m409:39[22m[39m
+    [90m407| [39m
+    [90m408| [39m      [90m// Не должно падать[39m
+    [90m409| [39m      [34mexpect[39m(response[33m.[39mstatusCode)[33m.[39mnot[33m.[39m[34mtoBe[39m([34m500[39m)[33m;[39m
+    [90m   | [39m                                      [31m^[39m
+    [90m410| [39m    })[33m;[39m
+    [90m411| [39m  })[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[14/157]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m src/test/fuzzing/auth-fuzzing.test.ts[2m > [22mAuth Fuzzing Tests[2m > [22mContent-Type Fuzzing[2m > [22mshould handle various Content-Types safely
+[31m[1mAssertionError[22m: expected 500 not to be 500 // Object.is equality[39m
+[36m [2m❯[22m src/test/fuzzing/auth-fuzzing.test.ts:[2m435:41[22m[39m
+    [90m433| [39m        })[33m;[39m
+    [90m434| [39m
+    [90m435| [39m        [34mexpect[39m(response[33m.[39mstatusCode)[33m.[39mnot[33m.[39m[34mtoBe[39m([34m500[39m)[33m;[39m
+    [90m   | [39m                                        [31m^[39m
+    [90m436| [39m      }
+    [90m437| [39m    })[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[15/157]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m src/test/integration/auth.advanced.test.ts[2m > [22mAuth Advanced Security Tests[2m > [22mDevice Approval Workflow[2m > [22mshould create pending approval on first login from new device
+[41m[1m FAIL [22m[49m src/test/integration/auth.advanced.test.ts[2m > [22mAuth Advanced Security Tests[2m > [22mDevice Approval Workflow[2m > [22mshould limit number of pending approvals per user
+[41m[1m FAIL [22m[49m src/test/integration/auth.advanced.test.ts[2m > [22mAuth Advanced Security Tests[2m > [22mSession Management[2m > [22mshould create session on successful login
+[41m[1m FAIL [22m[49m src/test/integration/auth.advanced.test.ts[2m > [22mAuth Advanced Security Tests[2m > [22mSession Management[2m > [22mshould allow multiple active sessions per user
+[41m[1m FAIL [22m[49m src/test/integration/auth.advanced.test.ts[2m > [22mAuth Advanced Security Tests[2m > [22mSession Management[2m > [22mshould revoke all sessions on password change
+[41m[1m FAIL [22m[49m src/test/integration/auth.advanced.test.ts[2m > [22mAuth Advanced Security Tests[2m > [22mRace Conditions & Concurrency[2m > [22mshould handle concurrent registrations of same username
+[31m[1mError[22m: Hook timed out in 10000ms.
+If this is a long-running hook, pass a timeout value as the last argument or configure it globally with "hookTimeout".[39m
+[36m [2m❯[22m src/test/integration/auth.advanced.test.ts:[2m36:3[22m[39m
+    [90m 34| [39m  })[33m;[39m
+    [90m 35| [39m
+    [90m 36| [39m  [34mbeforeEach[39m([35masync[39m () [33m=>[39m {
+    [90m   | [39m  [31m^[39m
+    [90m 37| [39m    [35mawait[39m [34mclearDatabase[39m()[33m;[39m
+    [90m 38| [39m  })[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[16/157]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m src/test/integration/auth.advanced.test.ts[2m > [22mAuth Advanced Security Tests[2m > [22mRace Conditions & Concurrency[2m > [22mshould handle concurrent logins from same user
+[31m[1mAssertionError[22m: expected 500 to be 200 // Object.is equality[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- 200[39m
+[31m+ 500[39m
+
+[36m [2m❯[22m src/test/integration/auth.advanced.test.ts:[2m233:44[22m[39m
+    [90m231| [39m      [90m// All should succeed (no race conditions)[39m
+    [90m232| [39m      results[33m.[39m[34mforEach[39m((result) [33m=>[39m {
+    [90m233| [39m        [34mexpect[39m(result[33m.[39mresponse[33m.[39mstatusCode)[33m.[39m[34mtoBe[39m([34m200[39m)[33m;[39m
+    [90m   | [39m                                           [31m^[39m
+    [90m234| [39m      })[33m;[39m
+    [90m235| [39m    })[33m;[39m
+[90m [2m❯[22m src/test/integration/auth.advanced.test.ts:[2m232:15[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[17/157]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m src/test/integration/auth.advanced.test.ts[2m > [22mAuth Advanced Security Tests[2m > [22mRace Conditions & Concurrency[2m > [22mshould handle concurrent requests with same JWT token
+[31m[1mError[22m: Failed to authenticate user[39m
+[36m [2m❯[22m createAuthenticatedUser src/test/helpers/user.helper.ts:[2m84:11[22m[39m
+    [90m 82| [39m
+    [90m 83| [39m  [35mif[39m ([33m![39muser[33m.[39mtoken) {
+    [90m 84| [39m    [35mthrow[39m [35mnew[39m [33mError[39m([32m"Failed to authenticate user"[39m)[33m;[39m
+    [90m   | [39m          [31m^[39m
+    [90m 85| [39m  }
+    [90m 86| [39m
+[90m [2m❯[22m src/test/integration/auth.advanced.test.ts:[2m238:20[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[18/157]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m src/test/integration/auth.advanced.test.ts[2m > [22mAuth Advanced Security Tests[2m > [22mAdvanced Attack Vectors[2m > [22mshould block LDAP injection in username
+[31m[1mAssertionError[22m: expected 500 to be 401 // Object.is equality[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- 401[39m
+[31m+ 500[39m
+
+[36m [2m❯[22m src/test/integration/auth.advanced.test.ts:[2m293:37[22m[39m
+    [90m291| [39m        })[33m;[39m
+    [90m292| [39m
+    [90m293| [39m        [34mexpect[39m(response[33m.[39mstatusCode)[33m.[39m[34mtoBe[39m([34m401[39m)[33m;[39m
+    [90m   | [39m                                    [31m^[39m
+    [90m294| [39m      }
+    [90m295| [39m    })[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[19/157]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m src/test/integration/auth.advanced.test.ts[2m > [22mAuth Advanced Security Tests[2m > [22mAdvanced Attack Vectors[2m > [22mshould block command injection attempts
+[31m[1mAssertionError[22m: expected 500 to be 400 // Object.is equality[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- 400[39m
+[31m+ 500[39m
+
+[36m [2m❯[22m src/test/integration/auth.advanced.test.ts:[2m318:37[22m[39m
+    [90m316| [39m        })[33m;[39m
+    [90m317| [39m
+    [90m318| [39m        [34mexpect[39m(response[33m.[39mstatusCode)[33m.[39m[34mtoBe[39m([34m400[39m)[33m;[39m
+    [90m   | [39m                                    [31m^[39m
+    [90m319| [39m      }
+    [90m320| [39m    })[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[20/157]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m src/test/integration/auth.advanced.test.ts[2m > [22mAuth Advanced Security Tests[2m > [22mAdvanced Attack Vectors[2m > [22mshould block path traversal in inputs
+[31m[1mAssertionError[22m: expected 500 to be 400 // Object.is equality[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- 400[39m
+[31m+ 500[39m
+
+[36m [2m❯[22m src/test/integration/auth.advanced.test.ts:[2m341:37[22m[39m
+    [90m339| [39m        })[33m;[39m
+    [90m340| [39m
+    [90m341| [39m        [34mexpect[39m(response[33m.[39mstatusCode)[33m.[39m[34mtoBe[39m([34m400[39m)[33m;[39m
+    [90m   | [39m                                    [31m^[39m
+    [90m342| [39m      }
+    [90m343| [39m    })[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[21/157]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m src/test/integration/auth.advanced.test.ts[2m > [22mAuth Advanced Security Tests[2m > [22mAdvanced Attack Vectors[2m > [22mshould block NULL byte injection
+[31m[1mAssertionError[22m: expected 500 to be 400 // Object.is equality[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- 400[39m
+[31m+ 500[39m
+
+[36m [2m❯[22m src/test/integration/auth.advanced.test.ts:[2m357:35[22m[39m
+    [90m355| [39m      })[33m;[39m
+    [90m356| [39m
+    [90m357| [39m      [34mexpect[39m(response[33m.[39mstatusCode)[33m.[39m[34mtoBe[39m([34m400[39m)[33m;[39m
+    [90m   | [39m                                  [31m^[39m
+    [90m358| [39m    })[33m;[39m
+    [90m359| [39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[22/157]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m src/test/integration/auth.advanced.test.ts[2m > [22mAuth Advanced Security Tests[2m > [22mAdvanced Attack Vectors[2m > [22mshould block CRLF injection in headers
+[31m[1mAssertionError[22m: expected 500 not to be 500 // Object.is equality[39m
+[36m [2m❯[22m src/test/integration/auth.advanced.test.ts:[2m380:39[22m[39m
+    [90m378| [39m      }
+    [90m379| [39m      [90m// If no set-cookie header, the attack failed anyway[39m
+    [90m380| [39m      expect(response.statusCode).not.toBe(500); // Server should hand…
+    [90m   | [39m                                      [31m^[39m
+    [90m381| [39m    })[33m;[39m
+    [90m382| [39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[23/157]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m src/test/integration/auth.advanced.test.ts[2m > [22mAuth Advanced Security Tests[2m > [22mResource Exhaustion & DoS Protection[2m > [22mshould reject extremely large payloads
+[31m[1mAssertionError[22m: expected 500 to be 400 // Object.is equality[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- 400[39m
+[31m+ 500[39m
+
+[36m [2m❯[22m src/test/integration/auth.advanced.test.ts:[2m426:35[22m[39m
+    [90m424| [39m
+    [90m425| [39m      [90m// Should reject large payload[39m
+    [90m426| [39m      [34mexpect[39m(response[33m.[39mstatusCode)[33m.[39m[34mtoBe[39m([34m400[39m)[33m;[39m
+    [90m   | [39m                                  [31m^[39m
+    [90m427| [39m    }[33m,[39m [34m10000[39m)[33m;[39m
+    [90m428| [39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[24/157]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m src/test/integration/auth.advanced.test.ts[2m > [22mAuth Advanced Security Tests[2m > [22mResource Exhaustion & DoS Protection[2m > [22mshould handle very long password gracefully
+[31m[1mAssertionError[22m: expected 500 to be 400 // Object.is equality[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- 400[39m
+[31m+ 500[39m
+
+[36m [2m❯[22m src/test/integration/auth.advanced.test.ts:[2m469:35[22m[39m
+    [90m467| [39m      [90m// Should reject quickly (not hash 100KB password)[39m
+    [90m468| [39m      [34mexpect[39m(duration)[33m.[39m[34mtoBeLessThan[39m([34m1000[39m)[33m;[39m
+    [90m469| [39m      [34mexpect[39m(response[33m.[39mstatusCode)[33m.[39m[34mtoBe[39m([34m400[39m)[33m;[39m
+    [90m   | [39m                                  [31m^[39m
+    [90m470| [39m    })[33m;[39m
+    [90m471| [39m  })[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[25/157]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m src/test/integration/auth.advanced.test.ts[2m > [22mAuth Advanced Security Tests[2m > [22mInformation Disclosure Prevention[2m > [22mshould not expose internal database IDs
+[31m[1mTypeError[22m: Cannot read properties of undefined (reading 'user')[39m
+[36m [2m❯[22m src/test/integration/auth.advanced.test.ts:[2m513:24[22m[39m
+    [90m511| [39m
+    [90m512| [39m      [90m// In our DB, username is the primary key (no auto-increment id)[39m
+    [90m513| [39m      [34mexpect[39m(body[33m.[39mdata[33m.[39muser[33m.[39musername)[33m.[39m[34mtoBeDefined[39m()[33m;[39m
+    [90m   | [39m                       [31m^[39m
+    [90m514| [39m      [34mexpect[39m(body[33m.[39mdata[33m.[39muser[33m.[39m_id)[33m.[39m[34mtoBeUndefined[39m()[33m;[39m
+    [90m515| [39m      [34mexpect[39m(body[33m.[39mdata[33m.[39muser[33m.[39mrow_id)[33m.[39m[34mtoBeUndefined[39m()[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[26/157]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m src/test/integration/auth.advanced.test.ts[2m > [22mAuth Advanced Security Tests[2m > [22mSession Security[2m > [22mshould generate new token on each login (session fixation prevention)
+[31m[1mAssertionError[22m: expected null not to be null // Object.is equality[39m
+[36m [2m❯[22m src/test/integration/auth.advanced.test.ts:[2m532:32[22m[39m
+    [90m530| [39m
+    [90m531| [39m      [90m// Tokens should be DIFFERENT[39m
+    [90m532| [39m      [34mexpect[39m(login1[33m.[39mtoken)[33m.[39mnot[33m.[39m[34mtoBe[39m(login2[33m.[39mtoken)[33m;[39m
+    [90m   | [39m                               [31m^[39m
+    [90m533| [39m    })[33m;[39m
+    [90m534| [39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[27/157]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m src/test/integration/auth.advanced.test.ts[2m > [22mAuth Advanced Security Tests[2m > [22mSession Security[2m > [22mshould not accept token from another user
+[31m[1mError[22m: Failed to authenticate user[39m
+[36m [2m❯[22m createAuthenticatedUser src/test/helpers/user.helper.ts:[2m84:11[22m[39m
+    [90m 82| [39m
+    [90m 83| [39m  [35mif[39m ([33m![39muser[33m.[39mtoken) {
+    [90m 84| [39m    [35mthrow[39m [35mnew[39m [33mError[39m([32m"Failed to authenticate user"[39m)[33m;[39m
+    [90m   | [39m          [31m^[39m
+    [90m 85| [39m  }
+    [90m 86| [39m
+[90m [2m❯[22m src/test/integration/auth.advanced.test.ts:[2m536:21[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[28/157]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m src/test/integration/auth.test.ts[2m > [22mAuth API - Integration & Security Tests[2m > [22mPOST /api/auth/register - Registration[2m > [22mshould register new user with valid data
+[31m[1mAssertionError[22m: expected 500 to be 201 // Object.is equality[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- 201[39m
+[31m+ 500[39m
+
+[36m [2m❯[22m src/test/integration/auth.test.ts:[2m66:35[22m[39m
+    [90m 64| [39m      })[33m;[39m
+    [90m 65| [39m
+    [90m 66| [39m      [34mexpect[39m(response[33m.[39mstatusCode)[33m.[39m[34mtoBe[39m([34m201[39m)[33m;[39m
+    [90m   | [39m                                  [31m^[39m
+    [90m 67| [39m
+    [90m 68| [39m      [35mconst[39m body [33m=[39m [33mJSON[39m[33m.[39m[34mparse[39m(response[33m.[39mbody)[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[29/157]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m src/test/integration/auth.test.ts[2m > [22mAuth API - Integration & Security Tests[2m > [22mPOST /api/auth/register - Registration[2m > [22mshould return JWT token with correct structure
+[41m[1m FAIL [22m[49m src/test/integration/auth.test.ts[2m > [22mAuth API - Integration & Security Tests[2m > [22mPOST /api/auth/register - Registration[2m > [22mshould reject duplicate email with 409
+[41m[1m FAIL [22m[49m src/test/integration/auth.test.ts[2m > [22mAuth API - Integration & Security Tests[2m > [22mPOST /api/auth/register - Registration[2m > [22mshould reject invalid username format
+[41m[1m FAIL [22m[49m src/test/integration/auth.test.ts[2m > [22mAuth API - Integration & Security Tests[2m > [22mPOST /api/auth/register - Registration[2m > [22mshould reject invalid email format
+[31m[1mError[22m: Hook timed out in 10000ms.
+If this is a long-running hook, pass a timeout value as the last argument or configure it globally with "hookTimeout".[39m
+[36m [2m❯[22m src/test/integration/auth.test.ts:[2m39:3[22m[39m
+    [90m 37| [39m  })[33m;[39m
+    [90m 38| [39m
+    [90m 39| [39m  [34mbeforeEach[39m([35masync[39m () [33m=>[39m {
+    [90m   | [39m  [31m^[39m
+    [90m 40| [39m    [35mawait[39m [34mclearDatabase[39m()[33m;[39m
+    [90m 41| [39m  })[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[30/157]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m src/test/integration/auth.test.ts[2m > [22mAuth API - Integration & Security Tests[2m > [22mPOST /api/auth/register - Registration[2m > [22mshould store auth_token in database (not plaintext password)
+[31m[1mTypeError[22m: Cannot read properties of null (reading 'auth_token')[39m
+[36m [2m❯[22m src/test/integration/auth.test.ts:[2m99:19[22m[39m
+    [90m 97| [39m      [35mconst[39m user [33m=[39m [35mawait[39m [34mgetUser[39m([32m"alice"[39m)[33m;[39m
+    [90m 98| [39m      // Password field doesn't exist in DB, we store auth_token inste…
+    [90m 99| [39m      [34mexpect[39m(user[33m.[39mauth_token)[33m.[39m[34mtoBeDefined[39m()[33m;[39m
+    [90m   | [39m                  [31m^[39m
+    [90m100| [39m      [34mexpect[39m(user[33m.[39mauth_token)[33m.[39mnot[33m.[39m[34mtoBe[39m([32m"myPassword123"[39m)[33m;[39m
+    [90m101| [39m      [34mexpect[39m(user[33m.[39msalt)[33m.[39m[34mtoBeDefined[39m()[33m;[39m [90m// Salt should exist[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[31/157]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m src/test/integration/auth.test.ts[2m > [22mAuth API - Integration & Security Tests[2m > [22mPOST /api/auth/register - Registration[2m > [22mshould reject duplicate username with 409
+[31m[1mAssertionError[22m: expected 500 to be 409 // Object.is equality[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- 409[39m
+[31m+ 500[39m
+
+[36m [2m❯[22m src/test/integration/auth.test.ts:[2m119:35[22m[39m
+    [90m117| [39m      })[33m;[39m
+    [90m118| [39m
+    [90m119| [39m      [34mexpect[39m(response[33m.[39mstatusCode)[33m.[39m[34mtoBe[39m([34m409[39m)[33m;[39m [90m// Conflict[39m
+    [90m   | [39m                                  [31m^[39m
+    [90m120| [39m      [35mconst[39m body [33m=[39m [33mJSON[39m[33m.[39m[34mparse[39m(response[33m.[39mbody)[33m;[39m
+    [90m121| [39m      [34mexpect[39m(body[33m.[39msuccess)[33m.[39m[34mtoBe[39m([35mfalse[39m)[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[32/157]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m src/test/integration/auth.test.ts[2m > [22mAuth API - Integration & Security Tests[2m > [22mPOST /api/auth/register - Registration[2m > [22mshould reject short password (< 8 chars)
+[31m[1mAssertionError[22m: expected 500 to be 400 // Object.is equality[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- 400[39m
+[31m+ 500[39m
+
+[36m [2m❯[22m src/test/integration/auth.test.ts:[2m202:35[22m[39m
+    [90m200| [39m      })[33m;[39m
+    [90m201| [39m
+    [90m202| [39m      [34mexpect[39m(response[33m.[39mstatusCode)[33m.[39m[34mtoBe[39m([34m400[39m)[33m;[39m
+    [90m   | [39m                                  [31m^[39m
+    [90m203| [39m    })[33m;[39m
+    [90m204| [39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[33/157]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m src/test/integration/auth.test.ts[2m > [22mAuth API - Integration & Security Tests[2m > [22mPOST /api/auth/register - Registration[2m > [22mshould reject missing fields
+[31m[1mAssertionError[22m: expected 500 to be 400 // Object.is equality[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- 400[39m
+[31m+ 500[39m
+
+[36m [2m❯[22m src/test/integration/auth.test.ts:[2m219:37[22m[39m
+    [90m217| [39m        })[33m;[39m
+    [90m218| [39m
+    [90m219| [39m        [34mexpect[39m(response[33m.[39mstatusCode)[33m.[39m[34mtoBe[39m([34m400[39m)[33m;[39m
+    [90m   | [39m                                    [31m^[39m
+    [90m220| [39m      }
+    [90m221| [39m    })[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[34/157]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m src/test/integration/auth.test.ts[2m > [22mAuth API - Integration & Security Tests[2m > [22mPOST /api/auth/register - Registration[2m > [22mshould sanitize XSS in username
+[31m[1mAssertionError[22m: expected 500 to be 400 // Object.is equality[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- 400[39m
+[31m+ 500[39m
+
+[36m [2m❯[22m src/test/integration/auth.test.ts:[2m271:37[22m[39m
+    [90m269| [39m
+    [90m270| [39m        [90m// Should be rejected by validation[39m
+    [90m271| [39m        [34mexpect[39m(response[33m.[39mstatusCode)[33m.[39m[34mtoBe[39m([34m400[39m)[33m;[39m
+    [90m   | [39m                                    [31m^[39m
+    [90m272| [39m      }
+    [90m273| [39m    })[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[35/157]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m src/test/integration/auth.test.ts[2m > [22mAuth API - Integration & Security Tests[2m > [22mPOST /api/auth/register - Registration[2m > [22mshould normalize email to lowercase
+[31m[1mTypeError[22m: Cannot read properties of null (reading 'email')[39m
+[36m [2m❯[22m src/test/integration/auth.test.ts:[2m283:19[22m[39m
+    [90m281| [39m
+    [90m282| [39m      [35mconst[39m user [33m=[39m [35mawait[39m [34mgetUser[39m([32m"alice"[39m)[33m;[39m
+    [90m283| [39m      [34mexpect[39m(user[33m.[39memail)[33m.[39m[34mtoBe[39m([32m"alice@example.com"[39m)[33m;[39m
+    [90m   | [39m                  [31m^[39m
+    [90m284| [39m    })[33m;[39m
+    [90m285| [39m  })[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[36/157]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m src/test/integration/auth.test.ts[2m > [22mAuth API - Integration & Security Tests[2m > [22mPOST /api/auth/login - Login[2m > [22mshould login with correct credentials
+[31m[1mAssertionError[22m: expected 401 to be 200 // Object.is equality[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- 200[39m
+[31m+ 401[39m
+
+[36m [2m❯[22m src/test/integration/auth.test.ts:[2m304:35[22m[39m
+    [90m302| [39m      )[33m;[39m
+    [90m303| [39m
+    [90m304| [39m      [34mexpect[39m(response[33m.[39mstatusCode)[33m.[39m[34mtoBe[39m([34m200[39m)[33m;[39m
+    [90m   | [39m                                  [31m^[39m
+    [90m305| [39m      [35mconst[39m body [33m=[39m [33mJSON[39m[33m.[39m[34mparse[39m(response[33m.[39mbody)[33m;[39m
+    [90m306| [39m      [34mexpect[39m(body[33m.[39msuccess)[33m.[39m[34mtoBe[39m([35mtrue[39m)[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[37/157]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m src/test/integration/auth.test.ts[2m > [22mAuth API - Integration & Security Tests[2m > [22mPOST /api/auth/login - Login[2m > [22mshould block SQL injection in login
+[31m[1mAssertionError[22m: expected 500 to be 401 // Object.is equality[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- 401[39m
+[31m+ 500[39m
+
+[36m [2m❯[22m src/test/integration/auth.test.ts:[2m361:37[22m[39m
+    [90m359| [39m      [35mfor[39m ([35mconst[39m injection [35mof[39m sqlInjections) {
+    [90m360| [39m        const { response } = await loginUser(app, injection, "anything…
+    [90m361| [39m        [34mexpect[39m(response[33m.[39mstatusCode)[33m.[39m[34mtoBe[39m([34m401[39m)[33m;[39m
+    [90m   | [39m                                    [31m^[39m
+    [90m362| [39m      }
+    [90m363| [39m    })[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[38/157]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m src/test/integration/auth.test.ts[2m > [22mAuth API - Integration & Security Tests[2m > [22mPOST /api/auth/login - Login[2m > [22mshould reject missing username
+[31m[1mAssertionError[22m: expected 500 to be 400 // Object.is equality[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- 400[39m
+[31m+ 500[39m
+
+[36m [2m❯[22m src/test/integration/auth.test.ts:[2m373:35[22m[39m
+    [90m371| [39m      })[33m;[39m
+    [90m372| [39m
+    [90m373| [39m      [34mexpect[39m(response[33m.[39mstatusCode)[33m.[39m[34mtoBe[39m([34m400[39m)[33m;[39m
+    [90m   | [39m                                  [31m^[39m
+    [90m374| [39m    })[33m;[39m
+    [90m375| [39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[39/157]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m src/test/integration/auth.test.ts[2m > [22mAuth API - Integration & Security Tests[2m > [22mPOST /api/auth/login - Login[2m > [22mshould reject missing password
+[31m[1mAssertionError[22m: expected 500 to be 400 // Object.is equality[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- 400[39m
+[31m+ 500[39m
+
+[36m [2m❯[22m src/test/integration/auth.test.ts:[2m383:35[22m[39m
+    [90m381| [39m      })[33m;[39m
+    [90m382| [39m
+    [90m383| [39m      [34mexpect[39m(response[33m.[39mstatusCode)[33m.[39m[34mtoBe[39m([34m400[39m)[33m;[39m
+    [90m   | [39m                                  [31m^[39m
+    [90m384| [39m    })[33m;[39m
+    [90m385| [39m  })[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[40/157]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m src/test/integration/auth.test.ts[2m > [22mAuth API - Integration & Security Tests[2m > [22mJWT Token Security[2m > [22mshould reject missing Bearer prefix
+[31m[1mError[22m: Failed to authenticate user[39m
+[36m [2m❯[22m createAuthenticatedUser src/test/helpers/user.helper.ts:[2m84:11[22m[39m
+    [90m 82| [39m
+    [90m 83| [39m  [35mif[39m ([33m![39muser[33m.[39mtoken) {
+    [90m 84| [39m    [35mthrow[39m [35mnew[39m [33mError[39m([32m"Failed to authenticate user"[39m)[33m;[39m
+    [90m   | [39m          [31m^[39m
+    [90m 85| [39m  }
+    [90m 86| [39m
+[90m [2m❯[22m src/test/integration/auth.test.ts:[2m453:20[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[41/157]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m src/test/integration/auth.test.ts[2m > [22mAuth API - Integration & Security Tests[2m > [22mJWT Token Security[2m > [22mshould reject tampered JWT token
+[31m[1mError[22m: Failed to authenticate user[39m
+[36m [2m❯[22m createAuthenticatedUser src/test/helpers/user.helper.ts:[2m84:11[22m[39m
+    [90m 82| [39m
+    [90m 83| [39m  [35mif[39m ([33m![39muser[33m.[39mtoken) {
+    [90m 84| [39m    [35mthrow[39m [35mnew[39m [33mError[39m([32m"Failed to authenticate user"[39m)[33m;[39m
+    [90m   | [39m          [31m^[39m
+    [90m 85| [39m  }
+    [90m 86| [39m
+[90m [2m❯[22m src/test/integration/auth.test.ts:[2m467:20[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[42/157]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m src/test/integration/auth.test.ts[2m > [22mAuth API - Integration & Security Tests[2m > [22mAccess Control - Authorization[2m > [22mshould allow authenticated user to access protected route
+[31m[1mError[22m: Failed to authenticate user[39m
+[36m [2m❯[22m createAuthenticatedUser src/test/helpers/user.helper.ts:[2m84:11[22m[39m
+    [90m 82| [39m
+    [90m 83| [39m  [35mif[39m ([33m![39muser[33m.[39mtoken) {
+    [90m 84| [39m    [35mthrow[39m [35mnew[39m [33mError[39m([32m"Failed to authenticate user"[39m)[33m;[39m
+    [90m   | [39m          [31m^[39m
+    [90m 85| [39m  }
+    [90m 86| [39m
+[90m [2m❯[22m src/test/integration/auth.test.ts:[2m501:20[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[43/157]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m src/test/integration/auth.test.ts[2m > [22mAuth API - Integration & Security Tests[2m > [22mError Handling & Edge Cases[2m > [22mshould handle malformed JSON payload
+[31m[1mAssertionError[22m: expected 500 to be 400 // Object.is equality[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- 400[39m
+[31m+ 500[39m
+
+[36m [2m❯[22m src/test/integration/auth.test.ts:[2m540:35[22m[39m
+    [90m538| [39m      })[33m;[39m
+    [90m539| [39m
+    [90m540| [39m      [34mexpect[39m(response[33m.[39mstatusCode)[33m.[39m[34mtoBe[39m([34m400[39m)[33m;[39m
+    [90m   | [39m                                  [31m^[39m
+    [90m541| [39m    })[33m;[39m
+    [90m542| [39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[44/157]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m src/test/integration/auth.test.ts[2m > [22mAuth API - Integration & Security Tests[2m > [22mError Handling & Edge Cases[2m > [22mshould handle empty payload
+[31m[1mAssertionError[22m: expected 500 to be 400 // Object.is equality[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- 400[39m
+[31m+ 500[39m
+
+[36m [2m❯[22m src/test/integration/auth.test.ts:[2m550:35[22m[39m
+    [90m548| [39m      })[33m;[39m
+    [90m549| [39m
+    [90m550| [39m      [34mexpect[39m(response[33m.[39mstatusCode)[33m.[39m[34mtoBe[39m([34m400[39m)[33m;[39m
+    [90m   | [39m                                  [31m^[39m
+    [90m551| [39m    })[33m;[39m
+    [90m552| [39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[45/157]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m src/test/integration/auth.test.ts[2m > [22mAuth API - Integration & Security Tests[2m > [22mError Handling & Edge Cases[2m > [22mshould handle very long username (DoS attempt)
+[31m[1mAssertionError[22m: expected 500 to be 400 // Object.is equality[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- 400[39m
+[31m+ 500[39m
+
+[36m [2m❯[22m src/test/integration/auth.test.ts:[2m564:35[22m[39m
+    [90m562| [39m      })[33m;[39m
+    [90m563| [39m
+    [90m564| [39m      [34mexpect[39m(response[33m.[39mstatusCode)[33m.[39m[34mtoBe[39m([34m400[39m)[33m;[39m
+    [90m   | [39m                                  [31m^[39m
+    [90m565| [39m    })[33m;[39m
+    [90m566| [39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[46/157]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m src/test/integration/auth.test.ts[2m > [22mAuth API - Integration & Security Tests[2m > [22mError Handling & Edge Cases[2m > [22mshould handle unicode in username
+[31m[1mAssertionError[22m: expected 500 to be 400 // Object.is equality[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- 400[39m
+[31m+ 500[39m
+
+[36m [2m❯[22m src/test/integration/auth.test.ts:[2m579:35[22m[39m
+    [90m577| [39m
+    [90m578| [39m      [90m// Should be rejected (only alphanumeric + underscore allowed)[39m
+    [90m579| [39m      [34mexpect[39m(response[33m.[39mstatusCode)[33m.[39m[34mtoBe[39m([34m400[39m)[33m;[39m
+    [90m   | [39m                                  [31m^[39m
+    [90m580| [39m    })[33m;[39m
+    [90m581| [39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[47/157]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m src/test/integration/auth.test.ts[2m > [22mAuth API - Integration & Security Tests[2m > [22mError Handling & Edge Cases[2m > [22mshould handle null values
+[31m[1mAssertionError[22m: expected 500 to be 400 // Object.is equality[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- 400[39m
+[31m+ 500[39m
+
+[36m [2m❯[22m src/test/integration/auth.test.ts:[2m593:35[22m[39m
+    [90m591| [39m      })[33m;[39m
+    [90m592| [39m
+    [90m593| [39m      [34mexpect[39m(response[33m.[39mstatusCode)[33m.[39m[34mtoBe[39m([34m400[39m)[33m;[39m
+    [90m   | [39m                                  [31m^[39m
+    [90m594| [39m    })[33m;[39m
+    [90m595| [39m  })[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[48/157]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m src/test/security/api-websocket-injection-extreme.test.ts[2m > [22m🔥 EXTREME: WebSocket Security[2m > [22mWebSocket Hijacking[2m > [22mshould require authentication for WebSocket connections
+[41m[1m FAIL [22m[49m src/test/security/api-websocket-injection-extreme.test.ts[2m > [22m🔥 EXTREME: WebSocket Security[2m > [22mWebSocket Hijacking[2m > [22mshould validate JWT on every WebSocket message
+[41m[1m FAIL [22m[49m src/test/security/api-websocket-injection-extreme.test.ts[2m > [22m🔥 EXTREME: WebSocket Security[2m > [22mWebSocket Hijacking[2m > [22mshould rate limit WebSocket messages (prevent DoS)
+[41m[1m FAIL [22m[49m src/test/security/api-websocket-injection-extreme.test.ts[2m > [22m🔥 EXTREME: WebSocket Security[2m > [22mWebSocket Hijacking[2m > [22mshould not allow WebSocket message injection
+[31m[1mError[22m: Hook timed out in 10000ms.
+If this is a long-running hook, pass a timeout value as the last argument or configure it globally with "hookTimeout".[39m
+[36m [2m❯[22m src/test/security/api-websocket-injection-extreme.test.ts:[2m36:3[22m[39m
+    [90m 34| [39m  })[33m;[39m
+    [90m 35| [39m
+    [90m 36| [39m  [34mbeforeEach[39m([35masync[39m () [33m=>[39m {
+    [90m   | [39m  [31m^[39m
+    [90m 37| [39m    [35mawait[39m [34mclearDatabase[39m()[33m;[39m
+    [90m 38| [39m  })[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[49/157]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m src/test/security/api-websocket-injection-extreme.test.ts[2m > [22m🔥 EXTREME: API Security[2m > [22mMass Assignment Vulnerability[2m > [22mshould prevent mass assignment of protected fields
+[41m[1m FAIL [22m[49m src/test/security/api-websocket-injection-extreme.test.ts[2m > [22m🔥 EXTREME: API Security[2m > [22mMass Assignment Vulnerability[2m > [22mshould whitelist only allowed fields in API requests
+[41m[1m FAIL [22m[49m src/test/security/api-websocket-injection-extreme.test.ts[2m > [22m🔥 EXTREME: API Security[2m > [22mIDOR (Insecure Direct Object Reference)[2m > [22mshould prevent accessing other users' data via ID
+[41m[1m FAIL [22m[49m src/test/security/api-websocket-injection-extreme.test.ts[2m > [22m🔥 EXTREME: API Security[2m > [22mIDOR (Insecure Direct Object Reference)[2m > [22mshould use non-sequential IDs (prevent enumeration)
+[41m[1m FAIL [22m[49m src/test/security/api-websocket-injection-extreme.test.ts[2m > [22m🔥 EXTREME: API Security[2m > [22mParameter Pollution[2m > [22mshould handle duplicate parameters safely
+[41m[1m FAIL [22m[49m src/test/security/api-websocket-injection-extreme.test.ts[2m > [22m🔥 EXTREME: API Security[2m > [22mParameter Pollution[2m > [22mshould reject conflicting parameters
+[41m[1m FAIL [22m[49m src/test/security/api-websocket-injection-extreme.test.ts[2m > [22m🔥 EXTREME: API Security[2m > [22mHTTP Verb Tampering[2m > [22mshould enforce correct HTTP methods
+[41m[1m FAIL [22m[49m src/test/security/api-websocket-injection-extreme.test.ts[2m > [22m🔥 EXTREME: API Security[2m > [22mHTTP Verb Tampering[2m > [22mshould not allow bypass via X-HTTP-Method-Override
+[41m[1m FAIL [22m[49m src/test/security/api-websocket-injection-extreme.test.ts[2m > [22m🔥 EXTREME: API Security[2m > [22mContent-Type Confusion[2m > [22mshould validate Content-Type header
+[41m[1m FAIL [22m[49m src/test/security/api-websocket-injection-extreme.test.ts[2m > [22m🔥 EXTREME: API Security[2m > [22mContent-Type Confusion[2m > [22mshould not accept XML when expecting JSON
+[31m[1mError[22m: Cannot use a pool after calling end on the pool[39m
+[90m [2m❯[22m ../node_modules/.pnpm/pg-pool@3.10.1_pg@8.16.3/node_modules/pg-pool/index.js:[2m45:11[22m[39m
+[36m [2m❯[22m clearDatabase src/test/helpers/db.helper.ts:[2m12:18[22m[39m
+    [90m 10| [39m[35mexport[39m [35masync[39m [35mfunction[39m [34mclearDatabase[39m()[33m:[39m [33mPromise[39m[33m<[39m[35mvoid[39m[33m>[39m {
+    [90m 11| [39m  // Проверка что мы в тестовой БД (защита от удаления production данн…
+    [90m 12| [39m  [35mconst[39m result [33m=[39m [35mawait[39m pool[33m.[39m[34mquery[39m([32m"SELECT current_database()"[39m)[33m;[39m
+    [90m   | [39m                 [31m^[39m
+    [90m 13| [39m  [35mconst[39m dbName [33m=[39m result[33m.[39mrows[[34m0[39m][33m.[39mcurrent_database[33m;[39m
+    [90m 14| [39m
+[90m [2m❯[22m src/test/security/api-websocket-injection-extreme.test.ts:[2m96:5[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[50/157]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m src/test/security/api-websocket-injection-extreme.test.ts[2m > [22m🔥 EXTREME: XSS (Cross-Site Scripting)[2m > [22mReflected XSS[2m > [22mshould sanitize XSS in username field
+[41m[1m FAIL [22m[49m src/test/security/api-websocket-injection-extreme.test.ts[2m > [22m🔥 EXTREME: XSS (Cross-Site Scripting)[2m > [22mReflected XSS[2m > [22mshould sanitize XSS in search queries
+[41m[1m FAIL [22m[49m src/test/security/api-websocket-injection-extreme.test.ts[2m > [22m🔥 EXTREME: XSS (Cross-Site Scripting)[2m > [22mStored XSS[2m > [22mshould sanitize XSS in stored messages
+[41m[1m FAIL [22m[49m src/test/security/api-websocket-injection-extreme.test.ts[2m > [22m🔥 EXTREME: XSS (Cross-Site Scripting)[2m > [22mStored XSS[2m > [22mshould sanitize XSS in user bios
+[41m[1m FAIL [22m[49m src/test/security/api-websocket-injection-extreme.test.ts[2m > [22m🔥 EXTREME: XSS (Cross-Site Scripting)[2m > [22mDOM-Based XSS[2m > [22mshould not use eval() or similar dangerous functions
+[41m[1m FAIL [22m[49m src/test/security/api-websocket-injection-extreme.test.ts[2m > [22m🔥 EXTREME: XSS (Cross-Site Scripting)[2m > [22mMutation XSS[2m > [22mshould prevent mXSS via HTML mutation
+[31m[1mError[22m: Cannot use a pool after calling end on the pool[39m
+[90m [2m❯[22m ../node_modules/.pnpm/pg-pool@3.10.1_pg@8.16.3/node_modules/pg-pool/index.js:[2m45:11[22m[39m
+[36m [2m❯[22m clearDatabase src/test/helpers/db.helper.ts:[2m12:18[22m[39m
+    [90m 10| [39m[35mexport[39m [35masync[39m [35mfunction[39m [34mclearDatabase[39m()[33m:[39m [33mPromise[39m[33m<[39m[35mvoid[39m[33m>[39m {
+    [90m 11| [39m  // Проверка что мы в тестовой БД (защита от удаления production данн…
+    [90m 12| [39m  [35mconst[39m result [33m=[39m [35mawait[39m pool[33m.[39m[34mquery[39m([32m"SELECT current_database()"[39m)[33m;[39m
+    [90m   | [39m                 [31m^[39m
+    [90m 13| [39m  [35mconst[39m dbName [33m=[39m result[33m.[39mrows[[34m0[39m][33m.[39mcurrent_database[33m;[39m
+    [90m 14| [39m
+[90m [2m❯[22m src/test/security/api-websocket-injection-extreme.test.ts:[2m335:5[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[51/157]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m src/test/security/api-websocket-injection-extreme.test.ts[2m > [22m🔥 EXTREME: Command & Path Injection[2m > [22mOS Command Injection[2m > [22mshould block command injection in username
+[41m[1m FAIL [22m[49m src/test/security/api-websocket-injection-extreme.test.ts[2m > [22m🔥 EXTREME: Command & Path Injection[2m > [22mOS Command Injection[2m > [22mshould not execute commands from user input
+[41m[1m FAIL [22m[49m src/test/security/api-websocket-injection-extreme.test.ts[2m > [22m🔥 EXTREME: Command & Path Injection[2m > [22mPath Traversal[2m > [22mshould block path traversal in filenames
+[41m[1m FAIL [22m[49m src/test/security/api-websocket-injection-extreme.test.ts[2m > [22m🔥 EXTREME: Command & Path Injection[2m > [22mPath Traversal[2m > [22mshould not expose .env or config files
+[41m[1m FAIL [22m[49m src/test/security/api-websocket-injection-extreme.test.ts[2m > [22m🔥 EXTREME: Command & Path Injection[2m > [22mNULL Byte Injection[2m > [22mshould block NULL bytes in input
+[31m[1mError[22m: Cannot use a pool after calling end on the pool[39m
+[90m [2m❯[22m ../node_modules/.pnpm/pg-pool@3.10.1_pg@8.16.3/node_modules/pg-pool/index.js:[2m45:11[22m[39m
+[36m [2m❯[22m clearDatabase src/test/helpers/db.helper.ts:[2m12:18[22m[39m
+    [90m 10| [39m[35mexport[39m [35masync[39m [35mfunction[39m [34mclearDatabase[39m()[33m:[39m [33mPromise[39m[33m<[39m[35mvoid[39m[33m>[39m {
+    [90m 11| [39m  // Проверка что мы в тестовой БД (защита от удаления production данн…
+    [90m 12| [39m  [35mconst[39m result [33m=[39m [35mawait[39m pool[33m.[39m[34mquery[39m([32m"SELECT current_database()"[39m)[33m;[39m
+    [90m   | [39m                 [31m^[39m
+    [90m 13| [39m  [35mconst[39m dbName [33m=[39m result[33m.[39mrows[[34m0[39m][33m.[39mcurrent_database[33m;[39m
+    [90m 14| [39m
+[90m [2m❯[22m src/test/security/api-websocket-injection-extreme.test.ts:[2m472:5[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[52/157]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m src/test/security/api-websocket-injection-extreme.test.ts[2m > [22m🔥 EXTREME: Advanced Injection Attacks[2m > [22mLDAP Injection[2m > [22mshould block LDAP injection attempts
+[41m[1m FAIL [22m[49m src/test/security/api-websocket-injection-extreme.test.ts[2m > [22m🔥 EXTREME: Advanced Injection Attacks[2m > [22mServer-Side Template Injection (SSTI)[2m > [22mshould block template injection payloads
+[41m[1m FAIL [22m[49m src/test/security/api-websocket-injection-extreme.test.ts[2m > [22m🔥 EXTREME: Advanced Injection Attacks[2m > [22mHeader Injection (CRLF)[2m > [22mshould block CRLF injection in headers
+[41m[1m FAIL [22m[49m src/test/security/api-websocket-injection-extreme.test.ts[2m > [22m🔥 EXTREME: Advanced Injection Attacks[2m > [22mXML External Entity (XXE)[2m > [22mshould block XXE attacks
+[41m[1m FAIL [22m[49m src/test/security/api-websocket-injection-extreme.test.ts[2m > [22m🔥 EXTREME: Advanced Injection Attacks[2m > [22mLog Injection[2m > [22mshould sanitize log entries
+[31m[1mError[22m: Cannot use a pool after calling end on the pool[39m
+[90m [2m❯[22m ../node_modules/.pnpm/pg-pool@3.10.1_pg@8.16.3/node_modules/pg-pool/index.js:[2m45:11[22m[39m
+[36m [2m❯[22m clearDatabase src/test/helpers/db.helper.ts:[2m12:18[22m[39m
+    [90m 10| [39m[35mexport[39m [35masync[39m [35mfunction[39m [34mclearDatabase[39m()[33m:[39m [33mPromise[39m[33m<[39m[35mvoid[39m[33m>[39m {
+    [90m 11| [39m  // Проверка что мы в тестовой БД (защита от удаления production данн…
+    [90m 12| [39m  [35mconst[39m result [33m=[39m [35mawait[39m pool[33m.[39m[34mquery[39m([32m"SELECT current_database()"[39m)[33m;[39m
+    [90m   | [39m                 [31m^[39m
+    [90m 13| [39m  [35mconst[39m dbName [33m=[39m result[33m.[39mrows[[34m0[39m][33m.[39mcurrent_database[33m;[39m
+    [90m 14| [39m
+[90m [2m❯[22m src/test/security/api-websocket-injection-extreme.test.ts:[2m610:5[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[53/157]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m src/test/security/auth-extreme.test.ts[2m > [22m🔥 EXTREME: Authentication & Session Security[2m > [22mJWT Manipulation & Bypass[2m > [22mshould reject JWT with 'none' algorithm (CVE-2015-9235)
+[41m[1m FAIL [22m[49m src/test/security/auth-extreme.test.ts[2m > [22m🔥 EXTREME: Authentication & Session Security[2m > [22mJWT Manipulation & Bypass[2m > [22mshould reject JWT with weak/guessable secret
+[41m[1m FAIL [22m[49m src/test/security/auth-extreme.test.ts[2m > [22m🔥 EXTREME: Authentication & Session Security[2m > [22mJWT Manipulation & Bypass[2m > [22mshould reject expired JWT tokens
+[41m[1m FAIL [22m[49m src/test/security/auth-extreme.test.ts[2m > [22m🔥 EXTREME: Authentication & Session Security[2m > [22mJWT Manipulation & Bypass[2m > [22mshould reject JWT with future 'nbf' (not before) claim
+[41m[1m FAIL [22m[49m src/test/security/auth-extreme.test.ts[2m > [22m🔥 EXTREME: Authentication & Session Security[2m > [22mJWT Manipulation & Bypass[2m > [22mshould reject JWT with missing required claims
+[41m[1m FAIL [22m[49m src/test/security/auth-extreme.test.ts[2m > [22m🔥 EXTREME: Authentication & Session Security[2m > [22mSession Hijacking & Fixation[2m > [22mshould generate different tokens for each login (prevent session fixation)
+[31m[1mError[22m: Hook timed out in 10000ms.
+If this is a long-running hook, pass a timeout value as the last argument or configure it globally with "hookTimeout".[39m
+[36m [2m❯[22m src/test/security/auth-extreme.test.ts:[2m38:3[22m[39m
+    [90m 36| [39m  })[33m;[39m
+    [90m 37| [39m
+    [90m 38| [39m  [34mbeforeEach[39m([35masync[39m () [33m=>[39m {
+    [90m   | [39m  [31m^[39m
+    [90m 39| [39m    [35mawait[39m [34mclearDatabase[39m()[33m;[39m
+    [90m 40| [39m  })[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[54/157]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m src/test/security/auth-extreme.test.ts[2m > [22m🔥 EXTREME: Authentication & Session Security[2m > [22mJWT Manipulation & Bypass[2m > [22mshould reject JWT with tampered signature
+[31m[1mError[22m: Failed to authenticate user[39m
+[36m [2m❯[22m createAuthenticatedUser src/test/helpers/user.helper.ts:[2m84:11[22m[39m
+    [90m 82| [39m
+    [90m 83| [39m  [35mif[39m ([33m![39muser[33m.[39mtoken) {
+    [90m 84| [39m    [35mthrow[39m [35mnew[39m [33mError[39m([32m"Failed to authenticate user"[39m)[33m;[39m
+    [90m   | [39m          [31m^[39m
+    [90m 85| [39m  }
+    [90m 86| [39m
+[90m [2m❯[22m src/test/security/auth-extreme.test.ts:[2m76:20[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[55/157]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m src/test/security/auth-extreme.test.ts[2m > [22m🔥 EXTREME: Authentication & Session Security[2m > [22mJWT Manipulation & Bypass[2m > [22mshould reject JWT with tampered payload
+[31m[1mError[22m: Failed to authenticate user[39m
+[36m [2m❯[22m createAuthenticatedUser src/test/helpers/user.helper.ts:[2m84:11[22m[39m
+    [90m 82| [39m
+    [90m 83| [39m  [35mif[39m ([33m![39muser[33m.[39mtoken) {
+    [90m 84| [39m    [35mthrow[39m [35mnew[39m [33mError[39m([32m"Failed to authenticate user"[39m)[33m;[39m
+    [90m   | [39m          [31m^[39m
+    [90m 85| [39m  }
+    [90m 86| [39m
+[90m [2m❯[22m src/test/security/auth-extreme.test.ts:[2m95:20[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[56/157]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m src/test/security/auth-extreme.test.ts[2m > [22m🔥 EXTREME: Authentication & Session Security[2m > [22mSession Hijacking & Fixation[2m > [22mshould not accept token from another user (session hijacking)
+[31m[1mError[22m: Failed to authenticate user[39m
+[36m [2m❯[22m createAuthenticatedUser src/test/helpers/user.helper.ts:[2m84:11[22m[39m
+    [90m 82| [39m
+    [90m 83| [39m  [35mif[39m ([33m![39muser[33m.[39mtoken) {
+    [90m 84| [39m    [35mthrow[39m [35mnew[39m [33mError[39m([32m"Failed to authenticate user"[39m)[33m;[39m
+    [90m   | [39m          [31m^[39m
+    [90m 85| [39m  }
+    [90m 86| [39m
+[90m [2m❯[22m src/test/security/auth-extreme.test.ts:[2m262:21[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[57/157]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m src/test/security/auth-extreme.test.ts[2m > [22m🔥 EXTREME: Authentication & Session Security[2m > [22mTiming Attacks & Username Enumeration[2m > [22mshould have consistent response time for existing vs non-existing users
+[31m[1mAssertionError[22m: expected 978 to be less than 50[39m
+[36m [2m❯[22m src/test/security/auth-extreme.test.ts:[2m310:30[22m[39m
+    [90m308| [39m      [90m// This prevents attackers from enumerating valid usernames[39m
+    [90m309| [39m      [35mconst[39m timeDifference [33m=[39m [33mMath[39m[33m.[39m[34mabs[39m(time1 [33m-[39m time2)[33m;[39m
+    [90m310| [39m      [34mexpect[39m(timeDifference)[33m.[39m[34mtoBeLessThan[39m([34m50[39m)[33m;[39m
+    [90m   | [39m                             [31m^[39m
+    [90m311| [39m    })[33m;[39m
+    [90m312| [39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[58/157]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m src/test/security/auth-extreme.test.ts[2m > [22m🔥 EXTREME: Authentication & Session Security[2m > [22mTiming Attacks & Username Enumeration[2m > [22mshould not reveal if username exists in error messages
+[31m[1mAssertionError[22m: expected 'invalid username or password' not to contain 'invalid username'[39m
+
+Expected: [32m"invalid username"[39m
+Received: [31m"invalid username[7m or password[27m"[39m
+
+[36m [2m❯[22m src/test/security/auth-extreme.test.ts:[2m330:45[22m[39m
+    [90m328| [39m      [34mexpect[39m(body1[33m.[39merror[33m.[39m[34mtoLowerCase[39m())[33m.[39mnot[33m.[39m[34mtoContain[39m([32m"exist"[39m)[33m;[39m
+    [90m329| [39m      [34mexpect[39m(body1[33m.[39merror[33m.[39m[34mtoLowerCase[39m())[33m.[39mnot[33m.[39m[34mtoContain[39m([32m"not found"[39m)[33m;[39m
+    [90m330| [39m      expect(body1.error.toLowerCase()).not.toContain("invalid usernam…
+    [90m   | [39m                                            [31m^[39m
+    [90m331| [39m      expect(body1.error.toLowerCase()).not.toContain("user does not e…
+    [90m332| [39m    })[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[59/157]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m src/test/security/auth-extreme.test.ts[2m > [22m🔥 EXTREME: Authentication & Session Security[2m > [22mBrute Force & Credential Stuffing Protection[2m > [22mshould detect and block credential stuffing attacks
+[31m[1mAssertionError[22m: expected 0 to be greater than 5[39m
+[36m [2m❯[22m src/test/security/auth-extreme.test.ts:[2m393:29[22m[39m
+    [90m391| [39m      // All should fail (unless by crazy coincidence user used one of…
+    [90m392| [39m      const failed = results.filter((r) => r.response.statusCode === 4…
+    [90m393| [39m      [34mexpect[39m(failed[33m.[39mlength)[33m.[39m[34mtoBeGreaterThan[39m([34m5[39m)[33m;[39m
+    [90m   | [39m                            [31m^[39m
+    [90m394| [39m    })[33m;[39m
+    [90m395| [39m  })[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[60/157]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m src/test/security/auth-extreme.test.ts[2m > [22m🔥 EXTREME: Authentication & Session Security[2m > [22mAccount Takeover Prevention[2m > [22mshould prevent account takeover via session hijacking
+[31m[1mError[22m: Failed to authenticate user[39m
+[36m [2m❯[22m createAuthenticatedUser src/test/helpers/user.helper.ts:[2m84:11[22m[39m
+    [90m 82| [39m
+    [90m 83| [39m  [35mif[39m ([33m![39muser[33m.[39mtoken) {
+    [90m 84| [39m    [35mthrow[39m [35mnew[39m [33mError[39m([32m"Failed to authenticate user"[39m)[33m;[39m
+    [90m   | [39m          [31m^[39m
+    [90m 85| [39m  }
+    [90m 86| [39m
+[90m [2m❯[22m src/test/security/auth-extreme.test.ts:[2m479:20[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[61/157]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m src/test/security/auth-extreme.test.ts[2m > [22m🔥 EXTREME: Authentication & Session Security[2m > [22mAccount Takeover Prevention[2m > [22mshould prevent account takeover via XSS → cookie theft
+[31m[1mError[22m: Failed to authenticate user[39m
+[36m [2m❯[22m createAuthenticatedUser src/test/helpers/user.helper.ts:[2m84:11[22m[39m
+    [90m 82| [39m
+    [90m 83| [39m  [35mif[39m ([33m![39muser[33m.[39mtoken) {
+    [90m 84| [39m    [35mthrow[39m [35mnew[39m [33mError[39m([32m"Failed to authenticate user"[39m)[33m;[39m
+    [90m   | [39m          [31m^[39m
+    [90m 85| [39m  }
+    [90m 86| [39m
+[90m [2m❯[22m src/test/security/auth-extreme.test.ts:[2m504:20[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[62/157]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m src/test/security/auth-extreme.test.ts[2m > [22m🔥 EXTREME: Authentication & Session Security[2m > [22mAuthentication Bypass[2m > [22mshould not allow authentication bypass via parameter pollution
+[31m[1mAssertionError[22m: expected [ 400, 401 ] to include 500[39m
+[36m [2m❯[22m src/test/security/auth-extreme.test.ts:[2m580:26[22m[39m
+    [90m578| [39m
+    [90m579| [39m      [90m// Should not bypass authentication[39m
+    [90m580| [39m      [34mexpect[39m([[34m400[39m[33m,[39m [34m401[39m])[33m.[39m[34mtoContain[39m(response[33m.[39mstatusCode)[33m;[39m
+    [90m   | [39m                         [31m^[39m
+    [90m581| [39m    })[33m;[39m
+    [90m582| [39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[63/157]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m src/test/security/auth-extreme.test.ts[2m > [22m🔥 EXTREME: Authentication & Session Security[2m > [22mAuthentication Bypass[2m > [22mshould not allow SQL injection in authentication
+[31m[1mAssertionError[22m: expected 500 to be 401 // Object.is equality[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- 401[39m
+[31m+ 500[39m
+
+[36m [2m❯[22m src/test/security/auth-extreme.test.ts:[2m603:37[22m[39m
+    [90m601| [39m
+    [90m602| [39m        [90m// Should reject SQL injection attempts[39m
+    [90m603| [39m        [34mexpect[39m(response[33m.[39mstatusCode)[33m.[39m[34mtoBe[39m([34m401[39m)[33m;[39m
+    [90m   | [39m                                    [31m^[39m
+    [90m604| [39m      }
+    [90m605| [39m    })[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[64/157]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m src/test/security/crypto-database-extreme.test.ts[2m > [22m🔥 EXTREME: Cryptography Security[2m > [22mArgon2id Timing Attacks[2m > [22mshould have consistent timing for password verification (prevent timing attacks)
+[31m[1mTypeError[22m: Cannot read properties of null (reading 'salt')[39m
+[36m [2m❯[22m src/test/security/crypto-database-extreme.test.ts:[2m69:18[22m[39m
+    [90m 67| [39m        [35mawait[39m [33mCryptoService[39m[33m.[39m[34mverifyAuthToken[39m(
+    [90m 68| [39m          [32m"correctpassword123"[39m[33m,[39m
+    [90m 69| [39m          dbUser[33m.[39msalt[33m,[39m
+    [90m   | [39m                 [31m^[39m
+    [90m 70| [39m          dbUser[33m.[39mauth_token[33m,[39m
+    [90m 71| [39m        )[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[65/157]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m src/test/security/crypto-database-extreme.test.ts[2m > [22m🔥 EXTREME: Cryptography Security[2m > [22mArgon2id Timing Attacks[2m > [22mshould use sufficient Argon2 parameters (prevent brute force)
+[41m[1m FAIL [22m[49m src/test/security/crypto-database-extreme.test.ts[2m > [22m🔥 EXTREME: Cryptography Security[2m > [22mArgon2id Timing Attacks[2m > [22mshould generate unique salts for each user
+[41m[1m FAIL [22m[49m src/test/security/crypto-database-extreme.test.ts[2m > [22m🔥 EXTREME: Cryptography Security[2m > [22mArgon2id Timing Attacks[2m > [22mshould not store plaintext password anywhere
+[41m[1m FAIL [22m[49m src/test/security/crypto-database-extreme.test.ts[2m > [22m🔥 EXTREME: Cryptography Security[2m > [22mAES-GCM Encryption Security[2m > [22mshould use unique IV/nonce for each encryption
+[41m[1m FAIL [22m[49m src/test/security/crypto-database-extreme.test.ts[2m > [22m🔥 EXTREME: Cryptography Security[2m > [22mAES-GCM Encryption Security[2m > [22mshould reject tampered ciphertext (auth tag verification)
+[41m[1m FAIL [22m[49m src/test/security/crypto-database-extreme.test.ts[2m > [22m🔥 EXTREME: Cryptography Security[2m > [22mAES-GCM Encryption Security[2m > [22mshould use 256-bit keys (AES-256)
+[31m[1mError[22m: Hook timed out in 10000ms.
+If this is a long-running hook, pass a timeout value as the last argument or configure it globally with "hookTimeout".[39m
+[36m [2m❯[22m src/test/security/crypto-database-extreme.test.ts:[2m41:3[22m[39m
+    [90m 39| [39m  })[33m;[39m
+    [90m 40| [39m
+    [90m 41| [39m  [34mbeforeEach[39m([35masync[39m () [33m=>[39m {
+    [90m   | [39m  [31m^[39m
+    [90m 42| [39m    [35mawait[39m [34mclearDatabase[39m()[33m;[39m
+    [90m 43| [39m  })[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[66/157]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m src/test/security/crypto-database-extreme.test.ts[2m > [22m🔥 EXTREME: Database Security[2m > [22mSQL Injection Protection[2m > [22mshould block classic SQL injection
+[41m[1m FAIL [22m[49m src/test/security/crypto-database-extreme.test.ts[2m > [22m🔥 EXTREME: Database Security[2m > [22mSQL Injection Protection[2m > [22mshould block UNION-based SQL injection
+[41m[1m FAIL [22m[49m src/test/security/crypto-database-extreme.test.ts[2m > [22m🔥 EXTREME: Database Security[2m > [22mSQL Injection Protection[2m > [22mshould block blind SQL injection (boolean-based)
+[41m[1m FAIL [22m[49m src/test/security/crypto-database-extreme.test.ts[2m > [22m🔥 EXTREME: Database Security[2m > [22mSQL Injection Protection[2m > [22mshould block time-based blind SQL injection
+[41m[1m FAIL [22m[49m src/test/security/crypto-database-extreme.test.ts[2m > [22m🔥 EXTREME: Database Security[2m > [22mSQL Injection Protection[2m > [22mshould block second-order SQL injection
+[41m[1m FAIL [22m[49m src/test/security/crypto-database-extreme.test.ts[2m > [22m🔥 EXTREME: Database Security[2m > [22mSQL Injection Protection[2m > [22mshould use parameterized queries (not string concatenation)
+[41m[1m FAIL [22m[49m src/test/security/crypto-database-extreme.test.ts[2m > [22m🔥 EXTREME: Database Security[2m > [22mDatabase DoS Protection[2m > [22mshould handle connection pool exhaustion
+[41m[1m FAIL [22m[49m src/test/security/crypto-database-extreme.test.ts[2m > [22m🔥 EXTREME: Database Security[2m > [22mDatabase DoS Protection[2m > [22mshould prevent query bombing (heavy queries)
+[41m[1m FAIL [22m[49m src/test/security/crypto-database-extreme.test.ts[2m > [22m🔥 EXTREME: Database Security[2m > [22mDatabase DoS Protection[2m > [22mshould limit result set size (prevent memory exhaustion)
+[41m[1m FAIL [22m[49m src/test/security/crypto-database-extreme.test.ts[2m > [22m🔥 EXTREME: Database Security[2m > [22mPrivilege Escalation Prevention[2m > [22mshould prevent privilege escalation via mass assignment
+[41m[1m FAIL [22m[49m src/test/security/crypto-database-extreme.test.ts[2m > [22m🔥 EXTREME: Database Security[2m > [22mPrivilege Escalation Prevention[2m > [22mshould not allow direct database manipulation via payloads
+[41m[1m FAIL [22m[49m src/test/security/crypto-database-extreme.test.ts[2m > [22m🔥 EXTREME: Database Security[2m > [22mData Leakage Prevention[2m > [22mshould not expose sensitive data in error messages
+[41m[1m FAIL [22m[49m src/test/security/crypto-database-extreme.test.ts[2m > [22m🔥 EXTREME: Database Security[2m > [22mData Leakage Prevention[2m > [22mshould not expose database version in headers
+[41m[1m FAIL [22m[49m src/test/security/crypto-database-extreme.test.ts[2m > [22m🔥 EXTREME: Database Security[2m > [22mData Leakage Prevention[2m > [22mshould not leak user existence through timing
+[41m[1m FAIL [22m[49m src/test/security/crypto-database-extreme.test.ts[2m > [22m🔥 EXTREME: Database Security[2m > [22mDatabase Backup Security[2m > [22mshould not expose backup files via web server
+[31m[1mError[22m: Cannot use a pool after calling end on the pool[39m
+[90m [2m❯[22m ../node_modules/.pnpm/pg-pool@3.10.1_pg@8.16.3/node_modules/pg-pool/index.js:[2m45:11[22m[39m
+[36m [2m❯[22m clearDatabase src/test/helpers/db.helper.ts:[2m12:18[22m[39m
+    [90m 10| [39m[35mexport[39m [35masync[39m [35mfunction[39m [34mclearDatabase[39m()[33m:[39m [33mPromise[39m[33m<[39m[35mvoid[39m[33m>[39m {
+    [90m 11| [39m  // Проверка что мы в тестовой БД (защита от удаления production данн…
+    [90m 12| [39m  [35mconst[39m result [33m=[39m [35mawait[39m pool[33m.[39m[34mquery[39m([32m"SELECT current_database()"[39m)[33m;[39m
+    [90m   | [39m                 [31m^[39m
+    [90m 13| [39m  [35mconst[39m dbName [33m=[39m result[33m.[39mrows[[34m0[39m][33m.[39mcurrent_database[33m;[39m
+    [90m 14| [39m
+[90m [2m❯[22m src/test/security/crypto-database-extreme.test.ts:[2m290:5[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[67/157]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m src/test/security/dos-redis-disclosure-extreme.test.ts[2m > [22m🔥 EXTREME: DoS & Resource Exhaustion[2m > [22mReDoS (Regular Expression DoS)[2m > [22mshould have timeout for regex operations
+[31m[1mAssertionError[22m: expected [ 400, 413 ] to include 500[39m
+[36m [2m❯[22m src/test/security/dos-redis-disclosure-extreme.test.ts:[2m70:28[22m[39m
+    [90m 68| [39m
+    [90m 69| [39m        [90m// Should reject or handle gracefully[39m
+    [90m 70| [39m        [34mexpect[39m([[34m400[39m[33m,[39m [34m413[39m])[33m.[39m[34mtoContain[39m(response[33m.[39mstatusCode)[33m;[39m
+    [90m   | [39m                           [31m^[39m
+    [90m 71| [39m      }
+    [90m 72| [39m    })[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[68/157]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m src/test/security/dos-redis-disclosure-extreme.test.ts[2m > [22m🔥 EXTREME: DoS & Resource Exhaustion[2m > [22mMemory Exhaustion[2m > [22mshould limit array size in requests
+[41m[1m FAIL [22m[49m src/test/security/dos-redis-disclosure-extreme.test.ts[2m > [22m🔥 EXTREME: DoS & Resource Exhaustion[2m > [22mCompression Attacks[2m > [22mshould detect and reject zip bomb attempts
+[41m[1m FAIL [22m[49m src/test/security/dos-redis-disclosure-extreme.test.ts[2m > [22m🔥 EXTREME: DoS & Resource Exhaustion[2m > [22mCompression Attacks[2m > [22mshould prevent billion laughs (XML entity expansion)
+[41m[1m FAIL [22m[49m src/test/security/dos-redis-disclosure-extreme.test.ts[2m > [22m🔥 EXTREME: DoS & Resource Exhaustion[2m > [22mSlowloris Attack[2m > [22mshould timeout slow requests
+[31m[1mError[22m: Hook timed out in 10000ms.
+If this is a long-running hook, pass a timeout value as the last argument or configure it globally with "hookTimeout".[39m
+[36m [2m❯[22m src/test/security/dos-redis-disclosure-extreme.test.ts:[2m28:3[22m[39m
+    [90m 26| [39m  })[33m;[39m
+    [90m 27| [39m
+    [90m 28| [39m  [34mbeforeEach[39m([35masync[39m () [33m=>[39m {
+    [90m   | [39m  [31m^[39m
+    [90m 29| [39m    [35mawait[39m [34mclearDatabase[39m()[33m;[39m
+    [90m 30| [39m  })[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[69/157]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m src/test/security/dos-redis-disclosure-extreme.test.ts[2m > [22m🔥 EXTREME: Redis Security[2m > [22mRedis Command Injection[2m > [22mshould not allow Redis command injection via keys
+[41m[1m FAIL [22m[49m src/test/security/dos-redis-disclosure-extreme.test.ts[2m > [22m🔥 EXTREME: Redis Security[2m > [22mRedis Command Injection[2m > [22mshould sanitize Redis key names
+[41m[1m FAIL [22m[49m src/test/security/dos-redis-disclosure-extreme.test.ts[2m > [22m🔥 EXTREME: Redis Security[2m > [22mRedis Data Leakage[2m > [22mshould not expose Redis KEYS command
+[41m[1m FAIL [22m[49m src/test/security/dos-redis-disclosure-extreme.test.ts[2m > [22m🔥 EXTREME: Redis Security[2m > [22mRedis Data Leakage[2m > [22mshould set TTL on session keys (prevent memory leak)
+[41m[1m FAIL [22m[49m src/test/security/dos-redis-disclosure-extreme.test.ts[2m > [22m🔥 EXTREME: Redis Security[2m > [22mRedis Authentication[2m > [22mshould use password for Redis connection
+[31m[1mError[22m: Cannot use a pool after calling end on the pool[39m
+[90m [2m❯[22m ../node_modules/.pnpm/pg-pool@3.10.1_pg@8.16.3/node_modules/pg-pool/index.js:[2m45:11[22m[39m
+[36m [2m❯[22m clearDatabase src/test/helpers/db.helper.ts:[2m12:18[22m[39m
+    [90m 10| [39m[35mexport[39m [35masync[39m [35mfunction[39m [34mclearDatabase[39m()[33m:[39m [33mPromise[39m[33m<[39m[35mvoid[39m[33m>[39m {
+    [90m 11| [39m  // Проверка что мы в тестовой БД (защита от удаления production данн…
+    [90m 12| [39m  [35mconst[39m result [33m=[39m [35mawait[39m pool[33m.[39m[34mquery[39m([32m"SELECT current_database()"[39m)[33m;[39m
+    [90m   | [39m                 [31m^[39m
+    [90m 13| [39m  [35mconst[39m dbName [33m=[39m result[33m.[39mrows[[34m0[39m][33m.[39mcurrent_database[33m;[39m
+    [90m 14| [39m
+[90m [2m❯[22m src/test/security/dos-redis-disclosure-extreme.test.ts:[2m291:5[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[70/157]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m src/test/security/dos-redis-disclosure-extreme.test.ts[2m > [22m🔥 EXTREME: Information Disclosure[2m > [22mError Message Disclosure[2m > [22mshould not expose stack traces in production
+[41m[1m FAIL [22m[49m src/test/security/dos-redis-disclosure-extreme.test.ts[2m > [22m🔥 EXTREME: Information Disclosure[2m > [22mError Message Disclosure[2m > [22mshould not expose database errors
+[41m[1m FAIL [22m[49m src/test/security/dos-redis-disclosure-extreme.test.ts[2m > [22m🔥 EXTREME: Information Disclosure[2m > [22mError Message Disclosure[2m > [22mshould use generic error messages
+[41m[1m FAIL [22m[49m src/test/security/dos-redis-disclosure-extreme.test.ts[2m > [22m🔥 EXTREME: Information Disclosure[2m > [22mVersion Disclosure[2m > [22mshould not expose server version in headers
+[41m[1m FAIL [22m[49m src/test/security/dos-redis-disclosure-extreme.test.ts[2m > [22m🔥 EXTREME: Information Disclosure[2m > [22mVersion Disclosure[2m > [22mshould not expose package.json
+[41m[1m FAIL [22m[49m src/test/security/dos-redis-disclosure-extreme.test.ts[2m > [22m🔥 EXTREME: Information Disclosure[2m > [22mSource Code Disclosure[2m > [22mshould not expose .git directory
+[41m[1m FAIL [22m[49m src/test/security/dos-redis-disclosure-extreme.test.ts[2m > [22m🔥 EXTREME: Information Disclosure[2m > [22mSource Code Disclosure[2m > [22mshould not expose .env files
+[41m[1m FAIL [22m[49m src/test/security/dos-redis-disclosure-extreme.test.ts[2m > [22m🔥 EXTREME: Information Disclosure[2m > [22mSource Code Disclosure[2m > [22mshould not expose backup files
+[41m[1m FAIL [22m[49m src/test/security/dos-redis-disclosure-extreme.test.ts[2m > [22m🔥 EXTREME: Information Disclosure[2m > [22mDebug Endpoint Disclosure[2m > [22mshould not expose debug endpoints in production
+[41m[1m FAIL [22m[49m src/test/security/dos-redis-disclosure-extreme.test.ts[2m > [22m🔥 EXTREME: Information Disclosure[2m > [22mDirectory Listing[2m > [22mshould not allow directory listing
+[41m[1m FAIL [22m[49m src/test/security/dos-redis-disclosure-extreme.test.ts[2m > [22m🔥 EXTREME: Information Disclosure[2m > [22mTiming Attack Prevention[2m > [22mshould have constant-time string comparison for secrets
+[41m[1m FAIL [22m[49m src/test/security/dos-redis-disclosure-extreme.test.ts[2m > [22m🔥 EXTREME: Information Disclosure[2m > [22mTiming Attack Prevention[2m > [22mshould not leak information via response time
+[31m[1mError[22m: Cannot use a pool after calling end on the pool[39m
+[90m [2m❯[22m ../node_modules/.pnpm/pg-pool@3.10.1_pg@8.16.3/node_modules/pg-pool/index.js:[2m45:11[22m[39m
+[36m [2m❯[22m clearDatabase src/test/helpers/db.helper.ts:[2m12:18[22m[39m
+    [90m 10| [39m[35mexport[39m [35masync[39m [35mfunction[39m [34mclearDatabase[39m()[33m:[39m [33mPromise[39m[33m<[39m[35mvoid[39m[33m>[39m {
+    [90m 11| [39m  // Проверка что мы в тестовой БД (защита от удаления production данн…
+    [90m 12| [39m  [35mconst[39m result [33m=[39m [35mawait[39m pool[33m.[39m[34mquery[39m([32m"SELECT current_database()"[39m)[33m;[39m
+    [90m   | [39m                 [31m^[39m
+    [90m 13| [39m  [35mconst[39m dbName [33m=[39m result[33m.[39mrows[[34m0[39m][33m.[39mcurrent_database[33m;[39m
+    [90m 14| [39m
+[90m [2m❯[22m src/test/security/dos-redis-disclosure-extreme.test.ts:[2m386:5[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[71/157]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m src/test/unit/services/user.service.test.ts[2m > [22mUserService[2m > [22musernameExists()[2m > [22mshould return true for existing username
+[41m[1m FAIL [22m[49m src/test/unit/services/user.service.test.ts[2m > [22mUserService[2m > [22musernameExists()[2m > [22mshould be case-insensitive
+[41m[1m FAIL [22m[49m src/test/unit/services/user.service.test.ts[2m > [22mUserService[2m > [22musernameExists()[2m > [22mshould handle very long username
+[41m[1m FAIL [22m[49m src/test/unit/services/user.service.test.ts[2m > [22mUserService[2m > [22musernameExists()[2m > [22mshould handle special characters safely (no SQL injection)
+[41m[1m FAIL [22m[49m src/test/unit/services/user.service.test.ts[2m > [22mUserService[2m > [22memailExists()[2m > [22mshould return false for non-existent email
+[41m[1m FAIL [22m[49m src/test/unit/services/user.service.test.ts[2m > [22mUserService[2m > [22memailExists()[2m > [22mshould return true for existing email
+[31m[1mError[22m: Hook timed out in 10000ms.
+If this is a long-running hook, pass a timeout value as the last argument or configure it globally with "hookTimeout".[39m
+[36m [2m❯[22m src/test/unit/services/user.service.test.ts:[2m11:3[22m[39m
+    [90m  9| [39m
+    [90m 10| [39m[34mdescribe[39m([32m"UserService"[39m[33m,[39m () [33m=>[39m {
+    [90m 11| [39m  [34mbeforeEach[39m([35masync[39m () [33m=>[39m {
+    [90m   | [39m  [31m^[39m
+    [90m 12| [39m    [35mawait[39m [34mclearDatabase[39m()[33m;[39m
+    [90m 13| [39m  })[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[72/157]⎯[22m[39m
+
+
+[2m Test Files [22m [1m[31m8 failed[39m[22m[2m | [22m[1m[32m2 passed[39m[22m[90m (10)[39m
+[2m      Tests [22m [1m[31m150 failed[39m[22m[2m | [22m[1m[32m124 passed[39m[22m[2m | [22m[33m2 skipped[39m[90m (276)[39m
+[2m   Start at [22m 20:56:59
+[2m   Duration [22m 239.72s[2m (transform 3.20s, setup 363ms, collect 16.64s, tests 1290.44s, environment 3ms, prepare 405ms)[22m
+
+ ELIFECYCLE  Test failed. See above for more details.

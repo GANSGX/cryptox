@@ -144,6 +144,16 @@ fastify.addHook("onRequest", async (request, reply) => {
   });
 });
 
+// Remove version disclosure headers (security)
+fastify.addHook("onSend", async (request, reply, payload) => {
+  // Remove server version headers
+  reply.removeHeader("Server");
+  reply.removeHeader("X-Powered-By");
+  reply.removeHeader("X-Fastify-Version");
+
+  return payload;
+});
+
 fastify.addHook("onResponse", async (request, reply) => {
   log.http(`${request.method} ${request.url} - ${reply.statusCode}`, {
     responseTime: reply.elapsedTime,
