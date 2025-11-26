@@ -158,6 +158,9 @@ importers:
       winston-daily-rotate-file:
         specifier: ^5.0.0
         version: 5.0.0(winston@3.18.3)
+      zod:
+        specifier: ^4.1.13
+        version: 4.1.13
     devDependencies:
       "@types/argon2":
         specifier: ^0.15.4
@@ -4048,6 +4051,12 @@ packages:
       }
     engines: { node: ">=10" }
 
+  zod@4.1.13:
+    resolution:
+      {
+        integrity: sha512-AvvthqfqrAhNH9dnfmrfKzX5upOdjUVJYFqNSlkmGf64gRaTzlPwz99IHYnVs28qYAybvAlBV+H7pn0saFY4Ig==,
+      }
+
   zustand@5.0.8:
     resolution:
       {
@@ -6257,6 +6266,8 @@ snapshots:
       yargs-parser: 21.1.1
 
   yocto-queue@0.1.0: {}
+
+  zod@4.1.13: {}
 
   zustand@5.0.8(@types/react@19.2.6)(react@19.2.0)(use-sync-external-store@1.6.0(react@19.2.0)):
     optionalDependencies:
