@@ -187,22 +187,7 @@ describe("🔥 EXTREME: DoS & Resource Exhaustion", () => {
   // ============================================================================
   // SLOWLORIS ATTACK
   // ============================================================================
-
-  describe("Slowloris Attack", () => {
-    it("should timeout slow requests", async () => {
-      // Slowloris: send headers very slowly to exhaust connections
-      // This is more of a server configuration test
-      // Fastify should have request timeout
-
-      // TODO: Test request timeout configuration
-      expect(true).toBe(true);
-    });
-
-    it("should limit concurrent connections per IP", async () => {
-      // TODO: Test connection limiting
-      expect(true).toBe(true);
-    });
-  });
+  // TODO: Implement when server connection limiting is configured
 
   // ============================================================================
   // ALGORITHMIC COMPLEXITY ATTACKS
@@ -269,16 +254,8 @@ describe("🔥 EXTREME: DoS & Resource Exhaustion", () => {
       expect(results.length).toBe(1001);
     }, 120000); // 2 minute timeout
 
-    it("should rate limit per IP (not globally)", async () => {
-      // TODO: Test that rate limits are per-IP
-      expect(true).toBe(true);
-    });
-
-    it("should use sliding window for rate limiting", async () => {
-      // TODO: Test that rate limiting uses sliding window (not fixed window)
-      // Sliding window is more fair and prevents burst attacks
-      expect(true).toBe(true);
-    });
+    // TODO: Test per-IP rate limiting
+    // TODO: Test sliding window rate limiting
   });
 });
 
@@ -303,78 +280,18 @@ describe("🔥 EXTREME: Redis Security", () => {
   // REDIS COMMAND INJECTION
   // ============================================================================
 
-  describe("Redis Command Injection", () => {
-    it("should not allow Redis command injection via keys", async () => {
-      // Try to inject Redis commands
-      const maliciousKeys = [
-        "\r\nFLUSHALL\r\n",
-        "key\r\nSET hacked true\r\n",
-        "\\r\\nDEL session:*\\r\\n",
-        "\nCONFIG SET dir /tmp\n",
-      ];
-
-      for (const key of maliciousKeys) {
-        // This would be in rate limiting or session storage
-        // For now, just verify it doesn't crash
-        expect(key).toBeDefined();
-      }
-
-      // TODO: Implement Redis injection tests when Redis operations are exposed
-      expect(true).toBe(true);
-    });
-
-    it("should sanitize Redis key names", async () => {
-      // Redis keys should not contain special characters
-      const invalidKeys = ["user\r\nFLUSHALL", "session*", "key\nDEL"];
-
-      // TODO: Test Redis key sanitization
-      expect(invalidKeys.length).toBeGreaterThan(0);
-    });
-  });
+  // TODO: Implement Redis Command Injection tests when Redis operations are exposed to user input
 
   // ============================================================================
   // REDIS DATA LEAKAGE
   // ============================================================================
-
-  describe("Redis Data Leakage", () => {
-    it("should not expose Redis KEYS command", async () => {
-      // KEYS * is dangerous - exposes all keys and blocks Redis
-      // Should use SCAN instead
-
-      // TODO: Verify KEYS command is not used in production code
-      expect(true).toBe(true);
-    });
-
-    it("should set TTL on session keys (prevent memory leak)", async () => {
-      // All session keys should have TTL set
-      // Otherwise Redis memory will grow indefinitely
-
-      // TODO: Test that session keys have expiration
-      expect(true).toBe(true);
-    });
-  });
+  // TODO: Verify KEYS command is not used in production code
+  // TODO: Test that session keys have expiration (TTL)
 
   // ============================================================================
   // REDIS AUTHENTICATION
   // ============================================================================
-
-  describe("Redis Authentication", () => {
-    it("should use password for Redis connection", async () => {
-      // Redis should not be publicly accessible without password
-
-      // TODO: Verify REDIS_URL contains password
-      const redisUrl = process.env.REDIS_URL || "";
-
-      // Check if password is present (format: redis://:password@host:port)
-      if (redisUrl.includes("localhost") || redisUrl.includes("127.0.0.1")) {
-        // Local development - password may not be required
-        expect(true).toBe(true);
-      } else {
-        // Production - should have password
-        expect(redisUrl).toContain(":");
-      }
-    });
-  });
+  // TODO: Verify REDIS_URL contains password in production
 });
 
 describe("🔥 EXTREME: Information Disclosure", () => {
@@ -618,13 +535,7 @@ describe("🔥 EXTREME: Information Disclosure", () => {
   // ============================================================================
 
   describe("Timing Attack Prevention", () => {
-    it("should have constant-time string comparison for secrets", async () => {
-      // This is more of a code review test
-      // Verify that crypto.timingSafeEqual is used for comparing secrets
-
-      // Test timing consistency for password verification (already tested above)
-      expect(true).toBe(true);
-    });
+    // TODO: Verify that crypto.timingSafeEqual is used for comparing secrets
 
     it("should not leak information via response time", async () => {
       const { user } = await registerUser(app);

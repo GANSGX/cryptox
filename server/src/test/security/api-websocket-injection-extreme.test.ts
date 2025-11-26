@@ -46,42 +46,12 @@ describe("🔥 EXTREME: WebSocket Security", () => {
   // WEBSOCKET HIJACKING
   // ============================================================================
 
-  describe("WebSocket Hijacking", () => {
-    it("should require authentication for WebSocket connections", async () => {
-      // TODO: Test WebSocket auth when Socket.IO endpoints are created
-      // Should reject connection without valid JWT
-      expect(true).toBe(true);
-    });
-
-    it("should validate JWT on every WebSocket message", async () => {
-      // TODO: Test that expired/invalid JWT is rejected on message send
-      expect(true).toBe(true);
-    });
-
-    it("should prevent Cross-Site WebSocket Hijacking (CSWSH)", async () => {
-      // TODO: Verify origin header is checked for WebSocket connections
-      // Should reject connections from unauthorized origins
-      expect(true).toBe(true);
-    });
-
-    it("should rate limit WebSocket messages (prevent DoS)", async () => {
-      // TODO: Test rate limiting for WebSocket message flooding
-      expect(true).toBe(true);
-    });
-
-    it("should not allow WebSocket message injection", async () => {
-      // TODO: Test that malicious payloads are sanitized
-      // Test XSS via WebSocket messages
-      const xssPayloads = [
-        "<script>alert('XSS')</script>",
-        "<img src=x onerror='alert(1)'>",
-        "javascript:alert(1)",
-      ];
-
-      // Each payload should be sanitized
-      expect(xssPayloads.length).toBeGreaterThan(0);
-    });
-  });
+  // TODO: Implement WebSocket security tests when Socket.IO endpoints are fully integrated
+  // - Authentication for WebSocket connections
+  // - JWT validation on every message
+  // - Cross-Site WebSocket Hijacking (CSWSH) prevention
+  // - Rate limiting for WebSocket messages
+  // - Message injection/XSS via WebSocket
 });
 
 describe("🔥 EXTREME: API Security", () => {
@@ -399,37 +369,14 @@ describe("🔥 EXTREME: XSS (Cross-Site Scripting)", () => {
   // STORED XSS
   // ============================================================================
 
-  describe("Stored XSS", () => {
-    it("should sanitize XSS in stored messages", async () => {
-      // TODO: Test when messaging is implemented
-      // Send message with XSS payload
-      // Verify it's sanitized when retrieved
-      expect(true).toBe(true);
-    });
-
-    it("should sanitize XSS in user bios", async () => {
-      // TODO: Test when profile update is implemented
-      expect(true).toBe(true);
-    });
-  });
+  // TODO: Test Stored XSS when messaging/profile features are implemented
+  // - XSS in stored messages
+  // - XSS in user bios
 
   // ============================================================================
   // DOM-BASED XSS
   // ============================================================================
-
-  describe("DOM-Based XSS", () => {
-    it("should not use eval() or similar dangerous functions", async () => {
-      // This is more of a code review test
-      // Verify that dangerous functions are not used:
-      // - eval()
-      // - Function()
-      // - setTimeout(string)
-      // - setInterval(string)
-      // - innerHTML (without sanitization)
-
-      expect(true).toBe(true); // Placeholder
-    });
-  });
+  // TODO: Code review test - verify dangerous functions are not used (eval, Function, etc)
 
   // ============================================================================
   // MUTATION XSS (mXSS)
