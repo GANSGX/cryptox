@@ -11,6 +11,7 @@
 
 import type { FastifyError, FastifyRequest, FastifyReply } from "fastify";
 import { logger } from "../services/logger.service.js";
+import { sanitizeDbError, isDatabaseError } from "../utils/db-error-handler.js";
 
 /**
  * Check if we're in production
@@ -95,15 +96,22 @@ export async function enhancedErrorHandler(
   const statusCode = error.statusCode || 500;
 
   // Check if error should be hidden (security-sensitive)
+  const isDbError = isDatabaseError(error);
   const isSecurityError =
+    isDbError ||
     error.message?.toLowerCase().includes("sql") ||
     error.message?.toLowerCase().includes("database") ||
+    error.message?.toLowerCase().includes("postgres") ||
+    error.message?.toLowerCase().includes("pg") ||
     error.message?.toLowerCase().includes("redis") ||
     error.message?.toLowerCase().includes("jwt") ||
     error.message?.toLowerCase().includes("token") ||
     error.message?.toLowerCase().includes("crypto") ||
     error.message?.toLowerCase().includes("argon") ||
     error.message?.toLowerCase().includes("password") ||
+    error.message?.toLowerCase().includes("constraint") ||
+    error.message?.toLowerCase().includes("column") ||
+    error.message?.toLowerCase().includes("table") ||
     statusCode === 500;
 
   // Prepare response
@@ -113,8 +121,13 @@ export async function enhancedErrorHandler(
   };
 
   if (isProd || isSecurityError) {
-    // Production or security-sensitive: generic message
-    response.error = getGenericErrorMessage(statusCode);
+    // Database errors - use sanitized message
+    if (isDbError) {
+      response.error = sanitizeDbError(error);
+    } else {
+      // Other security errors - generic message
+      response.error = getGenericErrorMessage(statusCode);
+    }
 
     // Add error ID for support/debugging
     response.errorId = `ERR-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;

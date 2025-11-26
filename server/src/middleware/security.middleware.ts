@@ -574,12 +574,25 @@ export function validateSchema<T extends ZodSchema>(schema: T) {
       const result = schema.safeParse(request.body);
 
       if (!result.success) {
+        // В production - только generic message
+        if (process.env.NODE_ENV === "production") {
+          return reply.code(400).send({
+            success: false,
+            error: "Invalid request data",
+          });
+        }
+
+        // В development - sanitized details (но без stack traces)
         return reply.code(400).send({
           success: false,
           error: "Validation failed",
           details: result.error.issues.map((e) => ({
             field: e.path.join("."),
-            message: e.message,
+            // Sanitize message (remove internal details)
+            message: e.message
+              .replace(/Expected.*received.*/gi, "Invalid format")
+              .replace(/Required/gi, "This field is required")
+              .substring(0, 100), // Limit length
           })),
         });
       }
@@ -587,9 +600,12 @@ export function validateSchema<T extends ZodSchema>(schema: T) {
       // Replace body with validated data
       request.body = result.data;
     } catch (error) {
+      // Log error server-side only
+      console.error("Validation error:", error);
+
       return reply.code(500).send({
         success: false,
-        error: "Internal validation error",
+        error: "Request validation failed",
       });
     }
   };

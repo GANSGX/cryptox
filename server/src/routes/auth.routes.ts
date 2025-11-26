@@ -93,21 +93,19 @@ export async function authRoutes(fastify: FastifyInstance) {
         });
       }
 
-      // Проверка существования username
-      const usernameExists = await UserService.usernameExists(username);
-      if (usernameExists) {
-        return reply.code(409).send({
-          success: false,
-          error: "Username already taken",
-        });
-      }
+      // Проверка существования username и email (timing-safe)
+      // Всегда проверяем ОБА чтобы предотвратить timing attacks
+      const [usernameExists, emailExists] = await Promise.all([
+        UserService.usernameExists(username),
+        UserService.emailExists(email),
+      ]);
 
-      // Проверка существования email
-      const emailExists = await UserService.emailExists(email);
-      if (emailExists) {
+      // Generic error чтобы не раскрывать что именно существует
+      if (usernameExists || emailExists) {
         return reply.code(409).send({
           success: false,
-          error: "Email already registered",
+          error:
+            "Registration failed. Username or email may already be in use.",
         });
       }
 
@@ -651,9 +649,13 @@ export async function authRoutes(fastify: FastifyInstance) {
         message: "Logged out successfully",
       });
     } catch (error) {
+      // Log error server-side only
+      console.error("❌ Logout error:", error);
+
+      // Generic error response
       return reply.code(500).send({
         success: false,
-        error: "Internal server error",
+        error: "Operation failed",
       });
     }
   });
@@ -678,10 +680,11 @@ export async function authRoutes(fastify: FastifyInstance) {
     // Получение пользователя
     const user = await UserService.getUserByUsername(username);
 
+    // Generic error to prevent username enumeration
     if (!user) {
-      return reply.code(404).send({
+      return reply.code(400).send({
         success: false,
-        error: "User not found",
+        error: "Invalid request",
       });
     }
 
@@ -747,10 +750,11 @@ export async function authRoutes(fastify: FastifyInstance) {
     // Получение пользователя
     const user = await UserService.getUserByUsername(username);
 
+    // Generic error to prevent username enumeration
     if (!user) {
-      return reply.code(404).send({
+      return reply.code(400).send({
         success: false,
-        error: "User not found",
+        error: "Invalid request",
       });
     }
 

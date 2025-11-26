@@ -76,4 +76,4 @@ penetration-test-*.md
 
 # Keep these MD files in git:
 # - README.md
-# - docs/*.md
+# - docs/*.mdserver/test-results.txt
