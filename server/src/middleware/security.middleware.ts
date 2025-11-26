@@ -516,18 +516,27 @@ export async function securityMiddleware(
 ) {
   // Validate body
   if (request.body) {
-    const result = validateInput(request.body);
+    try {
+      const result = validateInput(request.body);
 
-    if (!result.valid) {
-      return reply.code(400).send({
+      if (!result.valid) {
+        return reply.code(400).send({
+          success: false,
+          error: "Invalid or malicious input detected",
+          details: result.errors,
+        });
+      }
+
+      // Replace body with sanitized version
+      request.body = result.sanitized;
+    } catch (error) {
+      // If validation itself fails (e.g., payload too large for JSON.stringify)
+      // Return 413 Payload Too Large
+      return reply.code(413).send({
         success: false,
-        error: "Invalid or malicious input detected",
-        details: result.errors,
+        error: "Request payload too large or malformed",
       });
     }
-
-    // Replace body with sanitized version
-    request.body = result.sanitized;
   }
 
   // Validate query params
@@ -571,6 +580,19 @@ export async function securityMiddleware(
 export function validateSchema<T extends ZodSchema>(schema: T) {
   return async (request: FastifyRequest, reply: FastifyReply) => {
     try {
+      // Pre-check: Reject excessively large field values (ReDoS/DoS protection)
+      // This prevents Zod from even attempting to parse huge strings
+      if (request.body && typeof request.body === "object") {
+        for (const [key, value] of Object.entries(request.body)) {
+          if (typeof value === "string" && value.length > 10000) {
+            return reply.code(413).send({
+              success: false,
+              error: "Request field too large",
+            });
+          }
+        }
+      }
+
       const result = schema.safeParse(request.body);
 
       if (!result.success) {

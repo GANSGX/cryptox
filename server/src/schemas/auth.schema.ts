@@ -26,13 +26,11 @@ import {
 export const usernameSchema = z
   .string()
   .min(3, "Username must be at least 3 characters")
-  .max(REGEX_INPUT_LIMITS.username, "Username too long") // ReDoS: limit length BEFORE regex
-  .transform((val) => sanitizeForRegex(val, REGEX_INPUT_LIMITS.username)) // ReDoS: sanitize input
+  .max(REGEX_INPUT_LIMITS.username, "Username too long") // ReDoS: REJECT long inputs BEFORE processing
   .refine(
     (val) => {
-      // Length check before regex (ReDoS protection)
-      if (val.length > REGEX_INPUT_LIMITS.username) return false;
       // Safe regex pattern (no nested quantifiers)
+      // Length already checked by .max() above
       return /^[a-z][a-z0-9_]*$/.test(val);
     },
     {
@@ -85,14 +83,12 @@ export const usernameSchema = z
  */
 export const emailSchema = z
   .string()
-  .max(REGEX_INPUT_LIMITS.email, "Email too long") // ReDoS: limit length BEFORE regex
+  .max(REGEX_INPUT_LIMITS.email, "Email too long") // ReDoS: REJECT long inputs BEFORE processing
   .toLowerCase()
-  .transform((val) => sanitizeForRegex(val, REGEX_INPUT_LIMITS.email)) // ReDoS: sanitize
   .refine(
     (val) => {
-      // Length check (ReDoS protection)
-      if (val.length > REGEX_INPUT_LIMITS.email) return false;
       // Simplified safe email pattern (no catastrophic backtracking)
+      // Length already checked by .max() above
       return /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(val);
     },
     { message: "Invalid email format" },
