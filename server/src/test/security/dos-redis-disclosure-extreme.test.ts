@@ -396,9 +396,13 @@ describe("🔥 EXTREME: Information Disclosure", () => {
 
       // Should not expose versions
       expect(headers["x-powered-by"]).toBeUndefined();
-      expect(headers["server"]).not.toContain("Fastify");
-      expect(headers["server"]).not.toContain("Node");
-      expect(headers["server"]).not.toContain("Express");
+
+      // Server header should be undefined or not expose version
+      if (headers["server"] !== undefined) {
+        expect(headers["server"]).not.toContain("Fastify");
+        expect(headers["server"]).not.toContain("Node");
+        expect(headers["server"]).not.toContain("Express");
+      }
     });
 
     it("should not expose package.json", async () => {
