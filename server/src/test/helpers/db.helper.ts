@@ -84,9 +84,16 @@ export async function runMigrations(): Promise<void> {
 
 /**
  * Закрытие pool connection после всех тестов
+ *
+ * NOTE: We don't actually close the pool here because tests run in parallel.
+ * If one test file closes the pool, all other running tests will fail with
+ * "Cannot use a pool after calling end on the pool".
+ * The pool will be closed automatically when the process exits.
  */
 export async function closeDatabase(): Promise<void> {
-  await pool.end();
+  // Do nothing - let process exit handle pool cleanup
+  // This prevents "Cannot use a pool after calling end on the pool" errors
+  // when tests run in parallel
 }
 
 /**
