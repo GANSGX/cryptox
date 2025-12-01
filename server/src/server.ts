@@ -127,6 +127,44 @@ await fastify.register(rateLimit, {
   },
 });
 
+// Block access to sensitive files and directories (Information Disclosure prevention)
+fastify.addHook("onRequest", async (request, reply) => {
+  const path = request.url.toLowerCase();
+
+  // Block .env files
+  if (path.includes("/.env")) {
+    return reply.code(404).send({ error: "Not Found" });
+  }
+
+  // Block .git directory
+  if (path.includes("/.git")) {
+    return reply.code(404).send({ error: "Not Found" });
+  }
+
+  // Block package.json
+  if (path.includes("/package.json")) {
+    return reply.code(404).send({ error: "Not Found" });
+  }
+
+  // Block backup files
+  if (path.match(/\.(bak|backup|old|tmp|swp|sql|zip|tar\.gz|tgz)$/)) {
+    return reply.code(404).send({ error: "Not Found" });
+  }
+
+  // Block debug/admin endpoints in production
+  if (env.NODE_ENV === "production") {
+    if (
+      path.startsWith("/debug") ||
+      path.startsWith("/console") ||
+      path.startsWith("/admin") ||
+      path.startsWith("/server-status") ||
+      path.startsWith("/phpinfo")
+    ) {
+      return reply.code(404).send({ error: "Not Found" });
+    }
+  }
+});
+
 // Security middleware (XSS, SQL injection, command injection, etc.)
 fastify.addHook("preHandler", securityMiddleware);
 
@@ -171,12 +209,12 @@ await fastify.register(sessionsRoutes, { prefix: "/api" });
 fastify.setErrorHandler(enhancedErrorHandler);
 fastify.setNotFoundHandler(notFoundHandler);
 
-// Health check route
+// Health check route (no sensitive information!)
 fastify.get("/health", async () => {
   return {
     status: "ok",
     timestamp: new Date().toISOString(),
-    environment: env.NODE_ENV,
+    // DO NOT expose: environment, version, database status, etc.
   };
 });
 
