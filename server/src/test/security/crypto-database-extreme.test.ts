@@ -624,8 +624,12 @@ describe("🔥 EXTREME: Database Security", () => {
 
       // Should not expose database version
       expect(headers["x-powered-by"]).toBeUndefined();
-      expect(headers["server"]).not.toContain("PostgreSQL");
-      expect(headers["server"]).not.toContain("postgres");
+
+      // Server header should be removed (undefined) or not contain DB info
+      if (headers["server"]) {
+        expect(headers["server"]).not.toContain("PostgreSQL");
+        expect(headers["server"]).not.toContain("postgres");
+      }
     });
 
     it("should not leak user existence through timing", async () => {
