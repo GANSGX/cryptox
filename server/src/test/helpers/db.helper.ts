@@ -1,5 +1,6 @@
 // Database helper для тестов
 import { pool } from "../../db/pool.js";
+import { RedisService } from "../../services/redis.service.js";
 import fs from "fs/promises";
 import path from "path";
 
@@ -60,6 +61,17 @@ export async function clearDatabase(): Promise<void> {
           );
         }
       }
+    }
+  }
+
+  // Очистка Redis (rate limiters, sessions, etc.)
+  // ВАЖНО: Используем FLUSHDB только в тестовой среде!
+  if (process.env.NODE_ENV === "test") {
+    try {
+      const redis = RedisService.getConnection();
+      await redis.flushdb();
+    } catch (redisErr: any) {
+      console.warn("Warning: Failed to flush Redis:", redisErr.message);
     }
   }
 }

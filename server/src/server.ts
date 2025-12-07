@@ -112,21 +112,24 @@ await fastify.register(helmet, {
   crossOriginResourcePolicy: { policy: "same-origin" },
 });
 
-await fastify.register(rateLimit, {
-  max: 100,
-  timeWindow: "1 minute",
-  cache: 10000,
-  allowList: ["127.0.0.1"],
-  redis: undefined,
-  skipOnError: true,
-  errorResponseBuilder: (request, context) => {
-    return {
-      success: false,
-      error: "Too many requests. Please try again later.",
-      retryAfter: context.after,
-    };
-  },
-});
+// Rate limiting - отключен в тестах (иначе тесты падают из-за кэша в памяти)
+if (env.NODE_ENV !== "test") {
+  await fastify.register(rateLimit, {
+    max: 100,
+    timeWindow: "1 minute",
+    cache: 10000,
+    allowList: ["127.0.0.1"],
+    redis: undefined,
+    skipOnError: true,
+    errorResponseBuilder: (request, context) => {
+      return {
+        success: false,
+        error: "Too many requests. Please try again later.",
+        retryAfter: context.after,
+      };
+    },
+  });
+}
 
 // Block access to sensitive files and directories (Information Disclosure prevention)
 fastify.addHook("onRequest", async (request, reply) => {
