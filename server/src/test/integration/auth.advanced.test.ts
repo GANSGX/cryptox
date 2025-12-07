@@ -75,18 +75,18 @@ describe("Auth Advanced Security Tests", () => {
       }
     });
 
-    it("should require approval from trusted device", async () => {
+    it.skip("should require approval from trusted device", async () => {
       // TODO: Test device approval flow when implemented
       // This is a placeholder for future device approval tests
       expect(true).toBe(true);
     });
 
-    it("should reject login from blocked device", async () => {
+    it.skip("should reject login from blocked device", async () => {
       // TODO: Test blocked device scenario
       expect(true).toBe(true);
     });
 
-    it("should limit number of pending approvals per user", async () => {
+    it.skip("should limit number of pending approvals per user", async () => {
       // Security: Prevent spam of approval requests
       // TODO: Implement test when device approval is fully built
       expect(true).toBe(true);
@@ -169,7 +169,7 @@ describe("Auth Advanced Security Tests", () => {
       expect(test2.statusCode).not.toBe(401);
     });
 
-    it("should revoke all sessions on password change", async () => {
+    it.skip("should revoke all sessions on password change", async () => {
       // TODO: Implement when password change is added
       expect(true).toBe(true);
     });
@@ -552,7 +552,7 @@ describe("Auth Advanced Security Tests", () => {
       expect(body.data.username).not.toBe("bob");
     });
 
-    it("should invalidate old token after password change", async () => {
+    it.skip("should invalidate old token after password change", async () => {
       // TODO: Implement when password change endpoint exists
       expect(true).toBe(true);
     });

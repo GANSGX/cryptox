@@ -279,7 +279,7 @@ describe("🔥 EXTREME: Authentication & Session Security", () => {
       expect(body.data.username).not.toBe("bob");
     });
 
-    it("should invalidate token if user is deleted", async () => {
+    it.skip("should invalidate token if user is deleted", async () => {
       // This test would require implementing user deletion
       // TODO: Implement when user deletion endpoint is added
       expect(true).toBe(true);
@@ -358,7 +358,7 @@ describe("🔥 EXTREME: Authentication & Session Security", () => {
       expect(results.length).toBe(1001);
     }, 120000); // 2 minute timeout
 
-    it("should implement account lockout after N failed attempts", async () => {
+    it.skip("should implement account lockout after N failed attempts", async () => {
       // TODO: Implement account lockout mechanism
       // After 5-10 failed login attempts, account should be temporarily locked
       expect(true).toBe(true);
@@ -426,13 +426,13 @@ describe("🔥 EXTREME: Authentication & Session Security", () => {
       }
     });
 
-    it("should expire reset tokens after reasonable time", async () => {
+    it.skip("should expire reset tokens after reasonable time", async () => {
       // TODO: Test password reset token expiration
       // Tokens should expire after 15-30 minutes
       expect(true).toBe(true);
     });
 
-    it("should invalidate reset token after use", async () => {
+    it.skip("should invalidate reset token after use", async () => {
       // TODO: Test that reset token can only be used once
       expect(true).toBe(true);
     });
@@ -492,7 +492,7 @@ describe("🔥 EXTREME: Authentication & Session Security", () => {
       // If token is used from different IP/device, should require re-authentication
     });
 
-    it("should prevent account takeover via CSRF", async () => {
+    it.skip("should prevent account takeover via CSRF", async () => {
       // TODO: Implement CSRF protection tests
       // All state-changing operations should require CSRF token
       expect(true).toBe(true);
@@ -610,7 +610,7 @@ describe("🔥 EXTREME: Authentication & Session Security", () => {
   // ============================================================================
 
   describe("Multi-Factor Authentication (MFA)", () => {
-    it("should support 2FA for additional security", async () => {
+    it.skip("should support 2FA for additional security", async () => {
       // TODO: Implement 2FA tests when feature is added
       // - TOTP (Time-based One-Time Password)
       // - SMS verification
@@ -619,7 +619,7 @@ describe("🔥 EXTREME: Authentication & Session Security", () => {
       expect(true).toBe(true);
     });
 
-    it("should prevent 2FA bypass attacks", async () => {
+    it.skip("should prevent 2FA bypass attacks", async () => {
       // TODO: Test 2FA bypass vulnerabilities
       // - Race conditions in verification
       // - Reusing old codes
