@@ -17,6 +17,7 @@ import {
   setupGlobalErrorHandlers,
 } from "./middleware/error.middleware.enhanced.js";
 import { securityMiddleware } from "./middleware/security.middleware.js";
+import { validateContentType } from "./middleware/content-type.middleware.js";
 import { log } from "./services/logger.service.js";
 import { initializeSocketServer } from "./sockets/socket.server.js";
 
@@ -167,6 +168,9 @@ fastify.addHook("onRequest", async (request, reply) => {
 
 // Security middleware (XSS, SQL injection, command injection, etc.)
 fastify.addHook("preHandler", securityMiddleware);
+
+// Content-Type validation (prevent Content-Type confusion attacks)
+fastify.addHook("preHandler", validateContentType);
 
 // HTTP Request logging (DO NOT log sensitive data!)
 fastify.addHook("onRequest", async (request, reply) => {
