@@ -25,6 +25,7 @@ import {
   isValidEmail,
   isValidPassword,
 } from "../utils/crypto.js";
+import { sanitizeUsername, sanitizeEmail } from "../utils/sanitize.js";
 import type {
   RegisterRequest,
   RegisterResponse,
@@ -58,8 +59,12 @@ export async function authRoutes(fastify: FastifyInstance) {
       ],
     },
     async (request, reply) => {
-      const { username, email, password, public_key, deviceFingerprint } =
+      let { username, email, password, public_key, deviceFingerprint } =
         request.body;
+
+      // Sanitize inputs to prevent XSS
+      username = sanitizeUsername(username);
+      email = sanitizeEmail(email);
 
       // Валидация входных данных
       if (!username || !email || !password || !public_key) {
@@ -219,9 +224,12 @@ export async function authRoutes(fastify: FastifyInstance) {
     },
     async (request, reply) => {
       try {
-        console.log("🔍 Login attempt:", request.body.username);
+        let { username, password, deviceFingerprint } = request.body;
 
-        const { username, password, deviceFingerprint } = request.body;
+        // Sanitize inputs to prevent XSS
+        username = sanitizeUsername(username);
+
+        console.log("🔍 Login attempt:", username);
 
         // Валидация входных данных
         if (!username || !password) {

@@ -1,13 +1,14 @@
-import type { FastifyInstance } from 'fastify'
-import { authMiddleware } from '../middleware/auth.middleware.js'
-import { MessageService } from '../services/message.service.js'
+import type { FastifyInstance } from "fastify";
+import { authMiddleware } from "../middleware/auth.middleware.js";
+import { MessageService } from "../services/message.service.js";
+import { sanitizeUsername } from "../utils/sanitize.js";
 import type {
   SendMessageRequest,
   SendMessageResponse,
   GetMessagesQuery,
   GetMessagesResponse,
   ApiResponse,
-} from '../types/api.types.js'
+} from "../types/api.types.js";
 
 export async function messagesRoutes(fastify: FastifyInstance) {
   /**
@@ -15,31 +16,35 @@ export async function messagesRoutes(fastify: FastifyInstance) {
    * Отправка сообщения
    */
   fastify.post<{
-    Body: SendMessageRequest
-    Reply: ApiResponse<SendMessageResponse>
+    Body: SendMessageRequest;
+    Reply: ApiResponse<SendMessageResponse>;
   }>(
-    '/messages',
+    "/messages",
     {
       preHandler: authMiddleware,
     },
     async (request, reply) => {
-      const { recipient_username, encrypted_content, message_type } = request.body
-      const sender_username = request.user!.username
+      let { recipient_username, encrypted_content, message_type } =
+        request.body;
+      const sender_username = request.user!.username;
+
+      // Sanitize inputs to prevent XSS
+      recipient_username = sanitizeUsername(recipient_username);
 
       // Валидация
       if (!recipient_username || !encrypted_content) {
         return reply.code(400).send({
           success: false,
-          error: 'Missing required fields',
-        })
+          error: "Missing required fields",
+        });
       }
 
       // Проверка типа данных
-      if (typeof encrypted_content !== 'string') {
+      if (typeof encrypted_content !== "string") {
         return reply.code(400).send({
           success: false,
-          error: 'Invalid encrypted_content type',
-        })
+          error: "Invalid encrypted_content type",
+        });
       }
 
       // Проверка максимальной длины (50KB для зашифрованного текста)
@@ -47,8 +52,8 @@ export async function messagesRoutes(fastify: FastifyInstance) {
       if (encrypted_content.length > 50000) {
         return reply.code(400).send({
           success: false,
-          error: 'Message too long (max 50KB encrypted)',
-        })
+          error: "Message too long (max 50KB encrypted)",
+        });
       }
 
       // Проверка на подозрительные паттерны (базовая защита от инъекций)
@@ -56,16 +61,16 @@ export async function messagesRoutes(fastify: FastifyInstance) {
       if (!/^[A-Za-z0-9+/=:]+$/.test(encrypted_content)) {
         return reply.code(400).send({
           success: false,
-          error: 'Invalid encrypted_content format',
-        })
+          error: "Invalid encrypted_content format",
+        });
       }
 
       // Нельзя отправить самому себе
       if (sender_username.toLowerCase() === recipient_username.toLowerCase()) {
         return reply.code(400).send({
           success: false,
-          error: 'Cannot send message to yourself',
-        })
+          error: "Cannot send message to yourself",
+        });
       }
 
       // Создание сообщения
@@ -74,18 +79,18 @@ export async function messagesRoutes(fastify: FastifyInstance) {
         recipient_username,
         encrypted_content,
         message_type,
-      })
+      });
 
       // Отправка через Socket.io (если получатель online)
-      const io = fastify.io
-      io.to(`user:${recipient_username.toLowerCase()}`).emit('new_message', {
+      const io = fastify.io;
+      io.to(`user:${recipient_username.toLowerCase()}`).emit("new_message", {
         id: message.id,
         chat_id: message.chat_id,
         sender_username: message.sender_username,
         encrypted_content: message.encrypted_content,
         message_type: message.message_type,
         created_at: message.created_at.toISOString(),
-      })
+      });
 
       return reply.code(201).send({
         success: true,
@@ -93,36 +98,36 @@ export async function messagesRoutes(fastify: FastifyInstance) {
           message_id: message.id,
           chat_id: message.chat_id,
           created_at: message.created_at.toISOString(),
-          status: 'sent',
+          status: "sent",
         },
-      })
-    }
-  )
+      });
+    },
+  );
 
   /**
    * GET /messages/:username
    * Получение истории чата с пользователем
    */
   fastify.get<{
-    Params: { username: string }
-    Querystring: GetMessagesQuery
-    Reply: ApiResponse<GetMessagesResponse>
+    Params: { username: string };
+    Querystring: GetMessagesQuery;
+    Reply: ApiResponse<GetMessagesResponse>;
   }>(
-    '/messages/:username',
+    "/messages/:username",
     {
       preHandler: authMiddleware,
     },
     async (request, reply) => {
-      const { username: otherUsername } = request.params
-      const { limit = 50, offset = 0 } = request.query
-      const currentUsername = request.user!.username
+      const { username: otherUsername } = request.params;
+      const { limit = 50, offset = 0 } = request.query;
+      const currentUsername = request.user!.username;
 
       // Нельзя запросить чат с самим собой
       if (currentUsername.toLowerCase() === otherUsername.toLowerCase()) {
         return reply.code(400).send({
           success: false,
-          error: 'Cannot get messages with yourself',
-        })
+          error: "Cannot get messages with yourself",
+        });
       }
 
       // Получение сообщений
@@ -130,8 +135,8 @@ export async function messagesRoutes(fastify: FastifyInstance) {
         currentUsername,
         otherUsername,
         Number(limit),
-        Number(offset)
-      )
+        Number(offset),
+      );
 
       // Форматирование
       const formattedMessages = messages.map((msg) => ({
@@ -142,7 +147,7 @@ export async function messagesRoutes(fastify: FastifyInstance) {
         message_type: msg.message_type,
         created_at: msg.created_at.toISOString(),
         read_at: msg.read_at ? msg.read_at.toISOString() : null,
-      }))
+      }));
 
       return reply.code(200).send({
         success: true,
@@ -151,84 +156,87 @@ export async function messagesRoutes(fastify: FastifyInstance) {
           total,
           has_more: offset + messages.length < total,
         },
-      })
-    }
-  )
+      });
+    },
+  );
 
   /**
    * PATCH /messages/:id/read
    * Пометить сообщение как прочитанное
    */
   fastify.patch<{
-    Params: { id: string }
-    Reply: ApiResponse
+    Params: { id: string };
+    Reply: ApiResponse;
   }>(
-    '/messages/:id/read',
+    "/messages/:id/read",
     {
       preHandler: authMiddleware,
     },
     async (request, reply) => {
-      const { id } = request.params
+      const { id } = request.params;
 
-      await MessageService.markAsRead(id)
+      await MessageService.markAsRead(id);
 
       // Уведомляем отправителя через Socket.io
       // (здесь нужно получить sender_username из БД, упростим)
 
       return reply.code(200).send({
         success: true,
-        message: 'Message marked as read',
-      })
-    }
-  )
+        message: "Message marked as read",
+      });
+    },
+  );
 
   /**
    * PATCH /messages/chat/:username/read
    * Пометить все сообщения чата как прочитанные
    */
   fastify.patch<{
-    Params: { username: string }
-    Reply: ApiResponse
+    Params: { username: string };
+    Reply: ApiResponse;
   }>(
-    '/messages/chat/:username/read',
+    "/messages/chat/:username/read",
     {
       preHandler: authMiddleware,
     },
     async (request, reply) => {
-      const { username: otherUsername } = request.params
-      const currentUsername = request.user!.username
+      const { username: otherUsername } = request.params;
+      const currentUsername = request.user!.username;
 
-      await MessageService.markChatAsRead(currentUsername, otherUsername)
+      await MessageService.markChatAsRead(currentUsername, otherUsername);
 
       return reply.code(200).send({
         success: true,
-        message: 'All messages marked as read',
-      })
-    }
-  )
+        message: "All messages marked as read",
+      });
+    },
+  );
 
   /**
    * GET /messages/chat/:username/unread
    * Получить количество непрочитанных сообщений
    */
   fastify.get<{
-    Params: { username: string }
-    Reply: ApiResponse<{ count: number }>
+    Params: { username: string };
+    Reply: ApiResponse<{ count: number }>;
   }>(
-    '/messages/chat/:username/unread',
+    "/messages/chat/:username/unread",
     {
       preHandler: authMiddleware,
     },
     async (request, reply) => {
-      const { username: otherUsername } = request.params
-      const currentUsername = request.user!.username
+      const { username: otherUsername } = request.params;
+      const currentUsername = request.user!.username;
 
-      const count = await MessageService.getUnreadCount(currentUsername, otherUsername)
+      const count = await MessageService.getUnreadCount(
+        currentUsername,
+        otherUsername,
+      );
 
       return reply.code(200).send({
         success: true,
         data: { count },
-      })
-    }
-  )
+      });
+    },
+  );
 }
