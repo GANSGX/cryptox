@@ -22,10 +22,9 @@ export async function registerUser(
     password: userData.password || "testPassword123",
   };
 
-  // Генерируем публичный ключ (mock для тестов)
-  const mockPublicKey = `-----BEGIN PUBLIC KEY-----
-MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA${Buffer.from(user.username).toString("base64")}
------END PUBLIC KEY-----`;
+  // Генерируем публичный ключ (mock для тестов) - 64 hex chars
+  const mockPublicKey =
+    "a1b2c3d4e5f6789012345678901234567890abcdefabcdef1234567890abcdef";
 
   const response = await app.inject({
     method: "POST",

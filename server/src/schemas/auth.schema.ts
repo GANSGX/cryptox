@@ -25,6 +25,7 @@ import {
  */
 export const usernameSchema = z
   .string()
+  .toLowerCase() // Auto-normalize to lowercase (DB constraint requires it anyway)
   .min(3, "Username must be at least 3 characters")
   .max(REGEX_INPUT_LIMITS.username, "Username too long") // ReDoS: REJECT long inputs BEFORE processing
   .refine(

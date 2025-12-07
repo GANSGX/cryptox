@@ -23,10 +23,9 @@ import {
   createAuthenticatedUser,
 } from "../helpers/user.helper.js";
 
-// Mock public key for tests
-const MOCK_PUBLIC_KEY = `-----BEGIN PUBLIC KEY-----
-MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAtestkey
------END PUBLIC KEY-----`;
+// Mock public key for tests (64 hex chars = 32 bytes)
+const MOCK_PUBLIC_KEY =
+  "a1b2c3d4e5f6789012345678901234567890abcdefabcdef1234567890abcdef";
 
 describe("Auth API - Integration & Security Tests", () => {
   let app: FastifyInstance;

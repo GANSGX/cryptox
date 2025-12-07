@@ -625,9 +625,9 @@ export function validateSchema<T extends ZodSchema>(schema: T) {
       // Log error server-side only
       console.error("Validation error:", error);
 
-      return reply.code(500).send({
+      return reply.code(400).send({
         success: false,
-        error: "Request validation failed",
+        error: "Invalid request data",
       });
     }
   };

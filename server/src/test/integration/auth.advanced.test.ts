@@ -184,9 +184,8 @@ describe("Auth Advanced Security Tests", () => {
       const promises = [];
 
       // Try to register same username 10 times simultaneously
-      const MOCK_PUBLIC_KEY = `-----BEGIN PUBLIC KEY-----
-MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAtestkey
------END PUBLIC KEY-----`;
+      const MOCK_PUBLIC_KEY =
+        "a1b2c3d4e5f6789012345678901234567890abcdefabcdef1234567890abcdef";
 
       for (let i = 0; i < 10; i++) {
         promises.push(
