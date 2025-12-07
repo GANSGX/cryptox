@@ -47,8 +47,11 @@ export function sanitizeUsername(username: string): string {
   // Remove HTML tags first
   let sanitized = stripHtmlTags(username);
 
-  // Remove any non-alphanumeric characters except underscores and hyphens
-  sanitized = sanitized.replace(/[^a-zA-Z0-9_-]/g, "");
+  // Lowercase (usernames are case-insensitive in DB)
+  sanitized = sanitized.toLowerCase();
+
+  // Remove any non-alphanumeric characters except underscores
+  sanitized = sanitized.replace(/[^a-z0-9_]/g, "");
 
   // Trim to max 30 characters
   sanitized = sanitized.substring(0, 30);
