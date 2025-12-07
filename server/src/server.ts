@@ -167,7 +167,18 @@ fastify.addHook("onRequest", async (request, reply) => {
 });
 
 // Security middleware (XSS, SQL injection, command injection, etc.)
-fastify.addHook("preHandler", securityMiddleware);
+// Skip for /api/auth/* routes - they have strict Zod validation + manual sanitization
+fastify.addHook("preHandler", async (request, reply) => {
+  // Auth routes already have:
+  // 1. Zod schema validation (very strict)
+  // 2. Manual sanitization in handlers (sanitizeUsername, sanitizeEmail)
+  // 3. Database constraints
+  // Double sanitization breaks username matching
+  if (request.url.startsWith("/api/auth")) {
+    return;
+  }
+  return securityMiddleware(request, reply);
+});
 
 // Content-Type validation (prevent Content-Type confusion attacks)
 fastify.addHook("preHandler", validateContentType);

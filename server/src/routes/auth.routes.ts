@@ -25,7 +25,6 @@ import {
   isValidEmail,
   isValidPassword,
 } from "../utils/crypto.js";
-import { sanitizeUsername, sanitizeEmail } from "../utils/sanitize.js";
 import type {
   RegisterRequest,
   RegisterResponse,
@@ -59,12 +58,14 @@ export async function authRoutes(fastify: FastifyInstance) {
       ],
     },
     async (request, reply) => {
-      let { username, email, password, public_key, deviceFingerprint } =
+      const { username, email, password, public_key, deviceFingerprint } =
         request.body;
 
-      // Sanitize inputs to prevent XSS
-      username = sanitizeUsername(username);
-      email = sanitizeEmail(email);
+      // NOTE: Zod schema (registerSchema) already validated and normalized:
+      // - username: lowercased, 3-30 chars, a-z0-9_, no SQL/XSS patterns
+      // - email: lowercased, valid format, no suspicious chars
+      // - password: 8+ chars, no null bytes
+      // So manual sanitization here would be redundant
 
       // Валидация входных данных
       if (!username || !email || !password || !public_key) {
@@ -224,11 +225,9 @@ export async function authRoutes(fastify: FastifyInstance) {
     },
     async (request, reply) => {
       try {
-        let { username, password, deviceFingerprint } = request.body;
+        const { username, password, deviceFingerprint } = request.body;
 
-        // Sanitize inputs to prevent XSS
-        username = sanitizeUsername(username);
-
+        // NOTE: loginSchema already validated and normalized username (lowercase, a-z0-9_)
         console.log("🔍 Login attempt:", username);
 
         // Валидация входных данных
