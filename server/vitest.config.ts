@@ -10,6 +10,8 @@ export default defineConfig({
     },
     testTimeout: 30000, // 30 seconds for slow Argon2 tests
     hookTimeout: 30000, // 30 seconds for DB cleanup (prevent deadlock timeouts)
+    // Run test files sequentially to avoid DB conflicts
+    fileParallelism: false,
     coverage: {
       provider: "v8",
       reporter: ["text", "json", "html"],
