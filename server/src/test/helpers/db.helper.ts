@@ -40,14 +40,25 @@ export async function clearDatabase(): Promise<void> {
     "users",
   ];
 
-  // Очищаем каждую таблицу БЕЗ транзакции, игнорируя ошибки если таблица не существует
-  for (const table of tables) {
-    try {
-      await pool.query(`TRUNCATE TABLE ${table} CASCADE`);
-    } catch (err: any) {
-      // Игнорируем ошибку "таблица не существует"
-      if (!err.message.includes("does not exist")) {
-        console.warn(`Warning: Failed to truncate ${table}:`, err.message);
+  // Очищаем ВСЕ таблицы ОДНИМ запросом - это предотвращает deadlock
+  // при параллельном запуске тестов, т.к. используется одна блокировка
+  try {
+    // Формируем список таблиц через запятую
+    const tableList = tables.join(", ");
+    await pool.query(`TRUNCATE TABLE ${tableList} RESTART IDENTITY CASCADE`);
+  } catch (err: any) {
+    // Если какая-то таблица не существует - очищаем по одной
+    for (const table of tables) {
+      try {
+        await pool.query(`TRUNCATE TABLE ${table} RESTART IDENTITY CASCADE`);
+      } catch (tableErr: any) {
+        // Игнорируем ошибку "таблица не существует"
+        if (!tableErr.message.includes("does not exist")) {
+          console.warn(
+            `Warning: Failed to truncate ${table}:`,
+            tableErr.message,
+          );
+        }
       }
     }
   }

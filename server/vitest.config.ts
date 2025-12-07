@@ -8,6 +8,8 @@ export default defineConfig({
     env: {
       NODE_ENV: "test",
     },
+    testTimeout: 30000, // 30 seconds for slow Argon2 tests
+    hookTimeout: 30000, // 30 seconds for DB cleanup (prevent deadlock timeouts)
     coverage: {
       provider: "v8",
       reporter: ["text", "json", "html"],
