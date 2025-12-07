@@ -357,7 +357,8 @@ describe("Auth API - Integration & Security Tests", () => {
 
       for (const injection of sqlInjections) {
         const { response } = await loginUser(app, injection, "anything");
-        expect(response.statusCode).toBe(401);
+        // SQL injection should be rejected by Zod validation (400), not at login stage (401)
+        expect(response.statusCode).toBe(400);
       }
     });
 

@@ -599,8 +599,8 @@ describe("🔥 EXTREME: Authentication & Session Security", () => {
           },
         });
 
-        // Should reject SQL injection attempts
-        expect(response.statusCode).toBe(401);
+        // Should reject SQL injection attempts (Zod validation fails with 400)
+        expect(response.statusCode).toBe(400);
       }
     });
   });
