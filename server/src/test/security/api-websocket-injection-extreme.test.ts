@@ -586,7 +586,8 @@ describe("🔥 EXTREME: Advanced Injection Attacks", () => {
           },
         });
 
-        expect(response.statusCode).toBe(401);
+        // Zod blocks LDAP patterns at validation = 400
+        expect(response.statusCode).toBe(400);
       }
     });
   });

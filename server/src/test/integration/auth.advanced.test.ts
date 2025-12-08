@@ -289,7 +289,8 @@ describe("Auth Advanced Security Tests", () => {
           },
         });
 
-        expect(response.statusCode).toBe(401);
+        // Zod blocks LDAP patterns at validation = 400
+        expect(response.statusCode).toBe(400);
       }
     });
 
@@ -421,8 +422,8 @@ describe("Auth Advanced Security Tests", () => {
         payload: hugePayload,
       });
 
-      // Should reject large payload
-      expect(response.statusCode).toBe(400);
+      // Should reject large payload (413 = Payload Too Large, this is correct!)
+      expect(response.statusCode).toBe(413);
     }, 10000);
 
     it("should handle deeply nested JSON", async () => {
@@ -465,7 +466,8 @@ describe("Auth Advanced Security Tests", () => {
 
       // Should reject quickly (not hash 100KB password)
       expect(duration).toBeLessThan(1000);
-      expect(response.statusCode).toBe(400);
+      // 413 = Payload Too Large (bodyLimit protection works!)
+      expect(response.statusCode).toBe(413);
     });
   });
 

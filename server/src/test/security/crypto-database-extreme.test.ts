@@ -158,10 +158,12 @@ describe("🔥 EXTREME: Cryptography Security", () => {
       expect(allFields).not.toContain("MySecretPassword123!");
       expect(dbUser.password).toBeUndefined();
 
-      // Should have salt and auth_token (hashed password)
+      // Should have salt and auth_token (HMAC-SHA256 derived from Argon2 password_key)
+      // NOTE: auth_token is NOT Argon2 hash - it's HMAC-SHA256(password_key, "auth")
       expect(dbUser.salt).toBeDefined();
       expect(dbUser.auth_token).toBeDefined();
-      expect(dbUser.auth_token).toContain("$argon2id$");
+      // Auth token should be 64 hex chars (HMAC-SHA256 output)
+      expect(dbUser.auth_token).toMatch(/^[a-f0-9]{64}$/);
     });
   });
 
