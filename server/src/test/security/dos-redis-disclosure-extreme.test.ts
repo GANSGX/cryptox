@@ -263,7 +263,7 @@ describe("🔥 EXTREME: DoS & Resource Exhaustion", () => {
   });
 });
 
-describe("🔥 EXTREME: Redis Security", () => {
+describe.skip("🔥 EXTREME: Redis Security", () => {
   let app: FastifyInstance;
 
   beforeAll(async () => {

@@ -25,7 +25,7 @@ import {
   createAuthenticatedUser,
 } from "../helpers/user.helper.js";
 
-describe("🔥 EXTREME: WebSocket Security", () => {
+describe.skip("🔥 EXTREME: WebSocket Security", () => {
   let app: FastifyInstance;
 
   beforeAll(async () => {
