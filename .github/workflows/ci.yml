@@ -108,13 +108,26 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      - name: Run database migrations
+        run: cd server && pnpm migrate
+        env:
+          NODE_ENV: test
+          DATABASE_URL: postgresql://cryptox_user:cryptox_password_test@localhost:5432/cryptox_test
+          TEST_DATABASE_URL: postgresql://cryptox_user:cryptox_password_test@localhost:5432/cryptox_test
+          REDIS_URL: redis://localhost:6379
+          JWT_SECRET: U8mP@z3xLpH$Nd7sQeLkZ4f9XyGvJhWqT2ViSaRc1BtOyMlQpZwXeDsCuFbNaKmLp
+          SERVER_PEPPER: test_server_pepper_32_chars_long_secure_value_here
+          RESEND_API_KEY: test_resend_key
+
       - name: Run tests
         run: pnpm test
         env:
+          NODE_ENV: test
           DATABASE_URL: postgresql://cryptox_user:cryptox_password_test@localhost:5432/cryptox_test
+          TEST_DATABASE_URL: postgresql://cryptox_user:cryptox_password_test@localhost:5432/cryptox_test
           REDIS_URL: redis://localhost:6379
-          JWT_SECRET: test_jwt_secret
-          SERVER_PEPPER: test_server_pepper
+          JWT_SECRET: U8mP@z3xLpH$Nd7sQeLkZ4f9XyGvJhWqT2ViSaRc1BtOyMlQpZwXeDsCuFbNaKmLp
+          SERVER_PEPPER: test_server_pepper_32_chars_long_secure_value_here
           RESEND_API_KEY: test_resend_key
 
       - name: Upload coverage reports
