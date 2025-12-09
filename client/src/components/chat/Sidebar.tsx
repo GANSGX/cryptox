@@ -1,65 +1,109 @@
-import { Search } from 'lucide-react'
-import { useState } from 'react'
+import { Search } from "lucide-react";
+import { useState, useEffect } from "react";
+import { apiService } from "@/services/api.service";
 
 interface SidebarProps {
-  activeChat: string | null
-  onChatSelect: (username: string) => void
+  activeChat: string | null;
+  onChatSelect: (username: string) => void;
+}
+
+interface SearchUser {
+  username: string;
+  avatar_path: string | null;
+  bio: string | null;
 }
 
 export function Sidebar({ activeChat, onChatSelect }: SidebarProps) {
-  const [searchQuery, setSearchQuery] = useState('')
+  const [searchQuery, setSearchQuery] = useState("");
+  const [searchResults, setSearchResults] = useState<SearchUser[]>([]);
+  const [isSearching, setIsSearching] = useState(false);
 
-  // Заглушка - позже заменим на реальные чаты из store
-  const mockChats = [
-    { username: 'alice', lastMessage: 'Hey, how are you?', avatar: 'A' },
-    { username: 'bob', lastMessage: 'Check this out!', avatar: 'B' },
-    { username: 'charlie', lastMessage: 'See you tomorrow', avatar: 'C' },
-  ]
+  // Поиск пользователей при вводе
+  useEffect(() => {
+    if (searchQuery.trim().length < 2) {
+      setSearchResults([]);
+      return;
+    }
+
+    const searchTimeout = setTimeout(async () => {
+      setIsSearching(true);
+      try {
+        const response = await apiService.searchUsers(searchQuery);
+        if (response.success && response.data) {
+          setSearchResults(response.data.users);
+        }
+      } catch (err) {
+        console.error("Search error:", err);
+      } finally {
+        setIsSearching(false);
+      }
+    }, 300); // Debounce 300ms
+
+    return () => clearTimeout(searchTimeout);
+  }, [searchQuery]);
 
   return (
     <div className="sidebar">
       {/* Header */}
       <div className="sidebar-header">
         <h2>Chats</h2>
-        
+
         {/* Search */}
-        <div style={{ position: 'relative' }}>
-          <Search 
-            size={18} 
-            style={{ 
-              position: 'absolute', 
-              left: '12px', 
-              top: '50%', 
-              transform: 'translateY(-50%)',
-              color: 'var(--text-tertiary)'
-            }} 
+        <div style={{ position: "relative" }}>
+          <Search
+            size={18}
+            style={{
+              position: "absolute",
+              left: "12px",
+              top: "50%",
+              transform: "translateY(-50%)",
+              color: "var(--text-tertiary)",
+            }}
           />
           <input
             type="text"
             className="search-input"
-            placeholder="Search chats..."
+            placeholder="Search users..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
           />
         </div>
       </div>
 
-      {/* Chat List */}
+      {/* Chat List / Search Results */}
       <div className="chat-list">
-        {mockChats.map((chat) => (
-          <div
-            key={chat.username}
-            className={`chat-item ${activeChat === chat.username ? 'active' : ''}`}
-            onClick={() => onChatSelect(chat.username)}
-          >
-            <div className="chat-avatar">{chat.avatar}</div>
-            <div className="chat-info">
-              <h4>{chat.username}</h4>
-              <p>{chat.lastMessage}</p>
-            </div>
+        {isSearching ? (
+          <div className="search-loading">Searching...</div>
+        ) : searchQuery.trim().length >= 2 ? (
+          searchResults.length > 0 ? (
+            searchResults.map((user) => (
+              <div
+                key={user.username}
+                className={`chat-item ${activeChat === user.username ? "active" : ""}`}
+                onClick={() => {
+                  onChatSelect(user.username);
+                  setSearchQuery(""); // Очищаем поиск после выбора
+                  setSearchResults([]);
+                }}
+              >
+                <div className="chat-avatar">
+                  {user.username.charAt(0).toUpperCase()}
+                </div>
+                <div className="chat-info">
+                  <h4>{user.username}</h4>
+                  {user.bio && <p>{user.bio}</p>}
+                </div>
+              </div>
+            ))
+          ) : (
+            <div className="search-empty">No users found</div>
+          )
+        ) : (
+          <div className="chat-list-empty">
+            <p>Search for users to start chatting</p>
           </div>
-        ))}
+        )}
       </div>
     </div>
-  )
+  );
 }

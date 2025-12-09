@@ -1,5 +1,84 @@
-import { ChatLayout } from '@/components/chat/ChatLayout'
+import { useEffect } from "react";
+import { ChatLayout } from "@/components/chat/ChatLayout";
+import { socketService } from "@/services/socket.service";
+import { useChatStore } from "@/store/chatStore";
+import { useAuthStore } from "@/store/authStore";
+import { cryptoService } from "@/services/crypto.service";
+import type { Message } from "@/types/message.types";
 
 export function Chat() {
-  return <ChatLayout />
+  const { user } = useAuthStore();
+  const { addMessage, setUserTyping, removeUserTyping } = useChatStore();
+
+  useEffect(() => {
+    if (!user) return;
+
+    console.log("🎧 Chat: Setting up WebSocket listeners");
+
+    // Обработка новых сообщений
+    const handleNewMessage = (rawData: unknown) => {
+      const data = rawData as {
+        message_id: string;
+        sender_username: string;
+        recipient_username: string;
+        encrypted_content: string;
+        message_type: "text" | "image" | "video" | "file" | "audio";
+        created_at: string;
+      };
+      console.log("💬 New message received:", data);
+
+      // Расшифровываем сообщение
+      const otherUsername =
+        data.sender_username === user.username
+          ? data.recipient_username
+          : data.sender_username;
+
+      const decrypted = cryptoService.decryptMessageFromChat(
+        data.encrypted_content,
+        otherUsername,
+        user.username,
+      );
+
+      const message: Message = {
+        id: data.message_id,
+        sender_username: data.sender_username,
+        recipient_username: data.recipient_username,
+        encrypted_content: decrypted || "[Failed to decrypt]",
+        message_type: data.message_type || "text",
+        created_at: data.created_at,
+        read_at: null,
+      };
+
+      addMessage(message);
+    };
+
+    // Обработка typing indicators
+    const handleUserTyping = (data: { username: string; chatId: string }) => {
+      console.log("⌨️ User typing:", data.username);
+      setUserTyping(data.username);
+    };
+
+    const handleUserStoppedTyping = (data: {
+      username: string;
+      chatId: string;
+    }) => {
+      console.log("⏸️ User stopped typing:", data.username);
+      removeUserTyping(data.username);
+    };
+
+    // Подписываемся на события
+    socketService.onNewMessage(handleNewMessage);
+    socketService.onUserTyping(handleUserTyping);
+    socketService.onUserStoppedTyping(handleUserStoppedTyping);
+
+    // Отписываемся при размонтировании
+    return () => {
+      console.log("🔌 Chat: Cleaning up WebSocket listeners");
+      socketService.offNewMessage(handleNewMessage);
+      socketService.offUserTyping(handleUserTyping);
+      socketService.offUserStoppedTyping(handleUserStoppedTyping);
+    };
+  }, [user, addMessage, setUserTyping, removeUserTyping]);
+
+  return <ChatLayout />;
 }
