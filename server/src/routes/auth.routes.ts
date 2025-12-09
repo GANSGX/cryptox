@@ -1561,6 +1561,12 @@ export async function authRoutes(fastify: FastifyInstance) {
 
       console.log("✅ Device verified and session created for:", username);
 
+      // Уведомляем все устройства пользователя об обновлении списка сессий
+      if (fastify.io) {
+        fastify.io.to(username).emit("sessions:updated");
+        console.log("🔔 Sent sessions:updated to all devices for:", username);
+      }
+
       return reply.send({
         success: true,
         data: {
