@@ -65,13 +65,7 @@ export async function messagesRoutes(fastify: FastifyInstance) {
         });
       }
 
-      // Нельзя отправить самому себе
-      if (sender_username.toLowerCase() === recipient_username.toLowerCase()) {
-        return reply.code(400).send({
-          success: false,
-          error: "Cannot send message to yourself",
-        });
-      }
+      // Разрешаем отправку самому себе (Saved Messages / Избранное)
 
       // Создание сообщения
       const message = await MessageService.createMessage({
@@ -147,13 +141,7 @@ export async function messagesRoutes(fastify: FastifyInstance) {
         });
       }
 
-      // Нельзя запросить чат с самим собой
-      if (currentUsername.toLowerCase() === otherUsername.toLowerCase()) {
-        return reply.code(400).send({
-          success: false,
-          error: "Cannot get messages with yourself",
-        });
-      }
+      // Разрешаем чат с самим собой (Saved Messages / Избранное)
 
       // Получение сообщений
       const { messages, total } = await MessageService.getMessages(

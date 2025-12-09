@@ -1,6 +1,7 @@
-import { Search } from "lucide-react";
+import { Search, Bookmark } from "lucide-react";
 import { useState, useEffect } from "react";
 import { apiService } from "@/services/api.service";
+import { useAuthStore } from "@/store/authStore";
 
 interface SidebarProps {
   activeChat: string | null;
@@ -14,6 +15,7 @@ interface SearchUser {
 }
 
 export function Sidebar({ activeChat, onChatSelect }: SidebarProps) {
+  const { user } = useAuthStore();
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState<SearchUser[]>([]);
   const [isSearching, setIsSearching] = useState(false);
@@ -30,7 +32,11 @@ export function Sidebar({ activeChat, onChatSelect }: SidebarProps) {
       try {
         const response = await apiService.searchUsers(searchQuery);
         if (response.success && response.data) {
-          setSearchResults(response.data.users);
+          // Фильтруем текущего пользователя из результатов
+          const filteredUsers = response.data.users.filter(
+            (u) => u.username.toLowerCase() !== user?.username.toLowerCase(),
+          );
+          setSearchResults(filteredUsers);
         }
       } catch (err) {
         console.error("Search error:", err);
@@ -40,7 +46,7 @@ export function Sidebar({ activeChat, onChatSelect }: SidebarProps) {
     }, 300); // Debounce 300ms
 
     return () => clearTimeout(searchTimeout);
-  }, [searchQuery]);
+  }, [searchQuery, user]);
 
   return (
     <div className="sidebar">
@@ -72,6 +78,22 @@ export function Sidebar({ activeChat, onChatSelect }: SidebarProps) {
 
       {/* Chat List / Search Results */}
       <div className="chat-list">
+        {/* Избранное (Saved Messages) - показываем когда не ищем */}
+        {!searchQuery && user && (
+          <div
+            className={`chat-item saved-messages ${activeChat === user.username ? "active" : ""}`}
+            onClick={() => onChatSelect(user.username)}
+          >
+            <div className="chat-avatar saved">
+              <Bookmark size={20} />
+            </div>
+            <div className="chat-info">
+              <h4>Saved Messages</h4>
+              <p>Messages to yourself</p>
+            </div>
+          </div>
+        )}
+
         {isSearching ? (
           <div className="search-loading">Searching...</div>
         ) : searchQuery.trim().length >= 2 ? (
