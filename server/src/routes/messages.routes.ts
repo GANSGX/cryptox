@@ -119,8 +119,33 @@ export async function messagesRoutes(fastify: FastifyInstance) {
     },
     async (request, reply) => {
       const { username: otherUsername } = request.params;
-      const { limit = 50, offset = 0 } = request.query;
+      let { limit = 50, offset = 0 } = request.query;
       const currentUsername = request.user!.username;
+
+      // Валидация limit и offset
+      limit = Number(limit);
+      offset = Number(offset);
+
+      if (isNaN(limit) || isNaN(offset)) {
+        return reply.code(400).send({
+          success: false,
+          error: "Invalid limit or offset value",
+        });
+      }
+
+      if (limit < 1 || limit > 100) {
+        return reply.code(400).send({
+          success: false,
+          error: "Limit must be between 1 and 100",
+        });
+      }
+
+      if (offset < 0) {
+        return reply.code(400).send({
+          success: false,
+          error: "Offset must be non-negative",
+        });
+      }
 
       // Нельзя запросить чат с самим собой
       if (currentUsername.toLowerCase() === otherUsername.toLowerCase()) {
@@ -134,8 +159,8 @@ export async function messagesRoutes(fastify: FastifyInstance) {
       const { messages, total } = await MessageService.getMessages(
         currentUsername,
         otherUsername,
-        Number(limit),
-        Number(offset),
+        limit,
+        offset,
       );
 
       // Форматирование
@@ -174,8 +199,17 @@ export async function messagesRoutes(fastify: FastifyInstance) {
     },
     async (request, reply) => {
       const { id } = request.params;
+      const currentUsername = request.user!.username;
 
-      await MessageService.markAsRead(id);
+      // Пометить как прочитанное (только если текущий пользователь - получатель)
+      const updated = await MessageService.markAsRead(id, currentUsername);
+
+      if (!updated) {
+        return reply.code(404).send({
+          success: false,
+          error: "Message not found or already read",
+        });
+      }
 
       // Уведомляем отправителя через Socket.io
       // (здесь нужно получить sender_username из БД, упростим)
