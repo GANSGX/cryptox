@@ -55,6 +55,7 @@ export const useChatStore = create<ChatState>()(
        * Установка активного чата (и пометка как прочитанное)
        */
       setActiveChat: (username: string, _myUsername: string) => {
+        console.log(`📂 [setActiveChat] Opening chat with ${username}`);
         set({ activeChat: username });
 
         // Автоматически помечаем как прочитанное при открытии чата
@@ -65,15 +66,23 @@ export const useChatStore = create<ChatState>()(
 
         // Отправляем WebSocket события message_read для всех непрочитанных сообщений
         const chatMessages = get().messages[username] || [];
+        console.log(
+          `📂 [setActiveChat] Found ${chatMessages.length} messages in chat`,
+        );
+
         const unreadMessages = chatMessages.filter(
           (msg) => msg.sender_username === username && !msg.read_at,
         );
 
+        console.log(
+          `📂 [setActiveChat] Found ${unreadMessages.length} unread messages from ${username}`,
+        );
+
         unreadMessages.forEach((msg) => {
-          socketService.emitMessageRead(msg.id, username);
           console.log(
-            `✅ Sent read receipt for message ${msg.id} to ${username}`,
+            `📂 [setActiveChat] Message details: id=${msg.id}, sender=${msg.sender_username}, read_at=${msg.read_at}`,
           );
+          socketService.emitMessageRead(msg.id, username);
         });
 
         console.log(

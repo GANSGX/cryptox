@@ -110,6 +110,10 @@ class SocketService {
    * Подтверждение прочтения
    */
   emitMessageRead(messageId: string, toUsername: string) {
+    console.log(
+      `🔵 [SOCKET] Emitting message_read: messageId=${messageId}, toUsername=${toUsername}`,
+    );
+    console.trace("Call stack:");
     this.socket?.emit("message_read", { messageId, toUsername });
   }
 
