@@ -10,8 +10,7 @@ import { socketService } from "@/services/socket.service";
 
 export function ChatLayout() {
   const { user } = useAuthStore();
-  const { activeChat, setActiveChat, updateMessageStatus, addMessage } =
-    useChatStore();
+  const { activeChat, setActiveChat, updateMessageStatus } = useChatStore();
   const [isBurgerOpen, setIsBurgerOpen] = useState(false);
 
   const handleChatSelect = (username: string) => {
@@ -35,7 +34,9 @@ export function ChatLayout() {
       delivered_at: string | null;
       read_at: string | null;
     }) => {
-      console.log("📨 New message received:", data);
+      console.log(
+        "📨 ChatLayout: New message received, sending delivery receipt",
+      );
 
       // Автоматически отправляем delivery receipt
       socketService.emitMessageDelivered(data.message_id, data.sender_username);
@@ -43,20 +44,7 @@ export function ChatLayout() {
         `✅ Sent delivery receipt for message ${data.message_id} to ${data.sender_username}`,
       );
 
-      // Добавляем сообщение в store (уже есть в другом месте, но для consistency)
-      addMessage(
-        {
-          id: data.message_id,
-          sender_username: data.sender_username,
-          recipient_username: data.recipient_username,
-          encrypted_content: data.encrypted_content,
-          message_type: data.message_type,
-          created_at: data.created_at,
-          delivered_at: data.delivered_at,
-          read_at: data.read_at,
-        },
-        user.username,
-      );
+      // Сообщение будет расшифровано и добавлено в store в Chat.tsx
     };
 
     // Обработчик обновлений статуса сообщений
@@ -76,7 +64,7 @@ export function ChatLayout() {
       socketService.offNewMessage(handleNewMessage);
       socketService.offMessageStatusUpdate(handleStatusUpdate);
     };
-  }, [user, updateMessageStatus, addMessage]);
+  }, [user, updateMessageStatus]);
 
   return (
     <div className="chat-layout">
