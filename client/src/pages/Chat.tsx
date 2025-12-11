@@ -5,10 +5,19 @@ import { useChatStore } from "@/store/chatStore";
 import { useAuthStore } from "@/store/authStore";
 import { cryptoService } from "@/services/crypto.service";
 import type { Message } from "@/types/message.types";
+import { debugLogger } from "@/utils/debugLogger";
 
 export function Chat() {
   const { user } = useAuthStore();
   const { addMessage, setUserTyping, removeUserTyping } = useChatStore();
+
+  useEffect(() => {
+    // Initialize debug logger (Ctrl+Shift+D to toggle)
+    debugLogger.init();
+    debugLogger.log(
+      "🚀 Chat component mounted - Press Ctrl+Shift+D to toggle debug panel",
+    );
+  }, []);
 
   useEffect(() => {
     if (!user) return;

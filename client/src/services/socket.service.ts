@@ -110,10 +110,14 @@ class SocketService {
    * Подтверждение прочтения
    */
   emitMessageRead(messageId: string, toUsername: string) {
-    console.log(
-      `🔵 [SOCKET] Emitting message_read: messageId=${messageId}, toUsername=${toUsername}`,
-    );
-    console.trace("Call stack:");
+    const msg = `🔵 EMIT message_read: id=${messageId.slice(0, 8)}... to=${toUsername}`;
+    console.log(msg);
+
+    // Import debugLogger dynamically to avoid circular deps
+    import("@/utils/debugLogger").then(({ debugLogger }) => {
+      debugLogger.log(msg);
+    });
+
     this.socket?.emit("message_read", { messageId, toUsername });
   }
 

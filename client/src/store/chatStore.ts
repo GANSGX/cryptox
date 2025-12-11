@@ -184,6 +184,10 @@ export const useChatStore = create<ChatState>()(
             read_at: null,
           };
 
+          console.log(
+            `📤 [sendMessage] Adding MY message to store: id=${newMessage.id.slice(0, 8)}..., to=${recipientUsername}, delivered_at=${newMessage.delivered_at}, read_at=${newMessage.read_at}`,
+          );
+
           get().addMessage(newMessage, myUsername);
         } catch (err) {
           console.error("Send message error:", err);
@@ -224,19 +228,32 @@ export const useChatStore = create<ChatState>()(
 
           // Если сообщение получено (я не отправитель) и я в этом чате → автоматически прочитано
           if (message.sender_username !== myUsername && isInActiveChat) {
-            console.log("✅ Auto-marking as read (in active chat)");
-            // Отправим на сервер через timeout чтобы не блокировать UI
-            setTimeout(() => {
-              get().markChatAsRead(chatUsername);
-              // Отправляем WebSocket событие message_read для обновления статуса у отправителя
-              socketService.emitMessageRead(
-                message.id,
-                message.sender_username,
+            console.log(
+              `✅ [addMessage] Auto-marking as read: id=${message.id.slice(0, 8)}..., sender=${message.sender_username}, myUsername=${myUsername}, isInActiveChat=${isInActiveChat}`,
+            );
+
+            // ВАЖНАЯ ПРОВЕРКА: не отправляем read receipt для своих сообщений
+            if (
+              message.sender_username.toLowerCase() === myUsername.toLowerCase()
+            ) {
+              console.error(
+                `❌ [addMessage] BLOCKED: Attempted to send read receipt for OWN message!`,
               );
-              console.log(
-                `✅ Sent read receipt for message ${message.id} to ${message.sender_username}`,
-              );
-            }, 0);
+              // Не прерываем выполнение, продолжаем добавление сообщения
+            } else {
+              // Отправим на сервер через timeout чтобы не блокировать UI
+              setTimeout(() => {
+                get().markChatAsRead(chatUsername);
+                // Отправляем WebSocket событие message_read для обновления статуса у отправителя
+                socketService.emitMessageRead(
+                  message.id,
+                  message.sender_username,
+                );
+                console.log(
+                  `✅ Sent read receipt for message ${message.id.slice(0, 8)}... to ${message.sender_username}`,
+                );
+              }, 0);
+            }
           }
 
           // Обновляем контакт
