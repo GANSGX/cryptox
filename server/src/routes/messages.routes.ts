@@ -85,6 +85,8 @@ export async function messagesRoutes(fastify: FastifyInstance) {
         encrypted_content: message.encrypted_content,
         message_type: message.message_type,
         created_at: message.created_at.toISOString(),
+        delivered_at: null, // Новое сообщение еще не доставлено
+        read_at: null, // Новое сообщение еще не прочитано
       });
 
       return reply.code(201).send({
@@ -160,6 +162,7 @@ export async function messagesRoutes(fastify: FastifyInstance) {
         encrypted_content: msg.encrypted_content,
         message_type: msg.message_type,
         created_at: msg.created_at.toISOString(),
+        delivered_at: msg.delivered_at ? msg.delivered_at.toISOString() : null,
         read_at: msg.read_at ? msg.read_at.toISOString() : null,
       }));
 

@@ -1,0 +1,136 @@
+
+> @cryptox/server@0.1.0 test C:\Projects\cryptox\server
+> vitest run "src/test/security/dos-redis-disclosure-extreme.test.ts"
+
+
+[1m[46m RUN [49m[22m [36mv4.0.12 [39m[90mC:/Projects/cryptox/server[39m
+
+[90mstdout[2m | src/test/security/dos-redis-disclosure-extreme.test.ts
+[22m[39m[dotenv@17.2.3] injecting env (10) from .env -- tip: 🔑 add access controls to secrets: https://dotenvx.com/ops
+
+[90mstdout[2m | src/test/security/dos-redis-disclosure-extreme.test.ts
+[22m[39m{"level":"info","message":"✅ Connected to Redis","timestamp":"2025-12-02 01:14:02"}
+
+[90mstdout[2m | src/test/security/dos-redis-disclosure-extreme.test.ts
+[22m[39m{"level":"info","message":"✅ Redis is ready","timestamp":"2025-12-02 01:14:02"}
+
+(node:68220) [FSTDEP022] FastifyWarning: The router options for ignoreTrailingSlash property access is deprecated. Please use "options.routerOptions" instead for accessing router options. The router options will be removed in `fastify@6`.
+(Use `node --trace-warnings ...` to show where the warning was created)
+[90mstdout[2m | src/test/security/dos-redis-disclosure-extreme.test.ts[2m > [22m[2m🔥 EXTREME: DoS & Resource Exhaustion[2m > [22m[2mReDoS (Regular Expression DoS)[2m > [22m[2mshould have timeout for regex operations
+[22m[39m✅ Connected to PostgreSQL
+
+[90mstdout[2m | src/test/security/dos-redis-disclosure-extreme.test.ts[2m > [22m[2m🔥 EXTREME: DoS & Resource Exhaustion[2m > [22m[2mMemory Exhaustion[2m > [22m[2mshould reject extremely large payloads
+[22m[39m✅ Connected to PostgreSQL
+
+(node:68220) [FSTDEP022] FastifyWarning: The router options for ignoreTrailingSlash property access is deprecated. Please use "options.routerOptions" instead for accessing router options. The router options will be removed in `fastify@6`.
+(node:68220) [FSTDEP022] FastifyWarning: The router options for ignoreTrailingSlash property access is deprecated. Please use "options.routerOptions" instead for accessing router options. The router options will be removed in `fastify@6`.
+ [31m❯[39m src/test/security/dos-redis-disclosure-extreme.test.ts [2m([22m[2m19 tests[22m[2m | [22m[31m6 failed[39m[2m)[22m[33m 34910[2mms[22m[39m
+[31m       [31m×[31m should have timeout for regex operations[39m[33m 6858[2mms[22m[39m
+[31m       [31m×[31m should reject extremely large payloads[39m[33m 1630[2mms[22m[39m
+       [33m[2m✓[22m[39m should handle deeply nested JSON [33m 1732[2mms[22m[39m
+[31m       [31m×[31m should limit array size in requests[39m[33m 1566[2mms[22m[39m
+[31m       [31m×[31m should detect and reject zip bomb attempts[39m[33m 1496[2mms[22m[39m
+[31m       [31m×[31m should prevent billion laughs (XML entity expansion)[39m[33m 1457[2mms[22m[39m
+       [33m[2m✓[22m[39m should handle hash collision attacks [33m 1651[2mms[22m[39m
+       [33m[2m✓[22m[39m should rate limit excessive requests [33m 1558[2mms[22m[39m
+       [33m[2m✓[22m[39m should not expose stack traces in production [33m 1513[2mms[22m[39m
+       [33m[2m✓[22m[39m should not expose database errors [33m 1415[2mms[22m[39m
+       [33m[2m✓[22m[39m should use generic error messages [33m 1383[2mms[22m[39m
+[31m       [31m×[31m should not expose server version in headers[39m[33m 1587[2mms[22m[39m
+       [33m[2m✓[22m[39m should not expose package.json [33m 1511[2mms[22m[39m
+       [33m[2m✓[22m[39m should not expose .git directory [33m 1699[2mms[22m[39m
+       [33m[2m✓[22m[39m should not expose .env files [33m 1502[2mms[22m[39m
+       [33m[2m✓[22m[39m should not expose backup files [33m 1623[2mms[22m[39m
+       [33m[2m✓[22m[39m should not expose debug endpoints in production [33m 1649[2mms[22m[39m
+       [33m[2m✓[22m[39m should not allow directory listing [33m 1473[2mms[22m[39m
+       [33m[2m✓[22m[39m should not leak information via response time [33m 1540[2mms[22m[39m
+
+[31m⎯⎯⎯⎯⎯⎯[39m[1m[41m Failed Suites 1 [49m[22m[31m⎯⎯⎯⎯⎯⎯⎯[39m
+
+[41m[1m FAIL [22m[49m src/test/security/dos-redis-disclosure-extreme.test.ts[2m > [22m🔥 EXTREME: Redis Security
+[31m[1mError[22m: No test found in suite 🔥 EXTREME: Redis Security[39m
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/7]⎯[22m[39m
+
+
+[31m⎯⎯⎯⎯⎯⎯⎯[39m[1m[41m Failed Tests 6 [49m[22m[31m⎯⎯⎯⎯⎯⎯⎯[39m
+
+[41m[1m FAIL [22m[49m src/test/security/dos-redis-disclosure-extreme.test.ts[2m > [22m🔥 EXTREME: DoS & Resource Exhaustion[2m > [22mReDoS (Regular Expression DoS)[2m > [22mshould have timeout for regex operations
+[31m[1mError[22m: Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".[39m
+[36m [2m❯[22m src/test/security/dos-redis-disclosure-extreme.test.ts:[2m42:5[22m[39m
+    [90m 40| [39m
+    [90m 41| [39m  [34mdescribe[39m([32m"ReDoS (Regular Expression DoS)"[39m[33m,[39m () [33m=>[39m {
+    [90m 42| [39m    [34mit[39m([32m"should have timeout for regex operations"[39m[33m,[39m [35masync[39m () [33m=>[39m {
+    [90m   | [39m    [31m^[39m
+    [90m 43| [39m      [90m// Payloads that cause catastrophic backtracking[39m
+    [90m 44| [39m      [90m// Limit to 3 payloads to avoid hitting registerRateLimit (3/day)[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/7]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m src/test/security/dos-redis-disclosure-extreme.test.ts[2m > [22m🔥 EXTREME: DoS & Resource Exhaustion[2m > [22mMemory Exhaustion[2m > [22mshould reject extremely large payloads
+[31m[1mAssertionError[22m: expected [ 400, 413 ] to include 500[39m
+[36m [2m❯[22m src/test/security/dos-redis-disclosure-extreme.test.ts:[2m97:26[22m[39m
+    [90m 95| [39m
+    [90m 96| [39m      [90m// Should reject before processing[39m
+    [90m 97| [39m      [34mexpect[39m([[34m400[39m[33m,[39m [34m413[39m])[33m.[39m[34mtoContain[39m(response[33m.[39mstatusCode)[33m;[39m
+    [90m   | [39m                         [31m^[39m
+    [90m 98| [39m    })[33m;[39m
+    [90m 99| [39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/7]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m src/test/security/dos-redis-disclosure-extreme.test.ts[2m > [22m🔥 EXTREME: DoS & Resource Exhaustion[2m > [22mMemory Exhaustion[2m > [22mshould limit array size in requests
+[31m[1mAssertionError[22m: expected [ 400, 413 ] to include 500[39m
+[36m [2m❯[22m src/test/security/dos-redis-disclosure-extreme.test.ts:[2m137:26[22m[39m
+    [90m135| [39m      })[33m;[39m
+    [90m136| [39m
+    [90m137| [39m      [34mexpect[39m([[34m400[39m[33m,[39m [34m413[39m])[33m.[39m[34mtoContain[39m(response[33m.[39mstatusCode)[33m;[39m
+    [90m   | [39m                         [31m^[39m
+    [90m138| [39m    })[33m;[39m
+    [90m139| [39m  })[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/7]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m src/test/security/dos-redis-disclosure-extreme.test.ts[2m > [22m🔥 EXTREME: DoS & Resource Exhaustion[2m > [22mCompression Attacks[2m > [22mshould detect and reject zip bomb attempts
+[31m[1mAssertionError[22m: expected [ 400, 413, 415 ] to include 500[39m
+[36m [2m❯[22m src/test/security/dos-redis-disclosure-extreme.test.ts:[2m160:31[22m[39m
+    [90m158| [39m
+    [90m159| [39m      [90m// Should reject before decompression[39m
+    [90m160| [39m      [34mexpect[39m([[34m400[39m[33m,[39m [34m413[39m[33m,[39m [34m415[39m])[33m.[39m[34mtoContain[39m(response[33m.[39mstatusCode)[33m;[39m
+    [90m   | [39m                              [31m^[39m
+    [90m161| [39m    })[33m;[39m
+    [90m162| [39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/7]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m src/test/security/dos-redis-disclosure-extreme.test.ts[2m > [22m🔥 EXTREME: DoS & Resource Exhaustion[2m > [22mCompression Attacks[2m > [22mshould prevent billion laughs (XML entity expansion)
+[31m[1mAssertionError[22m: expected [ 400, 415 ] to include 500[39m
+[36m [2m❯[22m src/test/security/dos-redis-disclosure-extreme.test.ts:[2m183:26[22m[39m
+    [90m181| [39m
+    [90m182| [39m      [90m// Should reject XML or not expand entities[39m
+    [90m183| [39m      [34mexpect[39m([[34m400[39m[33m,[39m [34m415[39m])[33m.[39m[34mtoContain[39m(response[33m.[39mstatusCode)[33m;[39m
+    [90m   | [39m                         [31m^[39m
+    [90m184| [39m    })[33m;[39m
+    [90m185| [39m  })[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/7]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m src/test/security/dos-redis-disclosure-extreme.test.ts[2m > [22m🔥 EXTREME: Information Disclosure[2m > [22mVersion Disclosure[2m > [22mshould not expose server version in headers
+[31m[1mAssertionError[22m: the given combination of arguments (undefined and string) is invalid for this assertion. You can use an array, a map, an object, a set, a string, or a weakset instead of a string[39m
+[36m [2m❯[22m src/test/security/dos-redis-disclosure-extreme.test.ts:[2m399:37[22m[39m
+    [90m397| [39m      [90m// Should not expose versions[39m
+    [90m398| [39m      [34mexpect[39m(headers[[32m"x-powered-by"[39m])[33m.[39m[34mtoBeUndefined[39m()[33m;[39m
+    [90m399| [39m      [34mexpect[39m(headers[[32m"server"[39m])[33m.[39mnot[33m.[39m[34mtoContain[39m([32m"Fastify"[39m)[33m;[39m
+    [90m   | [39m                                    [31m^[39m
+    [90m400| [39m      [34mexpect[39m(headers[[32m"server"[39m])[33m.[39mnot[33m.[39m[34mtoContain[39m([32m"Node"[39m)[33m;[39m
+    [90m401| [39m      [34mexpect[39m(headers[[32m"server"[39m])[33m.[39mnot[33m.[39m[34mtoContain[39m([32m"Express"[39m)[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/7]⎯[22m[39m
+
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[31m6 failed[39m[22m[2m | [22m[1m[32m13 passed[39m[22m[90m (19)[39m
+[2m   Start at [22m 01:14:00
+[2m   Duration [22m 36.85s[2m (transform 431ms, setup 34ms, collect 1.55s, tests 34.91s, environment 0ms, prepare 29ms)[22m
+
+ ELIFECYCLE  Test failed. See above for more details.

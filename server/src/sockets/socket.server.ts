@@ -204,13 +204,14 @@ export function initializeSocketServer(httpServer: HTTPServer) {
         }
 
         try {
+          // Обновляем delivered_at в БД и проверяем авторизацию одним запросом
           const result = await pool.query(
-            "SELECT 1 FROM messages WHERE id = $1 AND recipient_username = $2",
+            "UPDATE messages SET delivered_at = NOW() WHERE id = $1 AND recipient_username = $2 AND delivered_at IS NULL RETURNING id",
             [data.messageId, username.toLowerCase()],
           );
 
           if (result.rows.length === 0) {
-            log.warn("Unauthorized message_delivered - not recipient", {
+            log.warn("Unauthorized message_delivered or already delivered", {
               username,
               messageId: data.messageId,
             });
@@ -221,10 +222,14 @@ export function initializeSocketServer(httpServer: HTTPServer) {
             messageId: data.messageId,
             username,
           });
-          socket.to(data.toUsername).emit("message_status_update", {
-            messageId: data.messageId,
-            status: "delivered",
-          });
+
+          // Отправляем уведомление отправителю
+          socket
+            .to(`user:${data.toUsername.toLowerCase()}`)
+            .emit("message_status_update", {
+              messageId: data.messageId,
+              status: "delivered",
+            });
         } catch (error) {
           log.error("Error in message_delivered", {
             error,
@@ -263,10 +268,14 @@ export function initializeSocketServer(httpServer: HTTPServer) {
           }
 
           log.debug("Message read", { messageId: data.messageId, username });
-          socket.to(data.toUsername).emit("message_status_update", {
-            messageId: data.messageId,
-            status: "read",
-          });
+
+          // Отправляем уведомление отправителю
+          socket
+            .to(`user:${data.toUsername.toLowerCase()}`)
+            .emit("message_status_update", {
+              messageId: data.messageId,
+              status: "read",
+            });
         } catch (error) {
           log.error("Error in message_read", {
             error,

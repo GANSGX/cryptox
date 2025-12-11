@@ -430,6 +430,34 @@
   color: rgba(255, 255, 255, 0.5);
   margin-top: 4px;
   text-align: right;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 4px;
+}
+
+/* Message Status Checkmarks */
+.message-status {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.7;
+}
+
+/* 1 серая галочка - отправлено */
+.message-status.sent {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+/* 2 серые галочки - доставлено */
+.message-status.delivered {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+/* 2 синие галочки - прочитано */
+.message-status.read {
+  color: #00b4ff;
+  opacity: 1;
 }
 
 /* ========================================

@@ -1,0 +1,160 @@
+[31m       [31m×[31m should reject duplicate username with 409[39m[32m 294[2mms[22m[39m
+[31m       [31m×[31m should reject duplicate email with 409[39m[32m 289[2mms[22m[39m
+[31m       [31m×[31m should reject invalid username format[39m[33m 319[2mms[22m[39m
+[31m       [31m×[31m should reject invalid email format[39m[33m 316[2mms[22m[39m
+[31m       [31m×[31m should reject short password (< 8 chars)[39m[33m 315[2mms[22m[39m
+[31m       [31m×[31m should reject missing fields[39m[33m 304[2mms[22m[39m
+[31m       [31m×[31m should sanitize XSS in username[39m[32m 283[2mms[22m[39m
+[31m       [31m×[31m should normalize email to lowercase[39m[32m 299[2mms[22m[39m
+[31m       [31m×[31m should login with correct credentials[39m[32m 284[2mms[22m[39m
+[31m       [31m×[31m should block SQL injection in login[39m[33m 303[2mms[22m[39m
+[31m       [31m×[31m should reject missing username[39m[33m 303[2mms[22m[39m
+[31m       [31m×[31m should reject missing password[39m[32m 286[2mms[22m[39m
+[31m       [31m×[31m should reject missing Bearer prefix[39m[32m 290[2mms[22m[39m
+[31m       [31m×[31m should reject tampered JWT token[39m[33m 301[2mms[22m[39m
+[31m       [31m×[31m should allow authenticated user to access protected route[39m[33m 302[2mms[22m[39m
+[31m       [31m×[31m should handle malformed JSON payload[39m[32m 295[2mms[22m[39m
+[31m       [31m×[31m should handle empty payload[39m[32m 289[2mms[22m[39m
+[31m       [31m×[31m should handle very long username (DoS attempt)[39m[32m 296[2mms[22m[39m
+[31m       [31m×[31m should handle unicode in username[39m[32m 290[2mms[22m[39m
+[31m       [31m×[31m should handle null values[39m[32m 295[2mms[22m[39m
+[31m       [31m×[31m should generate different tokens for each login (prevent session fixation)[39m[33m 309[2mms[22m[39m
+[31m       [31m×[31m should not accept token from another user (session hijacking)[39m[32m 293[2mms[22m[39m
+[31m       [31m×[31m should detect and block credential stuffing attacks[39m[33m 338[2mms[22m[39m
+[31m       [31m×[31m should prevent account takeover via session hijacking[39m[33m 359[2mms[22m[39m
+[31m       [31m×[31m should prevent account takeover via XSS → cookie theft[39m[33m 357[2mms[22m[39m
+[31m       [31m×[31m should not allow authentication bypass via parameter pollution[39m[33m 366[2mms[22m[39m
+[31m       [31m×[31m should not allow SQL injection in authentication[39m[33m 392[2mms[22m[39m
+[31m       [31m×[31m should generate unique salts for each user[39m[33m 558[2mms[22m[39m
+[31m       [31m×[31m should not store plaintext password anywhere[39m[32m 284[2mms[22m[39m
+[31m       [31m×[31m should block classic SQL injection[39m[33m 301[2mms[22m[39m
+[31m       [31m×[31m should block UNION-based SQL injection[39m[32m 300[2mms[22m[39m
+[31m       [31m×[31m should block blind SQL injection (boolean-based)[39m[32m 286[2mms[22m[39m
+[31m       [31m×[31m should block time-based blind SQL injection[39m[32m 289[2mms[22m[39m
+[31m       [31m×[31m should block second-order SQL injection[39m[32m 300[2mms[22m[39m
+[31m       [31m×[31m should limit result set size (prevent memory exhaustion)[39m[32m 300[2mms[22m[39m
+[31m       [31m×[31m should handle concurrent registrations of same username[39m[33m 319[2mms[22m[39m
+[31m       [31m×[31m should handle concurrent logins from same user[39m[32m 293[2mms[22m[39m
+[31m       [31m×[31m should handle concurrent requests with same JWT token[39m[32m 291[2mms[22m[39m
+[31m       [31m×[31m should block LDAP injection in username[39m[32m 295[2mms[22m[39m
+[31m       [31m×[31m should block command injection attempts[39m[32m 283[2mms[22m[39m
+[31m       [31m×[31m should block path traversal in inputs[39m[32m 279[2mms[22m[39m
+[31m       [31m×[31m should block NULL byte injection[39m[32m 297[2mms[22m[39m
+[31m       [31m×[31m should block CRLF injection in headers[39m[33m 309[2mms[22m[39m
+[31m       [31m×[31m should reject extremely large payloads[39m[33m 354[2mms[22m[39m
+[31m       [31m×[31m should handle very long password gracefully[39m[32m 293[2mms[22m[39m
+[31m       [31m×[31m should not expose internal database IDs[39m[32m 282[2mms[22m[39m
+[31m       [31m×[31m should generate new token on each login (session fixation prevention)[39m[33m 303[2mms[22m[39m
+[31m       [31m×[31m should not accept token from another user[39m[32m 286[2mms[22m[39m
+[31m       [31m×[31m should prevent accessing other users' data via ID[39m[33m 444[2mms[22m[39m
+[31m       [31m×[31m should use non-sequential IDs (prevent enumeration)[39m[33m 307[2mms[22m[39m
+[31m       [31m×[31m should validate Content-Type header[39m[32m 286[2mms[22m[39m
+[31m       [31m×[31m should not accept XML when expecting JSON[39m[32m 287[2mms[22m[39m
+[31m       [31m×[31m should sanitize XSS in username field[39m[32m 290[2mms[22m[39m
+[31m       [31m×[31m should prevent mXSS via HTML mutation[39m[32m 276[2mms[22m[39m
+[31m       [31m×[31m should block command injection in username[39m[32m 297[2mms[22m[39m
+[31m       [31m×[31m should not execute commands from user input[39m[32m 281[2mms[22m[39m
+[31m       [31m×[31m should block path traversal in filenames[39m[32m 280[2mms[22m[39m
+[31m       [31m×[31m should block NULL bytes in input[39m[32m 283[2mms[22m[39m
+[31m       [31m×[31m should block LDAP injection attempts[39m[32m 298[2mms[22m[39m
+[31m       [31m×[31m should block template injection payloads[39m[33m 332[2mms[22m[39m
+[31m       [31m×[31m should block XXE attacks[39m[32m 279[2mms[22m[39m
+[31m       [31m×[31m should reject extremely large payloads[39m[33m 329[2mms[22m[39m
+[31m       [31m×[31m should limit array size in requests[39m[33m 347[2mms[22m[39m
+[31m       [31m×[31m should detect and reject zip bomb attempts[39m[33m 306[2mms[22m[39m
+[31m       [31m×[31m should prevent billion laughs (XML entity expansion)[39m[32m 289[2mms[22m[39m
+[31m       [31m×[31m should handle extremely long strings (buffer overflow attempt)[39m[33m 325[2mms[22m[39m
+[31m       [31m×[31m should handle Unicode edge cases[39m[33m 336[2mms[22m[39m
+[31m       [31m×[31m should handle malformed JSON[39m[32m 299[2mms[22m[39m
+[31m       [31m×[31m should handle circular JSON references[39m[33m 311[2mms[22m[39m
+[31m       [31m×[31m should handle deeply nested JSON (DoS attempt)[39m[32m 295[2mms[22m[39m
+[31m       [31m×[31m should handle special JavaScript values[39m[32m 286[2mms[22m[39m
+[31m       [31m×[31m should handle polyglot payloads (multi-language injection)[39m[33m 305[2mms[22m[39m
+[31m       [31m×[31m should handle format string attacks[39m[33m 304[2mms[22m[39m
+[31m       [31m×[31m should handle negative numbers and large integers[39m[32m 292[2mms[22m[39m
+[31m       [31m×[31m should handle random credentials safely[39m[32m 298[2mms[22m[39m
+[31m       [31m×[31m should handle control characters in credentials[39m[32m 286[2mms[22m[39m
+[31m       [31m×[31m should handle very long credentials (memory exhaustion attempt)[39m[33m 302[2mms[22m[39m
+[31m       [31m×[31m should handle malformed headers[39m[33m 304[2mms[22m[39m
+[31m       [31m×[31m should handle various Content-Types safely[39m[32m 298[2mms[22m[39m
+[41m[1m FAIL [22m[49m src/test/security/api-websocket-injection-extreme.test.ts[2m > [22m🔥 EXTREME: WebSocket Security
+[41m[1m FAIL [22m[49m src/test/security/dos-redis-disclosure-extreme.test.ts[2m > [22m🔥 EXTREME: Redis Security
+[41m[1m FAIL [22m[49m src/test/fuzzing/auth-fuzzing.test.ts[2m > [22mAuth Fuzzing Tests[2m > [22mRegistration Fuzzing[2m > [22mshould handle extremely long strings (buffer overflow attempt)
+[41m[1m FAIL [22m[49m src/test/fuzzing/auth-fuzzing.test.ts[2m > [22mAuth Fuzzing Tests[2m > [22mRegistration Fuzzing[2m > [22mshould handle Unicode edge cases
+[41m[1m FAIL [22m[49m src/test/fuzzing/auth-fuzzing.test.ts[2m > [22mAuth Fuzzing Tests[2m > [22mRegistration Fuzzing[2m > [22mshould handle malformed JSON
+[41m[1m FAIL [22m[49m src/test/fuzzing/auth-fuzzing.test.ts[2m > [22mAuth Fuzzing Tests[2m > [22mRegistration Fuzzing[2m > [22mshould handle circular JSON references
+[41m[1m FAIL [22m[49m src/test/fuzzing/auth-fuzzing.test.ts[2m > [22mAuth Fuzzing Tests[2m > [22mRegistration Fuzzing[2m > [22mshould handle deeply nested JSON (DoS attempt)
+[41m[1m FAIL [22m[49m src/test/fuzzing/auth-fuzzing.test.ts[2m > [22mAuth Fuzzing Tests[2m > [22mRegistration Fuzzing[2m > [22mshould handle special JavaScript values
+[41m[1m FAIL [22m[49m src/test/fuzzing/auth-fuzzing.test.ts[2m > [22mAuth Fuzzing Tests[2m > [22mRegistration Fuzzing[2m > [22mshould handle polyglot payloads (multi-language injection)
+[41m[1m FAIL [22m[49m src/test/fuzzing/auth-fuzzing.test.ts[2m > [22mAuth Fuzzing Tests[2m > [22mRegistration Fuzzing[2m > [22mshould handle format string attacks
+[41m[1m FAIL [22m[49m src/test/fuzzing/auth-fuzzing.test.ts[2m > [22mAuth Fuzzing Tests[2m > [22mRegistration Fuzzing[2m > [22mshould handle negative numbers and large integers
+[41m[1m FAIL [22m[49m src/test/fuzzing/auth-fuzzing.test.ts[2m > [22mAuth Fuzzing Tests[2m > [22mLogin Fuzzing[2m > [22mshould handle random credentials safely
+[41m[1m FAIL [22m[49m src/test/fuzzing/auth-fuzzing.test.ts[2m > [22mAuth Fuzzing Tests[2m > [22mLogin Fuzzing[2m > [22mshould handle control characters in credentials
+[41m[1m FAIL [22m[49m src/test/fuzzing/auth-fuzzing.test.ts[2m > [22mAuth Fuzzing Tests[2m > [22mLogin Fuzzing[2m > [22mshould handle very long credentials (memory exhaustion attempt)
+[41m[1m FAIL [22m[49m src/test/fuzzing/auth-fuzzing.test.ts[2m > [22mAuth Fuzzing Tests[2m > [22mHTTP Header Fuzzing[2m > [22mshould handle malformed headers
+[41m[1m FAIL [22m[49m src/test/fuzzing/auth-fuzzing.test.ts[2m > [22mAuth Fuzzing Tests[2m > [22mContent-Type Fuzzing[2m > [22mshould handle various Content-Types safely
+[41m[1m FAIL [22m[49m src/test/integration/auth.advanced.test.ts[2m > [22mAuth Advanced Security Tests[2m > [22mRace Conditions & Concurrency[2m > [22mshould handle concurrent registrations of same username
+[41m[1m FAIL [22m[49m src/test/integration/auth.advanced.test.ts[2m > [22mAuth Advanced Security Tests[2m > [22mRace Conditions & Concurrency[2m > [22mshould handle concurrent logins from same user
+[41m[1m FAIL [22m[49m src/test/integration/auth.advanced.test.ts[2m > [22mAuth Advanced Security Tests[2m > [22mRace Conditions & Concurrency[2m > [22mshould handle concurrent requests with same JWT token
+[41m[1m FAIL [22m[49m src/test/integration/auth.advanced.test.ts[2m > [22mAuth Advanced Security Tests[2m > [22mAdvanced Attack Vectors[2m > [22mshould block LDAP injection in username
+[41m[1m FAIL [22m[49m src/test/integration/auth.advanced.test.ts[2m > [22mAuth Advanced Security Tests[2m > [22mAdvanced Attack Vectors[2m > [22mshould block command injection attempts
+[41m[1m FAIL [22m[49m src/test/integration/auth.advanced.test.ts[2m > [22mAuth Advanced Security Tests[2m > [22mAdvanced Attack Vectors[2m > [22mshould block path traversal in inputs
+[41m[1m FAIL [22m[49m src/test/integration/auth.advanced.test.ts[2m > [22mAuth Advanced Security Tests[2m > [22mAdvanced Attack Vectors[2m > [22mshould block NULL byte injection
+[41m[1m FAIL [22m[49m src/test/integration/auth.advanced.test.ts[2m > [22mAuth Advanced Security Tests[2m > [22mAdvanced Attack Vectors[2m > [22mshould block CRLF injection in headers
+[41m[1m FAIL [22m[49m src/test/integration/auth.advanced.test.ts[2m > [22mAuth Advanced Security Tests[2m > [22mResource Exhaustion & DoS Protection[2m > [22mshould reject extremely large payloads
+[41m[1m FAIL [22m[49m src/test/integration/auth.advanced.test.ts[2m > [22mAuth Advanced Security Tests[2m > [22mResource Exhaustion & DoS Protection[2m > [22mshould handle very long password gracefully
+[41m[1m FAIL [22m[49m src/test/integration/auth.advanced.test.ts[2m > [22mAuth Advanced Security Tests[2m > [22mInformation Disclosure Prevention[2m > [22mshould not expose internal database IDs
+[41m[1m FAIL [22m[49m src/test/integration/auth.advanced.test.ts[2m > [22mAuth Advanced Security Tests[2m > [22mSession Security[2m > [22mshould generate new token on each login (session fixation prevention)
+[41m[1m FAIL [22m[49m src/test/integration/auth.advanced.test.ts[2m > [22mAuth Advanced Security Tests[2m > [22mSession Security[2m > [22mshould not accept token from another user
+[41m[1m FAIL [22m[49m src/test/integration/auth.test.ts[2m > [22mAuth API - Integration & Security Tests[2m > [22mPOST /api/auth/register - Registration[2m > [22mshould reject duplicate username with 409
+[41m[1m FAIL [22m[49m src/test/integration/auth.test.ts[2m > [22mAuth API - Integration & Security Tests[2m > [22mPOST /api/auth/register - Registration[2m > [22mshould reject duplicate email with 409
+[41m[1m FAIL [22m[49m src/test/integration/auth.test.ts[2m > [22mAuth API - Integration & Security Tests[2m > [22mPOST /api/auth/register - Registration[2m > [22mshould reject invalid username format
+[41m[1m FAIL [22m[49m src/test/integration/auth.test.ts[2m > [22mAuth API - Integration & Security Tests[2m > [22mPOST /api/auth/register - Registration[2m > [22mshould reject invalid email format
+[41m[1m FAIL [22m[49m src/test/integration/auth.test.ts[2m > [22mAuth API - Integration & Security Tests[2m > [22mPOST /api/auth/register - Registration[2m > [22mshould reject short password (< 8 chars)
+[41m[1m FAIL [22m[49m src/test/integration/auth.test.ts[2m > [22mAuth API - Integration & Security Tests[2m > [22mPOST /api/auth/register - Registration[2m > [22mshould reject missing fields
+[41m[1m FAIL [22m[49m src/test/integration/auth.test.ts[2m > [22mAuth API - Integration & Security Tests[2m > [22mPOST /api/auth/register - Registration[2m > [22mshould sanitize XSS in username
+[41m[1m FAIL [22m[49m src/test/integration/auth.test.ts[2m > [22mAuth API - Integration & Security Tests[2m > [22mPOST /api/auth/register - Registration[2m > [22mshould normalize email to lowercase
+[41m[1m FAIL [22m[49m src/test/integration/auth.test.ts[2m > [22mAuth API - Integration & Security Tests[2m > [22mPOST /api/auth/login - Login[2m > [22mshould login with correct credentials
+[41m[1m FAIL [22m[49m src/test/integration/auth.test.ts[2m > [22mAuth API - Integration & Security Tests[2m > [22mPOST /api/auth/login - Login[2m > [22mshould block SQL injection in login
+[41m[1m FAIL [22m[49m src/test/integration/auth.test.ts[2m > [22mAuth API - Integration & Security Tests[2m > [22mPOST /api/auth/login - Login[2m > [22mshould reject missing username
+[41m[1m FAIL [22m[49m src/test/integration/auth.test.ts[2m > [22mAuth API - Integration & Security Tests[2m > [22mPOST /api/auth/login - Login[2m > [22mshould reject missing password
+[41m[1m FAIL [22m[49m src/test/integration/auth.test.ts[2m > [22mAuth API - Integration & Security Tests[2m > [22mJWT Token Security[2m > [22mshould reject missing Bearer prefix
+[41m[1m FAIL [22m[49m src/test/integration/auth.test.ts[2m > [22mAuth API - Integration & Security Tests[2m > [22mJWT Token Security[2m > [22mshould reject tampered JWT token
+[41m[1m FAIL [22m[49m src/test/integration/auth.test.ts[2m > [22mAuth API - Integration & Security Tests[2m > [22mAccess Control - Authorization[2m > [22mshould allow authenticated user to access protected route
+[41m[1m FAIL [22m[49m src/test/integration/auth.test.ts[2m > [22mAuth API - Integration & Security Tests[2m > [22mError Handling & Edge Cases[2m > [22mshould handle malformed JSON payload
+[41m[1m FAIL [22m[49m src/test/integration/auth.test.ts[2m > [22mAuth API - Integration & Security Tests[2m > [22mError Handling & Edge Cases[2m > [22mshould handle empty payload
+[41m[1m FAIL [22m[49m src/test/integration/auth.test.ts[2m > [22mAuth API - Integration & Security Tests[2m > [22mError Handling & Edge Cases[2m > [22mshould handle very long username (DoS attempt)
+[41m[1m FAIL [22m[49m src/test/integration/auth.test.ts[2m > [22mAuth API - Integration & Security Tests[2m > [22mError Handling & Edge Cases[2m > [22mshould handle unicode in username
+[41m[1m FAIL [22m[49m src/test/integration/auth.test.ts[2m > [22mAuth API - Integration & Security Tests[2m > [22mError Handling & Edge Cases[2m > [22mshould handle null values
+[41m[1m FAIL [22m[49m src/test/security/api-websocket-injection-extreme.test.ts[2m > [22m🔥 EXTREME: API Security[2m > [22mIDOR (Insecure Direct Object Reference)[2m > [22mshould prevent accessing other users' data via ID
+[41m[1m FAIL [22m[49m src/test/security/api-websocket-injection-extreme.test.ts[2m > [22m🔥 EXTREME: API Security[2m > [22mIDOR (Insecure Direct Object Reference)[2m > [22mshould use non-sequential IDs (prevent enumeration)
+[41m[1m FAIL [22m[49m src/test/security/api-websocket-injection-extreme.test.ts[2m > [22m🔥 EXTREME: API Security[2m > [22mContent-Type Confusion[2m > [22mshould validate Content-Type header
+[41m[1m FAIL [22m[49m src/test/security/api-websocket-injection-extreme.test.ts[2m > [22m🔥 EXTREME: API Security[2m > [22mContent-Type Confusion[2m > [22mshould not accept XML when expecting JSON
+[41m[1m FAIL [22m[49m src/test/security/api-websocket-injection-extreme.test.ts[2m > [22m🔥 EXTREME: XSS (Cross-Site Scripting)[2m > [22mReflected XSS[2m > [22mshould sanitize XSS in username field
+[41m[1m FAIL [22m[49m src/test/security/api-websocket-injection-extreme.test.ts[2m > [22m🔥 EXTREME: XSS (Cross-Site Scripting)[2m > [22mMutation XSS[2m > [22mshould prevent mXSS via HTML mutation
+[41m[1m FAIL [22m[49m src/test/security/api-websocket-injection-extreme.test.ts[2m > [22m🔥 EXTREME: Command & Path Injection[2m > [22mOS Command Injection[2m > [22mshould block command injection in username
+[41m[1m FAIL [22m[49m src/test/security/api-websocket-injection-extreme.test.ts[2m > [22m🔥 EXTREME: Command & Path Injection[2m > [22mOS Command Injection[2m > [22mshould not execute commands from user input
+[41m[1m FAIL [22m[49m src/test/security/api-websocket-injection-extreme.test.ts[2m > [22m🔥 EXTREME: Command & Path Injection[2m > [22mPath Traversal[2m > [22mshould block path traversal in filenames
+[41m[1m FAIL [22m[49m src/test/security/api-websocket-injection-extreme.test.ts[2m > [22m🔥 EXTREME: Command & Path Injection[2m > [22mNULL Byte Injection[2m > [22mshould block NULL bytes in input
+[41m[1m FAIL [22m[49m src/test/security/api-websocket-injection-extreme.test.ts[2m > [22m🔥 EXTREME: Advanced Injection Attacks[2m > [22mLDAP Injection[2m > [22mshould block LDAP injection attempts
+[41m[1m FAIL [22m[49m src/test/security/api-websocket-injection-extreme.test.ts[2m > [22m🔥 EXTREME: Advanced Injection Attacks[2m > [22mServer-Side Template Injection (SSTI)[2m > [22mshould block template injection payloads
+[41m[1m FAIL [22m[49m src/test/security/api-websocket-injection-extreme.test.ts[2m > [22m🔥 EXTREME: Advanced Injection Attacks[2m > [22mXML External Entity (XXE)[2m > [22mshould block XXE attacks
+[41m[1m FAIL [22m[49m src/test/security/auth-extreme.test.ts[2m > [22m🔥 EXTREME: Authentication & Session Security[2m > [22mSession Hijacking & Fixation[2m > [22mshould generate different tokens for each login (prevent session fixation)
+[41m[1m FAIL [22m[49m src/test/security/auth-extreme.test.ts[2m > [22m🔥 EXTREME: Authentication & Session Security[2m > [22mSession Hijacking & Fixation[2m > [22mshould not accept token from another user (session hijacking)
+[41m[1m FAIL [22m[49m src/test/security/auth-extreme.test.ts[2m > [22m🔥 EXTREME: Authentication & Session Security[2m > [22mBrute Force & Credential Stuffing Protection[2m > [22mshould detect and block credential stuffing attacks
+[41m[1m FAIL [22m[49m src/test/security/auth-extreme.test.ts[2m > [22m🔥 EXTREME: Authentication & Session Security[2m > [22mAccount Takeover Prevention[2m > [22mshould prevent account takeover via session hijacking
+[41m[1m FAIL [22m[49m src/test/security/auth-extreme.test.ts[2m > [22m🔥 EXTREME: Authentication & Session Security[2m > [22mAccount Takeover Prevention[2m > [22mshould prevent account takeover via XSS → cookie theft
+[41m[1m FAIL [22m[49m src/test/security/auth-extreme.test.ts[2m > [22m🔥 EXTREME: Authentication & Session Security[2m > [22mAuthentication Bypass[2m > [22mshould not allow authentication bypass via parameter pollution
+[41m[1m FAIL [22m[49m src/test/security/auth-extreme.test.ts[2m > [22m🔥 EXTREME: Authentication & Session Security[2m > [22mAuthentication Bypass[2m > [22mshould not allow SQL injection in authentication
+[41m[1m FAIL [22m[49m src/test/security/crypto-database-extreme.test.ts[2m > [22m🔥 EXTREME: Cryptography Security[2m > [22mArgon2id Timing Attacks[2m > [22mshould generate unique salts for each user
+[41m[1m FAIL [22m[49m src/test/security/crypto-database-extreme.test.ts[2m > [22m🔥 EXTREME: Cryptography Security[2m > [22mArgon2id Timing Attacks[2m > [22mshould not store plaintext password anywhere
+[41m[1m FAIL [22m[49m src/test/security/crypto-database-extreme.test.ts[2m > [22m🔥 EXTREME: Database Security[2m > [22mSQL Injection Protection[2m > [22mshould block classic SQL injection
+[41m[1m FAIL [22m[49m src/test/security/crypto-database-extreme.test.ts[2m > [22m🔥 EXTREME: Database Security[2m > [22mSQL Injection Protection[2m > [22mshould block UNION-based SQL injection
+[41m[1m FAIL [22m[49m src/test/security/crypto-database-extreme.test.ts[2m > [22m🔥 EXTREME: Database Security[2m > [22mSQL Injection Protection[2m > [22mshould block blind SQL injection (boolean-based)
+[41m[1m FAIL [22m[49m src/test/security/crypto-database-extreme.test.ts[2m > [22m🔥 EXTREME: Database Security[2m > [22mSQL Injection Protection[2m > [22mshould block time-based blind SQL injection
+[41m[1m FAIL [22m[49m src/test/security/crypto-database-extreme.test.ts[2m > [22m🔥 EXTREME: Database Security[2m > [22mSQL Injection Protection[2m > [22mshould block second-order SQL injection
+[41m[1m FAIL [22m[49m src/test/security/crypto-database-extreme.test.ts[2m > [22m🔥 EXTREME: Database Security[2m > [22mDatabase DoS Protection[2m > [22mshould limit result set size (prevent memory exhaustion)
+[41m[1m FAIL [22m[49m src/test/security/dos-redis-disclosure-extreme.test.ts[2m > [22m🔥 EXTREME: DoS & Resource Exhaustion[2m > [22mMemory Exhaustion[2m > [22mshould reject extremely large payloads
+[41m[1m FAIL [22m[49m src/test/security/dos-redis-disclosure-extreme.test.ts[2m > [22m🔥 EXTREME: DoS & Resource Exhaustion[2m > [22mMemory Exhaustion[2m > [22mshould limit array size in requests
+[41m[1m FAIL [22m[49m src/test/security/dos-redis-disclosure-extreme.test.ts[2m > [22m🔥 EXTREME: DoS & Resource Exhaustion[2m > [22mCompression Attacks[2m > [22mshould detect and reject zip bomb attempts
+[41m[1m FAIL [22m[49m src/test/security/dos-redis-disclosure-extreme.test.ts[2m > [22m🔥 EXTREME: DoS & Resource Exhaustion[2m > [22mCompression Attacks[2m > [22mshould prevent billion laughs (XML entity expansion)

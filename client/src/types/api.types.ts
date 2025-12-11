@@ -72,6 +72,7 @@ export interface Message {
   encrypted_content: string;
   message_type: string;
   created_at: string;
+  delivered_at: string | null;
   read_at: string | null;
 }
 

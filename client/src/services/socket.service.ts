@@ -116,14 +116,36 @@ class SocketService {
   /**
    * Подписка на новые сообщения
    */
-  onNewMessage(callback: (data: unknown) => void) {
+  onNewMessage(
+    callback: (data: {
+      message_id: string;
+      sender_username: string;
+      recipient_username: string;
+      encrypted_content: string;
+      message_type: "text" | "image" | "video" | "file" | "audio";
+      created_at: string;
+      delivered_at: string | null;
+      read_at: string | null;
+    }) => void,
+  ) {
     this.socket?.on("new_message", callback);
   }
 
   /**
    * Отписка от новых сообщений
    */
-  offNewMessage(callback: (data: unknown) => void) {
+  offNewMessage(
+    callback: (data: {
+      message_id: string;
+      sender_username: string;
+      recipient_username: string;
+      encrypted_content: string;
+      message_type: "text" | "image" | "video" | "file" | "audio";
+      created_at: string;
+      delivered_at: string | null;
+      read_at: string | null;
+    }) => void,
+  ) {
     this.socket?.off("new_message", callback);
   }
 
@@ -165,7 +187,10 @@ class SocketService {
    * Подписка на обновление статуса сообщения
    */
   onMessageStatusUpdate(
-    callback: (data: { messageId: string; status: string }) => void,
+    callback: (data: {
+      messageId: string;
+      status: "delivered" | "read";
+    }) => void,
   ) {
     this.socket?.on("message_status_update", callback);
   }
@@ -174,7 +199,10 @@ class SocketService {
    * Отписка от обновления статуса
    */
   offMessageStatusUpdate(
-    callback: (data: { messageId: string; status: string }) => void,
+    callback: (data: {
+      messageId: string;
+      status: "delivered" | "read";
+    }) => void,
   ) {
     this.socket?.off("message_status_update", callback);
   }

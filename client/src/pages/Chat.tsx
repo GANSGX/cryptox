@@ -24,6 +24,8 @@ export function Chat() {
         encrypted_content: string;
         message_type: "text" | "image" | "video" | "file" | "audio";
         created_at: string;
+        delivered_at: string | null;
+        read_at: string | null;
       };
       console.log("💬 New message received:", data);
 
@@ -46,6 +48,7 @@ export function Chat() {
         encrypted_content: decrypted || "[Failed to decrypt]",
         message_type: data.message_type || "text",
         created_at: data.created_at,
+        delivered_at: data.delivered_at || null,
         read_at: null,
       };
 

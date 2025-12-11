@@ -1,6 +1,7 @@
 import { useEffect, useRef } from "react";
 import { MessageCircle } from "lucide-react";
 import { MessageInput } from "./MessageInput";
+import { MessageStatus } from "./MessageStatus";
 import { useChatStore } from "@/store/chatStore";
 import { useAuthStore } from "@/store/authStore";
 
@@ -79,6 +80,12 @@ export function ChatWindow({ activeChat }: ChatWindowProps) {
                   {msg.encrypted_content}
                   <div className="message-time">
                     {formatTime(msg.created_at)}
+                    <MessageStatus
+                      createdAt={msg.created_at}
+                      deliveredAt={msg.delivered_at}
+                      readAt={msg.read_at}
+                      isSent={isOwn}
+                    />
                   </div>
                 </div>
               </div>

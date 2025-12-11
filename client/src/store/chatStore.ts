@@ -36,6 +36,10 @@ interface ChatState {
   setUserTyping: (username: string) => void;
   removeUserTyping: (username: string) => void;
   markChatAsRead: (username: string) => Promise<void>;
+  updateMessageStatus: (
+    messageId: string,
+    status: "delivered" | "read",
+  ) => void;
 }
 
 export const useChatStore = create<ChatState>()(
@@ -98,6 +102,7 @@ export const useChatStore = create<ChatState>()(
                   | "file"
                   | "audio",
                 created_at: msg.created_at,
+                delivered_at: msg.delivered_at,
                 read_at: msg.read_at,
               };
             }),
@@ -151,6 +156,7 @@ export const useChatStore = create<ChatState>()(
             encrypted_content: message, // Храним расшифрованное для отображения
             message_type: "text",
             created_at: response.data.created_at,
+            delivered_at: null, // Еще не доставлено
             read_at: null,
           };
 
@@ -334,6 +340,49 @@ export const useChatStore = create<ChatState>()(
         } catch (err) {
           console.error("Mark as read error:", err);
         }
+      },
+
+      /**
+       * Обновить статус сообщения (delivered/read)
+       */
+      updateMessageStatus: (
+        messageId: string,
+        status: "delivered" | "read",
+      ) => {
+        set((state) => {
+          const updatedMessages: Record<string, Message[]> = {};
+          let updated = false;
+
+          // Проходим по всем чатам и ищем сообщение
+          for (const [chatUsername, chatMessages] of Object.entries(
+            state.messages,
+          )) {
+            updatedMessages[chatUsername] = chatMessages.map((msg) => {
+              if (msg.id === messageId) {
+                updated = true;
+                const now = new Date().toISOString();
+                if (status === "delivered" && !msg.delivered_at) {
+                  return { ...msg, delivered_at: now };
+                }
+                if (status === "read" && !msg.read_at) {
+                  return {
+                    ...msg,
+                    read_at: now,
+                    delivered_at: msg.delivered_at || now,
+                  };
+                }
+              }
+              return msg;
+            });
+          }
+
+          if (updated) {
+            console.log(`✅ Updated message ${messageId} status to ${status}`);
+            return { messages: updatedMessages };
+          }
+
+          return state;
+        });
       },
     }),
     {

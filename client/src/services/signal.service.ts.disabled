@@ -1,0 +1,208 @@
+/**
+ * 🔐 SIGNAL PROTOCOL SERVICE
+ *
+ * Реализация E2E шифрования через Signal Protocol:
+ * - Identity Keys (долгосрочные)
+ * - Signed PreKey (периодически меняется)
+ * - One-Time PreKeys (используются один раз)
+ * - X3DH для установки сессии
+ * - Double Ratchet для шифрования сообщений
+ */
+
+import * as SignalProtocol from '@signalapp/libsignal-client';
+
+interface PreKeyBundle {
+  registrationId: number;
+  identityKey: Uint8Array;
+  signedPreKey: {
+    keyId: number;
+    publicKey: Uint8Array;
+    signature: Uint8Array;
+  };
+  preKey?: {
+    keyId: number;
+    publicKey: Uint8Array;
+  };
+}
+
+class SignalService {
+  private identityKeyPair: SignalProtocol.IdentityKeyPair | null = null;
+  private registrationId: number | null = null;
+  private store: Map<string, unknown> = new Map(); // Temporary stub
+
+  /**
+   * Инициализация (генерация ключей при первом запуске)
+   */
+  async initialize(username: string): Promise<void> {
+    console.log('🔐 Initializing Signal Protocol for:', username);
+
+    // Проверяем, есть ли уже ключи в localStorage
+    const savedIdentityKey = localStorage.getItem(`signal_identity_${username}`);
+    const savedRegistrationId = localStorage.getItem(`signal_registration_id_${username}`);
+
+    if (savedIdentityKey && savedRegistrationId) {
+      // Загружаем существующие ключи
+      console.log('📦 Loading existing Signal keys from localStorage');
+      this.identityKeyPair = SignalProtocol.IdentityKeyPair.deserialize(
+        Buffer.from(savedIdentityKey, 'base64')
+      );
+      this.registrationId = parseInt(savedRegistrationId);
+    } else {
+      // Генерируем новые ключи
+      console.log('🔑 Generating new Signal keys');
+      this.identityKeyPair = SignalProtocol.IdentityKeyPair.generate();
+      this.registrationId = this.generateRegistrationId();
+
+      // Сохраняем в localStorage
+      localStorage.setItem(
+        `signal_identity_${username}`,
+        Buffer.from(this.identityKeyPair.serialize()).toString('base64')
+      );
+      localStorage.setItem(
+        `signal_registration_id_${username}`,
+        this.registrationId.toString()
+      );
+    }
+
+    // TODO: Создать правильный store для сессий
+    // this.store уже инициализирован как new Map()
+
+    console.log('✅ Signal Protocol initialized (stub)');
+  }
+
+  /**
+   * Генерация registration ID (случайное число)
+   */
+  private generateRegistrationId(): number {
+    return Math.floor(Math.random() * 16380) + 1;
+  }
+
+  /**
+   * Генерация PreKey Bundle для загрузки на сервер
+   */
+  async generatePreKeyBundle(): Promise<{
+    registrationId: number;
+    identityKey: string; // base64
+    signedPreKey: {
+      keyId: number;
+      publicKey: string; // base64
+      signature: string; // base64
+    };
+    preKeys: Array<{
+      keyId: number;
+      publicKey: string; // base64
+    }>;
+  }> {
+    if (!this.identityKeyPair || !this.registrationId) {
+      throw new Error('Signal not initialized');
+    }
+
+    // TODO: Генерация Signed PreKey через правильный API
+    // Временная заглушка
+    const signedPreKeyId = 1;
+    const signedPreKeySignature = Buffer.from('stub_signature').toString('base64');
+
+    // TODO: Генерация One-Time PreKeys через правильный API
+    // Временная заглушка
+    const preKeys: Array<{ keyId: number; publicKey: string }> = [];
+    for (let i = 0; i < 100; i++) {
+      preKeys.push({
+        keyId: i + 1,
+        publicKey: Buffer.from(`stub_prekey_${i}`).toString('base64'),
+      });
+    }
+
+    return {
+      registrationId: this.registrationId,
+      identityKey: Buffer.from(this.identityKeyPair.publicKey.serialize()).toString('base64'),
+      signedPreKey: {
+        keyId: signedPreKeyId,
+        publicKey: Buffer.from('stub_signed_prekey_public').toString('base64'),
+        signature: signedPreKeySignature,
+      },
+      preKeys,
+    };
+  }
+
+  /**
+   * Установка сессии с другим пользователем (X3DH)
+   */
+  async processPreKeyBundle(
+    recipientUsername: string,
+    _bundle: PreKeyBundle
+  ): Promise<void> {
+    if (!this.identityKeyPair || !this.store) {
+      throw new Error('Signal not initialized');
+    }
+
+    console.log('🤝 Processing PreKey bundle for:', recipientUsername);
+
+    // TODO: Здесь нужна полная реализация X3DH
+    // Это сложный процесс, требующий:
+    // 1. Создание ephemeral key
+    // 2. Выполнение 4 Diffie-Hellman операций
+    // 3. Деривация shared secret через HKDF
+    // 4. Инициализация Double Ratchet
+
+    // Для MVP заглушка
+    console.log('⚠️ X3DH not fully implemented yet');
+  }
+
+  /**
+   * Шифрование сообщения
+   */
+  async encryptMessage(
+    recipientUsername: string,
+    plaintext: string
+  ): Promise<string> {
+    if (!this.store) {
+      throw new Error('Signal not initialized');
+    }
+
+    console.log('🔒 Encrypting message for:', recipientUsername);
+
+    // TODO: Использовать Double Ratchet для шифрования
+    // Для MVP возвращаем заглушку
+    return `encrypted_${plaintext}`;
+  }
+
+  /**
+   * Расшифровка сообщения
+   */
+  async decryptMessage(
+    senderUsername: string,
+    ciphertext: string
+  ): Promise<string | null> {
+    if (!this.store) {
+      throw new Error('Signal not initialized');
+    }
+
+    console.log('🔓 Decrypting message from:', senderUsername);
+
+    // TODO: Использовать Double Ratchet для расшифровки
+    // Для MVP возвращаем заглушку
+    if (ciphertext.startsWith('encrypted_')) {
+      return ciphertext.replace('encrypted_', '');
+    }
+    return null;
+  }
+
+  /**
+   * Получение публичного ключа Identity Key
+   */
+  getIdentityPublicKey(): string | null {
+    if (!this.identityKeyPair) return null;
+    return Buffer.from(this.identityKeyPair.publicKey.serialize()).toString('base64');
+  }
+
+  /**
+   * Очистка (при выходе)
+   */
+  clear(): void {
+    this.identityKeyPair = null;
+    this.registrationId = null;
+    this.store.clear();
+  }
+}
+
+export const signalService = new SignalService();
