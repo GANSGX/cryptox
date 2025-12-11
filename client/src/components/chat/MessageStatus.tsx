@@ -1,4 +1,4 @@
-import { Check, CheckCheck } from "lucide-react";
+import { Check } from "lucide-react";
 
 interface MessageStatusProps {
   createdAt: string;
@@ -20,8 +20,9 @@ export function MessageStatus({
   // 2 синие галочки - прочитано
   if (readAt) {
     return (
-      <span className="message-status read" title="Read">
-        <CheckCheck size={16} />
+      <span className="message-status read double-check" title="Read">
+        <Check size={16} className="check-1" />
+        <Check size={16} className="check-2" />
       </span>
     );
   }
@@ -29,8 +30,9 @@ export function MessageStatus({
   // 2 серые галочки - доставлено
   if (deliveredAt) {
     return (
-      <span className="message-status delivered" title="Delivered">
-        <CheckCheck size={16} />
+      <span className="message-status delivered double-check" title="Delivered">
+        <Check size={16} className="check-1" />
+        <Check size={16} className="check-2" />
       </span>
     );
   }
