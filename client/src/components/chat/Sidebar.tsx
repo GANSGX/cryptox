@@ -2,6 +2,7 @@ import { Search, Bookmark } from "lucide-react";
 import { useState, useEffect } from "react";
 import { apiService } from "@/services/api.service";
 import { useAuthStore } from "@/store/authStore";
+import { useChatStore } from "@/store/chatStore";
 
 interface SidebarProps {
   activeChat: string | null;
@@ -16,6 +17,7 @@ interface SearchUser {
 
 export function Sidebar({ activeChat, onChatSelect }: SidebarProps) {
   const { user } = useAuthStore();
+  const { contacts } = useChatStore();
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState<SearchUser[]>([]);
   const [isSearching, setIsSearching] = useState(false);
@@ -97,29 +99,60 @@ export function Sidebar({ activeChat, onChatSelect }: SidebarProps) {
         {isSearching ? (
           <div className="search-loading">Searching...</div>
         ) : searchQuery.trim().length >= 2 ? (
+          // Показываем результаты поиска
           searchResults.length > 0 ? (
-            searchResults.map((user) => (
+            searchResults.map((searchUser) => (
               <div
-                key={user.username}
-                className={`chat-item ${activeChat === user.username ? "active" : ""}`}
+                key={searchUser.username}
+                className={`chat-item ${activeChat === searchUser.username ? "active" : ""}`}
                 onClick={() => {
-                  onChatSelect(user.username);
+                  onChatSelect(searchUser.username);
                   setSearchQuery(""); // Очищаем поиск после выбора
                   setSearchResults([]);
                 }}
               >
                 <div className="chat-avatar">
-                  {user.username.charAt(0).toUpperCase()}
+                  {searchUser.username.charAt(0).toUpperCase()}
                 </div>
                 <div className="chat-info">
-                  <h4>{user.username}</h4>
-                  {user.bio && <p>{user.bio}</p>}
+                  <h4>{searchUser.username}</h4>
+                  {searchUser.bio && <p>{searchUser.bio}</p>}
                 </div>
               </div>
             ))
           ) : (
             <div className="search-empty">No users found</div>
           )
+        ) : // Показываем список контактов
+        contacts.length > 0 ? (
+          contacts.map((contact) => (
+            <div
+              key={contact.username}
+              className={`chat-item ${activeChat === contact.username ? "active" : ""}`}
+              onClick={() => onChatSelect(contact.username)}
+            >
+              <div className="chat-avatar">
+                {contact.username.charAt(0).toUpperCase()}
+              </div>
+              <div className="chat-info">
+                <div className="chat-info-top">
+                  <h4>{contact.username}</h4>
+                  <span className="chat-time">
+                    {new Date(contact.lastMessageTime).toLocaleTimeString([], {
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    })}
+                  </span>
+                </div>
+                <div className="chat-info-bottom">
+                  <p className="chat-last-message">{contact.lastMessage}</p>
+                  {contact.unreadCount > 0 && (
+                    <span className="unread-badge">{contact.unreadCount}</span>
+                  )}
+                </div>
+              </div>
+            </div>
+          ))
         ) : (
           <div className="chat-list-empty">
             <p>Search for users to start chatting</p>

@@ -1,13 +1,22 @@
-import { useState } from 'react'
-import { LeftStrip } from './LeftStrip'
-import { BurgerMenu } from './BurgerMenu'
-import { Sidebar } from './Sidebar'
-import { ChatWindow } from './ChatWindow'
-import { EmailVerificationBanner } from '@/components/settings/EmailVerificationBanner'
+import { useState } from "react";
+import { LeftStrip } from "./LeftStrip";
+import { BurgerMenu } from "./BurgerMenu";
+import { Sidebar } from "./Sidebar";
+import { ChatWindow } from "./ChatWindow";
+import { EmailVerificationBanner } from "@/components/settings/EmailVerificationBanner";
+import { useChatStore } from "@/store/chatStore";
+import { useAuthStore } from "@/store/authStore";
 
 export function ChatLayout() {
-  const [isBurgerOpen, setIsBurgerOpen] = useState(false)
-  const [activeChat, setActiveChat] = useState<string | null>(null)
+  const { user } = useAuthStore();
+  const { activeChat, setActiveChat } = useChatStore();
+  const [isBurgerOpen, setIsBurgerOpen] = useState(false);
+
+  const handleChatSelect = (username: string) => {
+    if (user) {
+      setActiveChat(username, user.username);
+    }
+  };
 
   return (
     <div className="chat-layout">
@@ -21,10 +30,7 @@ export function ChatLayout() {
       />
 
       {/* Сайдбар со списком чатов */}
-      <Sidebar
-        activeChat={activeChat}
-        onChatSelect={setActiveChat}
-      />
+      <Sidebar activeChat={activeChat} onChatSelect={handleChatSelect} />
 
       {/* Окно чата */}
       <ChatWindow activeChat={activeChat} />
@@ -32,5 +38,5 @@ export function ChatLayout() {
       {/* Email Verification Banner */}
       <EmailVerificationBanner />
     </div>
-  )
+  );
 }

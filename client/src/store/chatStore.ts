@@ -1,24 +1,36 @@
 import { create } from "zustand";
+import { persist } from "zustand/middleware";
 import { apiService } from "@/services/api.service";
 import { socketService } from "@/services/socket.service";
 import { cryptoService } from "@/services/crypto.service";
 import type { Message } from "@/types/message.types";
 
+interface Contact {
+  username: string;
+  lastMessage: string;
+  lastMessageTime: string;
+  unreadCount: number;
+  isOnline?: boolean;
+}
+
 interface ChatState {
   activeChat: string | null;
   messages: Record<string, Message[]>;
+  contacts: Contact[];
   isLoading: boolean;
   typingUsers: Set<string>;
 
   // Actions
-  setActiveChat: (username: string) => void;
+  setActiveChat: (username: string, myUsername: string) => void;
   loadMessages: (username: string, myUsername: string) => Promise<void>;
   sendMessage: (
     recipientUsername: string,
     message: string,
     myUsername: string,
   ) => Promise<void>;
-  addMessage: (message: Message, myUsername?: string) => void;
+  addMessage: (message: Message, myUsername: string) => void;
+  updateContact: (contact: Contact) => void;
+  markAsRead: (username: string) => void;
   startTyping: (chatId: string) => void;
   stopTyping: (chatId: string) => void;
   setUserTyping: (username: string) => void;
@@ -26,202 +38,311 @@ interface ChatState {
   markChatAsRead: (username: string) => Promise<void>;
 }
 
-export const useChatStore = create<ChatState>((set, get) => ({
-  activeChat: null,
-  messages: {},
-  isLoading: false,
-  typingUsers: new Set(),
+export const useChatStore = create<ChatState>()(
+  persist(
+    (set, get) => ({
+      activeChat: null,
+      messages: {},
+      contacts: [],
+      isLoading: false,
+      typingUsers: new Set(),
 
-  /**
-   * Установка активного чата
-   */
-  setActiveChat: (username: string) => {
-    set({ activeChat: username });
-  },
+      /**
+       * Установка активного чата (и пометка как прочитанное)
+       */
+      setActiveChat: (username: string, _myUsername: string) => {
+        set({ activeChat: username });
 
-  /**
-   * Загрузка истории сообщений
-   */
-  loadMessages: async (username: string, myUsername: string) => {
-    set({ isLoading: true });
+        // Автоматически помечаем как прочитанное при открытии чата
+        get().markAsRead(username);
 
-    try {
-      const response = await apiService.getMessages(username);
+        // Отправляем на сервер
+        get().markChatAsRead(username);
 
-      if (!response.success || !response.data) {
-        console.error("Failed to load messages:", response.error);
-        set({ isLoading: false });
-        return;
-      }
+        console.log(`📖 Opened chat with ${username}, marked as read`);
+      },
 
-      // Расшифровываем сообщения
-      const decryptedMessages: Message[] = await Promise.all(
-        response.data.messages.map(async (msg) => {
-          const decrypted = await cryptoService.decryptMessageFromChat(
-            msg.encrypted_content,
-            username,
+      /**
+       * Загрузка истории сообщений
+       */
+      loadMessages: async (username: string, myUsername: string) => {
+        set({ isLoading: true });
+
+        try {
+          const response = await apiService.getMessages(username);
+
+          if (!response.success || !response.data) {
+            console.error("Failed to load messages:", response.error);
+            set({ isLoading: false });
+            return;
+          }
+
+          // Расшифровываем сообщения
+          const decryptedMessages: Message[] = await Promise.all(
+            response.data.messages.map(async (msg) => {
+              const decrypted = await cryptoService.decryptMessageFromChat(
+                msg.encrypted_content,
+                username,
+                myUsername,
+              );
+
+              return {
+                id: msg.id,
+                sender_username: msg.sender_username,
+                recipient_username: msg.recipient_username,
+                encrypted_content: decrypted || "[Failed to decrypt]",
+                message_type: msg.message_type as
+                  | "text"
+                  | "image"
+                  | "video"
+                  | "file"
+                  | "audio",
+                created_at: msg.created_at,
+                read_at: msg.read_at,
+              };
+            }),
+          );
+
+          set((state) => ({
+            messages: {
+              ...state.messages,
+              [username]: decryptedMessages.reverse(), // Сортируем по возрастанию
+            },
+            isLoading: false,
+          }));
+        } catch (err) {
+          console.error("Load messages error:", err);
+          set({ isLoading: false });
+        }
+      },
+
+      /**
+       * Отправка сообщения
+       */
+      sendMessage: async (
+        recipientUsername: string,
+        message: string,
+        myUsername: string,
+      ) => {
+        try {
+          // Шифруем сообщение
+          const encryptedContent = await cryptoService.encryptMessageForChat(
+            message,
+            recipientUsername,
             myUsername,
           );
 
-          return {
-            id: msg.id,
-            sender_username: msg.sender_username,
-            recipient_username: msg.recipient_username,
-            encrypted_content: decrypted || "[Failed to decrypt]",
-            message_type: msg.message_type as
-              | "text"
-              | "image"
-              | "video"
-              | "file"
-              | "audio",
-            created_at: msg.created_at,
-            read_at: msg.read_at,
+          const response = await apiService.sendMessage({
+            recipient_username: recipientUsername,
+            encrypted_content: encryptedContent,
+            message_type: "text",
+          });
+
+          if (!response.success || !response.data) {
+            console.error("Failed to send message:", response.error);
+            return;
+          }
+
+          // Добавляем сообщение в локальный стор
+          const newMessage: Message = {
+            id: response.data.message_id,
+            sender_username: myUsername,
+            recipient_username: recipientUsername,
+            encrypted_content: message, // Храним расшифрованное для отображения
+            message_type: "text",
+            created_at: response.data.created_at,
+            read_at: null,
           };
-        }),
-      );
 
-      set((state) => ({
-        messages: {
-          ...state.messages,
-          [username]: decryptedMessages.reverse(), // Сортируем по возрастанию
-        },
-        isLoading: false,
-      }));
-    } catch (err) {
-      console.error("Load messages error:", err);
-      set({ isLoading: false });
-    }
-  },
+          get().addMessage(newMessage, myUsername);
+        } catch (err) {
+          console.error("Send message error:", err);
+        }
+      },
 
-  /**
-   * Отправка сообщения
-   */
-  sendMessage: async (
-    recipientUsername: string,
-    message: string,
-    myUsername: string,
-  ) => {
-    try {
-      // Шифруем сообщение
-      const encryptedContent = await cryptoService.encryptMessageForChat(
-        message,
-        recipientUsername,
-        myUsername,
-      );
+      /**
+       * Добавление сообщения в чат
+       */
+      addMessage: (message: Message, myUsername: string) => {
+        console.log(
+          "🔄 chatStore.addMessage called with:",
+          message,
+          "myUsername:",
+          myUsername,
+        );
 
-      const response = await apiService.sendMessage({
-        recipient_username: recipientUsername,
-        encrypted_content: encryptedContent,
-        message_type: "text",
-      });
+        set((state) => {
+          // Определяем username собеседника (не меня!)
+          const chatUsername =
+            message.sender_username === myUsername
+              ? message.recipient_username
+              : message.sender_username;
 
-      if (!response.success || !response.data) {
-        console.error("Failed to send message:", response.error);
-        return;
-      }
+          console.log("📊 Current activeChat:", state.activeChat);
+          console.log("📊 Determined chatUsername:", chatUsername);
 
-      // Добавляем сообщение в локальный стор
-      const newMessage: Message = {
-        id: response.data.message_id,
-        sender_username: myUsername,
-        recipient_username: recipientUsername,
-        encrypted_content: message, // Храним расшифрованное для отображения
-        message_type: "text",
-        created_at: response.data.created_at,
-        read_at: null,
-      };
+          const existingMessages = state.messages[chatUsername] || [];
 
-      get().addMessage(newMessage, myUsername);
-    } catch (err) {
-      console.error("Send message error:", err);
-    }
-  },
+          // ВАЖНО: Проверяем дубликаты перед добавлением
+          const isDuplicate = existingMessages.some((m) => m.id === message.id);
+          if (isDuplicate) {
+            console.log("⚠️ Duplicate message detected, skipping:", message.id);
+            return state; // Не изменяем state
+          }
 
-  /**
-   * Добавление сообщения в чат
-   */
-  addMessage: (message: Message, myUsername?: string) => {
-    console.log(
-      "🔄 chatStore.addMessage called with:",
-      message,
-      "myUsername:",
-      myUsername,
-    );
-    set((state) => {
-      // Определяем username собеседника (не меня!)
-      // Если я отправитель - chatUsername = получатель
-      // Если я получатель - chatUsername = отправитель
-      const chatUsername = myUsername
-        ? message.sender_username === myUsername
-          ? message.recipient_username
-          : message.sender_username
-        : message.sender_username === state.activeChat
-          ? message.sender_username
-          : message.recipient_username;
+          const isInActiveChat = state.activeChat === chatUsername;
 
-      console.log("📊 Current activeChat:", state.activeChat);
-      console.log("📊 My username:", myUsername);
-      console.log("📊 Determined chatUsername:", chatUsername);
+          // Если сообщение получено (я не отправитель) и я в этом чате → автоматически прочитано
+          if (message.sender_username !== myUsername && isInActiveChat) {
+            console.log("✅ Auto-marking as read (in active chat)");
+            // Отправим на сервер через timeout чтобы не блокировать UI
+            setTimeout(() => {
+              get().markChatAsRead(chatUsername);
+            }, 0);
+          }
 
-      const existingMessages = state.messages[chatUsername] || [];
-      console.log("📊 Existing messages count:", existingMessages.length);
+          // Обновляем контакт
+          const lastMessagePreview =
+            message.encrypted_content.length > 50
+              ? message.encrypted_content.substring(0, 50) + "..."
+              : message.encrypted_content;
 
-      const newMessages = {
-        messages: {
-          ...state.messages,
-          [chatUsername]: [...existingMessages, message],
-        },
-      };
+          const existingContact = state.contacts.find(
+            (c) => c.username === chatUsername,
+          );
+          const isMyMessage = message.sender_username === myUsername;
 
-      console.log("✅ New messages state:", newMessages);
-      return newMessages;
-    });
-  },
+          // Логируем для отладки
+          console.log("📊 Contact update:", {
+            chatUsername,
+            isMyMessage,
+            isInActiveChat,
+            currentUnread: existingContact?.unreadCount || 0,
+            shouldIncrement: !isMyMessage && !isInActiveChat,
+          });
 
-  /**
-   * Начало печати
-   */
-  startTyping: (chatId: string) => {
-    socketService.emitTypingStart(chatId);
-  },
+          const updatedContact: Contact = {
+            username: chatUsername,
+            lastMessage: isMyMessage
+              ? `You: ${lastMessagePreview}`
+              : lastMessagePreview,
+            lastMessageTime: message.created_at,
+            // Увеличиваем unread только если:
+            // 1. Сообщение НЕ от меня
+            // 2. Я НЕ в активном чате с этим пользователем
+            unreadCount:
+              !isMyMessage && !isInActiveChat
+                ? (existingContact?.unreadCount || 0) + 1
+                : isMyMessage || isInActiveChat
+                  ? 0 // Сбрасываем если я отправитель или в активном чате
+                  : existingContact?.unreadCount || 0,
+            isOnline: existingContact?.isOnline,
+          };
 
-  /**
-   * Остановка печати
-   */
-  stopTyping: (chatId: string) => {
-    socketService.emitTypingStop(chatId);
-  },
+          console.log("✅ Updated contact:", updatedContact);
 
-  /**
-   * Установка статуса "печатает"
-   */
-  setUserTyping: (username: string) => {
-    set((state) => {
-      const newTypingUsers = new Set(state.typingUsers);
-      newTypingUsers.add(username);
-      return { typingUsers: newTypingUsers };
-    });
-  },
+          // Обновляем список контактов
+          const otherContacts = state.contacts.filter(
+            (c) => c.username !== chatUsername,
+          );
+          const newContacts = [updatedContact, ...otherContacts].sort(
+            (a, b) =>
+              new Date(b.lastMessageTime).getTime() -
+              new Date(a.lastMessageTime).getTime(),
+          );
 
-  /**
-   * Удаление статуса "печатает"
-   */
-  removeUserTyping: (username: string) => {
-    set((state) => {
-      const newTypingUsers = new Set(state.typingUsers);
-      newTypingUsers.delete(username);
-      return { typingUsers: newTypingUsers };
-    });
-  },
+          return {
+            messages: {
+              ...state.messages,
+              [chatUsername]: [...existingMessages, message],
+            },
+            contacts: newContacts,
+          };
+        });
+      },
 
-  /**
-   * Пометить чат как прочитанный
-   */
-  markChatAsRead: async (username: string) => {
-    try {
-      await apiService.markChatAsRead(username);
-    } catch (err) {
-      console.error("Mark as read error:", err);
-    }
-  },
-}));
+      /**
+       * Обновить контакт
+       */
+      updateContact: (contact: Contact) => {
+        set((state) => {
+          const otherContacts = state.contacts.filter(
+            (c) => c.username !== contact.username,
+          );
+          return {
+            contacts: [contact, ...otherContacts],
+          };
+        });
+      },
+
+      /**
+       * Пометить как прочитанное (локально)
+       */
+      markAsRead: (username: string) => {
+        set((state) => {
+          const updatedContacts = state.contacts.map((contact) =>
+            contact.username === username
+              ? { ...contact, unreadCount: 0 }
+              : contact,
+          );
+          return { contacts: updatedContacts };
+        });
+      },
+
+      /**
+       * Начало печати
+       */
+      startTyping: (chatId: string) => {
+        socketService.emitTypingStart(chatId);
+      },
+
+      /**
+       * Остановка печати
+       */
+      stopTyping: (chatId: string) => {
+        socketService.emitTypingStop(chatId);
+      },
+
+      /**
+       * Установка статуса "печатает"
+       */
+      setUserTyping: (username: string) => {
+        set((state) => {
+          const newTypingUsers = new Set(state.typingUsers);
+          newTypingUsers.add(username);
+          return { typingUsers: newTypingUsers };
+        });
+      },
+
+      /**
+       * Удаление статуса "печатает"
+       */
+      removeUserTyping: (username: string) => {
+        set((state) => {
+          const newTypingUsers = new Set(state.typingUsers);
+          newTypingUsers.delete(username);
+          return { typingUsers: newTypingUsers };
+        });
+      },
+
+      /**
+       * Пометить чат как прочитанный
+       */
+      markChatAsRead: async (username: string) => {
+        try {
+          await apiService.markChatAsRead(username);
+        } catch (err) {
+          console.error("Mark as read error:", err);
+        }
+      },
+    }),
+    {
+      name: "chat-storage",
+      partialize: (state) => ({
+        contacts: state.contacts,
+        messages: state.messages,
+        // Don't persist: typingUsers (Set can't be serialized), isLoading, activeChat
+      }),
+    },
+  ),
+);
