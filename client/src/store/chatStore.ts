@@ -63,7 +63,22 @@ export const useChatStore = create<ChatState>()(
         // Отправляем на сервер
         get().markChatAsRead(username);
 
-        console.log(`📖 Opened chat with ${username}, marked as read`);
+        // Отправляем WebSocket события message_read для всех непрочитанных сообщений
+        const chatMessages = get().messages[username] || [];
+        const unreadMessages = chatMessages.filter(
+          (msg) => msg.sender_username === username && !msg.read_at,
+        );
+
+        unreadMessages.forEach((msg) => {
+          socketService.emitMessageRead(msg.id, username);
+          console.log(
+            `✅ Sent read receipt for message ${msg.id} to ${username}`,
+          );
+        });
+
+        console.log(
+          `📖 Opened chat with ${username}, marked as read (${unreadMessages.length} messages)`,
+        );
       },
 
       /**
@@ -204,6 +219,14 @@ export const useChatStore = create<ChatState>()(
             // Отправим на сервер через timeout чтобы не блокировать UI
             setTimeout(() => {
               get().markChatAsRead(chatUsername);
+              // Отправляем WebSocket событие message_read для обновления статуса у отправителя
+              socketService.emitMessageRead(
+                message.id,
+                message.sender_username,
+              );
+              console.log(
+                `✅ Sent read receipt for message ${message.id} to ${message.sender_username}`,
+              );
             }, 0);
           }
 
@@ -349,38 +372,68 @@ export const useChatStore = create<ChatState>()(
         messageId: string,
         status: "delivered" | "read",
       ) => {
+        console.log(
+          `🔄 updateMessageStatus called: messageId=${messageId}, status=${status}`,
+        );
+
         set((state) => {
-          const updatedMessages: Record<string, Message[]> = {};
-          let updated = false;
+          let found = false;
+          let actuallyUpdated = false;
 
           // Проходим по всем чатам и ищем сообщение
+          const updatedMessages: Record<string, Message[]> = {};
+
           for (const [chatUsername, chatMessages] of Object.entries(
             state.messages,
           )) {
             updatedMessages[chatUsername] = chatMessages.map((msg) => {
               if (msg.id === messageId) {
-                updated = true;
+                found = true;
                 const now = new Date().toISOString();
+
+                console.log(`📨 Found message in chat ${chatUsername}:`, msg);
+
                 if (status === "delivered" && !msg.delivered_at) {
+                  console.log(
+                    `✅ Updating delivered_at for message ${messageId}`,
+                  );
+                  actuallyUpdated = true;
                   return { ...msg, delivered_at: now };
                 }
+
                 if (status === "read" && !msg.read_at) {
+                  console.log(`✅ Updating read_at for message ${messageId}`);
+                  actuallyUpdated = true;
                   return {
                     ...msg,
                     read_at: now,
                     delivered_at: msg.delivered_at || now,
                   };
                 }
+
+                console.log(
+                  `⚠️ Message ${messageId} already has status ${status}`,
+                );
               }
               return msg;
             });
           }
 
-          if (updated) {
-            console.log(`✅ Updated message ${messageId} status to ${status}`);
+          if (!found) {
+            console.warn(`⚠️ Message ${messageId} not found in any chat`);
+            return state;
+          }
+
+          if (actuallyUpdated) {
+            console.log(
+              `✅ Successfully updated message ${messageId} to ${status}`,
+            );
             return { messages: updatedMessages };
           }
 
+          console.log(
+            `ℹ️ No update needed for message ${messageId} (already ${status})`,
+          );
           return state;
         });
       },

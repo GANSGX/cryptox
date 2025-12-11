@@ -64,8 +64,9 @@ export function ChatLayout() {
       messageId: string;
       status: "delivered" | "read";
     }) => {
-      console.log("📊 Message status update:", data);
+      console.log("📊 ChatLayout: Received message_status_update event:", data);
       updateMessageStatus(data.messageId, data.status);
+      console.log("📊 ChatLayout: Called updateMessageStatus");
     };
 
     socketService.onNewMessage(handleNewMessage);
