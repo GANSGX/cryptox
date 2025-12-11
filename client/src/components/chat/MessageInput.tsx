@@ -19,8 +19,7 @@ interface MessageInputProps {
 
 export function MessageInput({ activeChat }: MessageInputProps) {
   const { user } = useAuthStore();
-  const { sendMessage, startTyping, stopTyping, markAsRead, markChatAsRead } =
-    useChatStore();
+  const { sendMessage, startTyping, stopTyping } = useChatStore();
   const [message, setMessage] = useState("");
   const [showAttachMenu, setShowAttachMenu] = useState(false);
   const [recordMode, setRecordMode] = useState<"voice" | "video">("voice");
@@ -36,15 +35,11 @@ export function MessageInput({ activeChat }: MessageInputProps) {
     }
   }, [message]);
 
-  // Typing indicators + auto-mark as read
+  // Typing indicators
   useEffect(() => {
     if (message.trim() && user) {
       const chatId = cryptoService.createChatId(user.username, activeChat);
       startTyping(chatId);
-
-      // Пометить как прочитанное при начале печати
-      markAsRead(activeChat);
-      markChatAsRead(activeChat);
 
       // Останавливаем индикатор через 3 секунды если не печатаем
       if (typingTimeoutRef.current) {
@@ -60,15 +55,7 @@ export function MessageInput({ activeChat }: MessageInputProps) {
         clearTimeout(typingTimeoutRef.current);
       }
     };
-  }, [
-    message,
-    activeChat,
-    user,
-    startTyping,
-    stopTyping,
-    markAsRead,
-    markChatAsRead,
-  ]);
+  }, [message, activeChat, user, startTyping, stopTyping]);
 
   const handleSend = async () => {
     if (!message.trim() || !user) return;
