@@ -1,23 +1,37 @@
 import {
   encryptMessage,
   decryptMessage,
-  generateSessionKey,
+  deriveSessionKey,
 } from "@/utils/crypto";
+// import { signalService } from "./signal.service"; // DISABLED: не работает в браузере
 
 class CryptoService {
   private sessionKeys: Map<string, string> = new Map();
+  // private useSignalProtocol: boolean = false; // Feature flag - disabled
 
   /**
    * Получение или создание session key для чата
    */
-  getSessionKey(chatId: string): string {
+  async getSessionKey(
+    chatId: string,
+    username1: string,
+    username2: string,
+  ): Promise<string> {
     let key = this.sessionKeys.get(chatId);
 
     if (!key) {
-      key = generateSessionKey();
-      this.sessionKeys.set(chatId, key);
-      // Сохраняем в localStorage для персистентности
-      localStorage.setItem(`session_key_${chatId}`, key);
+      // Проверяем localStorage
+      const savedKey = localStorage.getItem(`session_key_${chatId}`);
+      if (savedKey) {
+        key = savedKey;
+        this.sessionKeys.set(chatId, key);
+      } else {
+        // Генерируем детерминированный ключ из usernames
+        key = await deriveSessionKey(username1, username2);
+        this.sessionKeys.set(chatId, key);
+        // Сохраняем в localStorage для персистентности
+        localStorage.setItem(`session_key_${chatId}`, key);
+      }
     }
 
     return key;
@@ -48,15 +62,37 @@ class CryptoService {
   }
 
   /**
+   * Инициализация Signal Protocol (вызывать при логине)
+   */
+  async initializeSignal(_username: string): Promise<void> {
+    // TODO: Signal Protocol не работает в браузере (native библиотека)
+    // Нужно либо:
+    // 1. Найти браузерную альтернативу
+    // 2. Реализовать самому X3DH + Double Ratchet
+    // 3. Использовать WebAssembly версию
+
+    // this.useSignalProtocol = false; // disabled
+    console.log("⚠️ Signal Protocol disabled (using fallback)");
+  }
+
+  /**
    * Шифрование сообщения для отправки
    */
-  encryptMessageForChat(
+  async encryptMessageForChat(
     message: string,
     otherUsername: string,
     myUsername: string,
-  ): string {
+  ): Promise<string> {
+    // Signal Protocol отключен (не работает в браузере)
+    // if (this.useSignalProtocol) { ... }
+
+    // Используем детерминированный ключ (одинаковый у обоих юзеров)
     const chatId = this.createChatId(myUsername, otherUsername);
-    const sessionKey = this.getSessionKey(chatId);
+    const sessionKey = await this.getSessionKey(
+      chatId,
+      myUsername,
+      otherUsername,
+    );
 
     const { ciphertext, nonce } = encryptMessage(message, sessionKey);
 
@@ -67,14 +103,22 @@ class CryptoService {
   /**
    * Расшифровка полученного сообщения
    */
-  decryptMessageFromChat(
+  async decryptMessageFromChat(
     encryptedContent: string,
     otherUsername: string,
     myUsername: string,
-  ): string | null {
+  ): Promise<string | null> {
+    // Signal Protocol отключен (не работает в браузере)
+    // if (this.useSignalProtocol) { ... }
+
+    // Используем детерминированный ключ (одинаковый у обоих юзеров)
     try {
       const chatId = this.createChatId(myUsername, otherUsername);
-      const sessionKey = this.getSessionKey(chatId);
+      const sessionKey = await this.getSessionKey(
+        chatId,
+        myUsername,
+        otherUsername,
+      );
 
       // Разделяем ciphertext и nonce
       const [ciphertext, nonce] = encryptedContent.split(":");

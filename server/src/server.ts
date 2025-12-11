@@ -8,6 +8,7 @@ import { protectedRoutes } from "./routes/protected.routes.js";
 import { usersRoutes } from "./routes/users.routes.js";
 import { messagesRoutes } from "./routes/messages.routes.js";
 import { sessionsRoutes } from "./routes/sessions.routes";
+import { keysRoutes } from "./routes/keys.routes.js";
 import {
   errorHandler,
   notFoundHandler,
@@ -222,6 +223,7 @@ await fastify.register(protectedRoutes, { prefix: "/api" });
 await fastify.register(usersRoutes, { prefix: "/api/users" });
 await fastify.register(messagesRoutes, { prefix: "/api" });
 await fastify.register(sessionsRoutes, { prefix: "/api" });
+await fastify.register(keysRoutes, { prefix: "/api" });
 
 // Error handlers (enhanced - no information disclosure)
 fastify.setErrorHandler(enhancedErrorHandler);

@@ -84,7 +84,10 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       // Подключаем Socket.io
       socketService.connect(token);
 
-      // Загружаем session keys
+      // Инициализируем Signal Protocol
+      await cryptoService.initializeSignal(user.username);
+
+      // Загружаем session keys (legacy fallback)
       cryptoService.loadSessionKeys();
 
       set({
@@ -115,8 +118,11 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       // Генерируем fingerprint устройства
       const deviceFingerprint = await fingerprintService.getFingerprint();
 
-      // Для MVP используем заглушку для public_key
-      const public_key = `${username}_public_key_${Date.now()}`;
+      // Генерируем валидный public_key (64 hex символа)
+      // TODO: Заменить на настоящий Signal Protocol public key
+      const public_key = Array.from({ length: 64 }, () =>
+        Math.floor(Math.random() * 16).toString(16),
+      ).join("");
 
       const response = await apiService.register({
         username,
@@ -211,7 +217,10 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       // Подключаем Socket.io
       socketService.connect(token);
 
-      // Загружаем session keys
+      // Инициализируем Signal Protocol
+      await cryptoService.initializeSignal(response.data.username);
+
+      // Загружаем session keys (legacy fallback)
       cryptoService.loadSessionKeys();
 
       set({
@@ -261,7 +270,10 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       // Подключаем Socket.io
       socketService.connect(token);
 
-      // Загружаем session keys
+      // Инициализируем Signal Protocol
+      await cryptoService.initializeSignal(user.username);
+
+      // Загружаем session keys (legacy fallback)
       cryptoService.loadSessionKeys();
 
       set({

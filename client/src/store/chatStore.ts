@@ -18,7 +18,7 @@ interface ChatState {
     message: string,
     myUsername: string,
   ) => Promise<void>;
-  addMessage: (message: Message) => void;
+  addMessage: (message: Message, myUsername?: string) => void;
   startTyping: (chatId: string) => void;
   stopTyping: (chatId: string) => void;
   setUserTyping: (username: string) => void;
@@ -55,28 +55,30 @@ export const useChatStore = create<ChatState>((set, get) => ({
       }
 
       // Расшифровываем сообщения
-      const decryptedMessages: Message[] = response.data.messages.map((msg) => {
-        const decrypted = cryptoService.decryptMessageFromChat(
-          msg.encrypted_content,
-          username,
-          myUsername,
-        );
+      const decryptedMessages: Message[] = await Promise.all(
+        response.data.messages.map(async (msg) => {
+          const decrypted = await cryptoService.decryptMessageFromChat(
+            msg.encrypted_content,
+            username,
+            myUsername,
+          );
 
-        return {
-          id: msg.id,
-          sender_username: msg.sender_username,
-          recipient_username: msg.recipient_username,
-          encrypted_content: decrypted || "[Failed to decrypt]",
-          message_type: msg.message_type as
-            | "text"
-            | "image"
-            | "video"
-            | "file"
-            | "audio",
-          created_at: msg.created_at,
-          read_at: msg.read_at,
-        };
-      });
+          return {
+            id: msg.id,
+            sender_username: msg.sender_username,
+            recipient_username: msg.recipient_username,
+            encrypted_content: decrypted || "[Failed to decrypt]",
+            message_type: msg.message_type as
+              | "text"
+              | "image"
+              | "video"
+              | "file"
+              | "audio",
+            created_at: msg.created_at,
+            read_at: msg.read_at,
+          };
+        }),
+      );
 
       set((state) => ({
         messages: {
@@ -101,7 +103,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
   ) => {
     try {
       // Шифруем сообщение
-      const encryptedContent = cryptoService.encryptMessageForChat(
+      const encryptedContent = await cryptoService.encryptMessageForChat(
         message,
         recipientUsername,
         myUsername,
@@ -129,7 +131,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
         read_at: null,
       };
 
-      get().addMessage(newMessage);
+      get().addMessage(newMessage, myUsername);
     } catch (err) {
       console.error("Send message error:", err);
     }
@@ -138,21 +140,41 @@ export const useChatStore = create<ChatState>((set, get) => ({
   /**
    * Добавление сообщения в чат
    */
-  addMessage: (message: Message) => {
+  addMessage: (message: Message, myUsername?: string) => {
+    console.log(
+      "🔄 chatStore.addMessage called with:",
+      message,
+      "myUsername:",
+      myUsername,
+    );
     set((state) => {
-      const chatUsername =
-        message.sender_username === state.activeChat
+      // Определяем username собеседника (не меня!)
+      // Если я отправитель - chatUsername = получатель
+      // Если я получатель - chatUsername = отправитель
+      const chatUsername = myUsername
+        ? message.sender_username === myUsername
+          ? message.recipient_username
+          : message.sender_username
+        : message.sender_username === state.activeChat
           ? message.sender_username
           : message.recipient_username;
 
-      const existingMessages = state.messages[chatUsername] || [];
+      console.log("📊 Current activeChat:", state.activeChat);
+      console.log("📊 My username:", myUsername);
+      console.log("📊 Determined chatUsername:", chatUsername);
 
-      return {
+      const existingMessages = state.messages[chatUsername] || [];
+      console.log("📊 Existing messages count:", existingMessages.length);
+
+      const newMessages = {
         messages: {
           ...state.messages,
           [chatUsername]: [...existingMessages, message],
         },
       };
+
+      console.log("✅ New messages state:", newMessages);
+      return newMessages;
     });
   },
 

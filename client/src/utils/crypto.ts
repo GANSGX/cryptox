@@ -40,7 +40,30 @@ export function generateKey(): string {
 }
 
 /**
- * Генерация session key для чата
+ * Генерация session key для чата (детерминированный из usernames)
+ * Оба пользователя получат одинаковый ключ
+ */
+export async function deriveSessionKey(
+  username1: string,
+  username2: string,
+): Promise<string> {
+  // Сортируем usernames для консистентности
+  const sorted = [username1.toLowerCase(), username2.toLowerCase()].sort();
+  const keyMaterial = sorted.join(":");
+
+  // Используем Web Crypto API для генерации ключа
+  const encoder = new TextEncoder();
+  const data = encoder.encode(keyMaterial);
+
+  // SHA-256 hash
+  const hashBuffer = await crypto.subtle.digest("SHA-256", data);
+  const hashArray = new Uint8Array(hashBuffer);
+
+  return encodeBase64(hashArray);
+}
+
+/**
+ * Генерация session key для чата (legacy)
  */
 export function generateSessionKey(): string {
   return generateKey();

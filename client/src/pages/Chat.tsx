@@ -16,7 +16,7 @@ export function Chat() {
     console.log("🎧 Chat: Setting up WebSocket listeners");
 
     // Обработка новых сообщений
-    const handleNewMessage = (rawData: unknown) => {
+    const handleNewMessage = async (rawData: unknown) => {
       const data = rawData as {
         message_id: string;
         sender_username: string;
@@ -33,7 +33,7 @@ export function Chat() {
           ? data.recipient_username
           : data.sender_username;
 
-      const decrypted = cryptoService.decryptMessageFromChat(
+      const decrypted = await cryptoService.decryptMessageFromChat(
         data.encrypted_content,
         otherUsername,
         user.username,
@@ -49,7 +49,9 @@ export function Chat() {
         read_at: null,
       };
 
-      addMessage(message);
+      console.log("📥 Adding message to store:", message);
+      addMessage(message, user.username);
+      console.log("✅ Message added to store");
     };
 
     // Обработка typing indicators

@@ -78,9 +78,10 @@ export async function messagesRoutes(fastify: FastifyInstance) {
       // Отправка через Socket.io (если получатель online)
       const io = fastify.io;
       io.to(`user:${recipient_username.toLowerCase()}`).emit("new_message", {
-        id: message.id,
+        message_id: message.id, // Клиент ожидает message_id, не id
         chat_id: message.chat_id,
         sender_username: message.sender_username,
+        recipient_username: message.recipient_username, // Добавлено для клиента
         encrypted_content: message.encrypted_content,
         message_type: message.message_type,
         created_at: message.created_at.toISOString(),

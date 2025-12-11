@@ -109,8 +109,10 @@ export function initializeSocketServer(httpServer: HTTPServer) {
       );
     } else {
       // Обычное подключение - подписываем на username room
-      socket.join(username);
-      console.log(`✅ Socket ${socket.id} joined room: ${username}`);
+      socket.join(`user:${username.toLowerCase()}`);
+      console.log(
+        `✅ Socket ${socket.id} joined room: user:${username.toLowerCase()}`,
+      );
     }
 
     // Отправляем подтверждение подключения

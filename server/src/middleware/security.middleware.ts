@@ -517,6 +517,19 @@ export async function securityMiddleware(
   // Validate body
   if (request.body) {
     try {
+      // Skip encrypted_content field from XSS sanitization (it's base64 encoded)
+      // Base64 contains '/' which gets escaped to '&#x2F;' breaking decryption
+      let encryptedContent: string | undefined;
+      if (
+        typeof request.body === "object" &&
+        request.body &&
+        "encrypted_content" in request.body
+      ) {
+        const body = request.body as Record<string, unknown>;
+        encryptedContent = body.encrypted_content as string | undefined;
+        delete body.encrypted_content;
+      }
+
       const result = validateInput(request.body);
 
       if (!result.valid) {
@@ -529,6 +542,16 @@ export async function securityMiddleware(
 
       // Replace body with sanitized version
       request.body = result.sanitized;
+
+      // Restore encrypted_content without sanitization
+      if (
+        encryptedContent !== undefined &&
+        typeof request.body === "object" &&
+        request.body
+      ) {
+        (request.body as Record<string, unknown>).encrypted_content =
+          encryptedContent;
+      }
     } catch (error) {
       // If validation itself fails (e.g., payload too large for JSON.stringify)
       // Return 413 Payload Too Large
