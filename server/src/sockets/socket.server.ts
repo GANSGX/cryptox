@@ -121,6 +121,81 @@ export function initializeSocketServer(httpServer: HTTPServer) {
       username,
     });
 
+    // Автоматически пометить неполученные сообщения как delivered
+    // И отправить клиенту непрочитанные сообщения (которые были отправлены пока он был offline)
+    if (username && username !== "unknown") {
+      Promise.all([
+        // 1. Пометить неполученные как delivered
+        pool.query(
+          `UPDATE messages
+           SET delivered_at = NOW()
+           WHERE recipient_username = $1
+           AND delivered_at IS NULL
+           RETURNING id, sender_username`,
+          [username.toLowerCase()],
+        ),
+        // 2. Получить все непрочитанные сообщения (для отправки клиенту)
+        pool.query(
+          `SELECT id, sender_username, recipient_username, encrypted_content,
+                  message_type, created_at, delivered_at, read_at, chat_id
+           FROM messages
+           WHERE recipient_username = $1
+           AND read_at IS NULL
+           ORDER BY created_at ASC`,
+          [username.toLowerCase()],
+        ),
+      ])
+        .then(([deliveredResult, unreadResult]) => {
+          // Отправить delivery receipts отправителям
+          if (deliveredResult.rows.length > 0) {
+            log.debug(
+              `Auto-marked ${deliveredResult.rows.length} messages as delivered for ${username}`,
+            );
+
+            deliveredResult.rows.forEach(
+              (row: { id: string; sender_username: string }) => {
+                io.to(`user:${row.sender_username.toLowerCase()}`).emit(
+                  "message_status_update",
+                  {
+                    messageId: row.id,
+                    status: "delivered",
+                  },
+                );
+              },
+            );
+          }
+
+          // Отправить непрочитанные сообщения клиенту (чтобы они появились в контактах)
+          if (unreadResult.rows.length > 0) {
+            log.debug(
+              `Sending ${unreadResult.rows.length} unread messages to ${username}`,
+            );
+
+            unreadResult.rows.forEach((msg: any) => {
+              socket.emit("new_message", {
+                message_id: msg.id,
+                chat_id: msg.chat_id,
+                sender_username: msg.sender_username,
+                recipient_username: msg.recipient_username,
+                encrypted_content: msg.encrypted_content,
+                message_type: msg.message_type,
+                created_at: msg.created_at.toISOString(),
+                delivered_at: msg.delivered_at
+                  ? msg.delivered_at.toISOString()
+                  : null,
+                read_at: msg.read_at ? msg.read_at.toISOString() : null,
+              });
+            });
+          }
+        })
+        .catch((error) => {
+          log.error("Error processing unread messages on connect", {
+            error,
+            username,
+          });
+        });
+    }
+
     // Обработчик отключения
     socket.on("disconnect", (reason: string) => {
       log.info("Client disconnected", {
