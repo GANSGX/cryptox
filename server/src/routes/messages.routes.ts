@@ -229,7 +229,25 @@ export async function messagesRoutes(fastify: FastifyInstance) {
       const { username: otherUsername } = request.params;
       const currentUsername = request.user!.username;
 
-      await MessageService.markChatAsRead(currentUsername, otherUsername);
+      // Получить список обновлённых сообщений
+      const updatedMessageIds = await MessageService.markChatAsRead(
+        currentUsername,
+        otherUsername,
+      );
+
+      // Отправить WebSocket уведомления отправителю для каждого сообщения
+      const io = fastify.io;
+      if (io && updatedMessageIds.length > 0) {
+        updatedMessageIds.forEach((messageId) => {
+          io.to(`user:${otherUsername.toLowerCase()}`).emit(
+            "message_status_update",
+            {
+              messageId,
+              status: "read",
+            },
+          );
+        });
+      }
 
       return reply.code(200).send({
         success: true,

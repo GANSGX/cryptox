@@ -111,21 +111,25 @@ export class MessageService {
 
   /**
    * Пометить все сообщения чата как прочитанные
+   * Возвращает список id обновлённых сообщений для WebSocket уведомлений
    */
   static async markChatAsRead(
     username: string,
     otherUsername: string,
-  ): Promise<void> {
+  ): Promise<string[]> {
     const chatId = this.createChatId(username, otherUsername);
 
-    await pool.query(
+    const result = await pool.query<{ id: string }>(
       `UPDATE messages
        SET read_at = NOW()
        WHERE chat_id = $1
        AND recipient_username = $2
-       AND read_at IS NULL`,
+       AND read_at IS NULL
+       RETURNING id`,
       [chatId, username.toLowerCase()],
     );
+
+    return result.rows.map((row) => row.id);
   }
 
   /**

@@ -254,13 +254,14 @@ export function initializeSocketServer(httpServer: HTTPServer) {
         }
 
         try {
+          // Обновляем read_at в БД и проверяем авторизацию одним запросом
           const result = await pool.query(
-            "SELECT 1 FROM messages WHERE id = $1 AND recipient_username = $2",
+            "UPDATE messages SET read_at = NOW() WHERE id = $1 AND recipient_username = $2 AND read_at IS NULL RETURNING id",
             [data.messageId, username.toLowerCase()],
           );
 
           if (result.rows.length === 0) {
-            log.warn("Unauthorized message_read - not recipient", {
+            log.warn("Unauthorized message_read or already read", {
               username,
               messageId: data.messageId,
             });
