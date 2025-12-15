@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { apiService } from "@/services/api.service";
 import { useAuthStore } from "@/store/authStore";
 import { useChatStore } from "@/store/chatStore";
+import { formatChatPreviewTime } from "@/utils/dateTime";
 
 interface SidebarProps {
   activeChat: string | null;
@@ -138,10 +139,7 @@ export function Sidebar({ activeChat, onChatSelect }: SidebarProps) {
                 <div className="chat-info-top">
                   <h4>{contact.username}</h4>
                   <span className="chat-time">
-                    {new Date(contact.lastMessageTime).toLocaleTimeString([], {
-                      hour: "2-digit",
-                      minute: "2-digit",
-                    })}
+                    {formatChatPreviewTime(contact.lastMessageTime)}
                   </span>
                 </div>
                 <div className="chat-info-bottom">

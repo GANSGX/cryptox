@@ -54,13 +54,14 @@ export const useChatStore = create<ChatState>()(
       /**
        * Установка активного чата (и пометка как прочитанное)
        */
-      setActiveChat: (username: string, _myUsername: string) => {
+      setActiveChat: (username: string, myUsername: string) => {
         console.log(`📂 [setActiveChat] Opening chat with ${username}`);
         set({ activeChat: username });
 
         // Автоматически помечаем как прочитанное при открытии чата
         get().markAsRead(username);
 
+        void myUsername; // Резерв для будущей логики
         // Отправляем на сервер
         get().markChatAsRead(username);
 

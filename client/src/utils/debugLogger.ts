@@ -70,7 +70,7 @@ class DebugLogger {
     // Also try regular console.log (might work in some browsers)
     try {
       console.log(logMessage);
-    } catch (e) {
+    } catch {
       // Ignore if blocked
     }
   }

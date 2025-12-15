@@ -64,7 +64,7 @@ class CryptoService {
   /**
    * Инициализация Signal Protocol (вызывать при логине)
    */
-  async initializeSignal(_username: string): Promise<void> {
+  async initializeSignal(username: string): Promise<void> {
     // TODO: Signal Protocol не работает в браузере (native библиотека)
     // Нужно либо:
     // 1. Найти браузерную альтернативу
@@ -72,6 +72,7 @@ class CryptoService {
     // 3. Использовать WebAssembly версию
 
     // this.useSignalProtocol = false; // disabled
+    void username; // Используется в будущем для Signal Protocol
     console.log("⚠️ Signal Protocol disabled (using fallback)");
   }
 
