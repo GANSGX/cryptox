@@ -126,31 +126,36 @@ export function Sidebar({ activeChat, onChatSelect }: SidebarProps) {
           )
         ) : // Показываем список контактов
         contacts.length > 0 ? (
-          contacts.map((contact) => (
-            <div
-              key={contact.username}
-              className={`chat-item ${activeChat === contact.username ? "active" : ""}`}
-              onClick={() => onChatSelect(contact.username)}
-            >
-              <div className="chat-avatar">
-                {contact.username.charAt(0).toUpperCase()}
-              </div>
-              <div className="chat-info">
-                <div className="chat-info-top">
-                  <h4>{contact.username}</h4>
-                  <span className="chat-time">
-                    {formatChatPreviewTime(contact.lastMessageTime)}
-                  </span>
+          contacts
+            // Фильтруем контакт с самим собой (для этого есть "Saved Messages")
+            .filter((contact) => contact.username !== user?.username)
+            .map((contact) => (
+              <div
+                key={contact.username}
+                className={`chat-item ${activeChat === contact.username ? "active" : ""}`}
+                onClick={() => onChatSelect(contact.username)}
+              >
+                <div className="chat-avatar">
+                  {contact.username.charAt(0).toUpperCase()}
                 </div>
-                <div className="chat-info-bottom">
-                  <p className="chat-last-message">{contact.lastMessage}</p>
-                  {contact.unreadCount > 0 && (
-                    <span className="unread-badge">{contact.unreadCount}</span>
-                  )}
+                <div className="chat-info">
+                  <div className="chat-info-top">
+                    <h4>{contact.username}</h4>
+                    <span className="chat-time">
+                      {formatChatPreviewTime(contact.lastMessageTime)}
+                    </span>
+                  </div>
+                  <div className="chat-info-bottom">
+                    <p className="chat-last-message">{contact.lastMessage}</p>
+                    {contact.unreadCount > 0 && (
+                      <span className="unread-badge">
+                        {contact.unreadCount}
+                      </span>
+                    )}
+                  </div>
                 </div>
               </div>
-            </div>
-          ))
+            ))
         ) : (
           <div className="chat-list-empty">
             <p>Search for users to start chatting</p>
