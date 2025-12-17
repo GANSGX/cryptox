@@ -102,7 +102,7 @@ export async function messagesRoutes(fastify: FastifyInstance) {
   );
 
   /**
-   * GET /sync
+   * GET /messages/sync
    * Полная синхронизация контактов и истории (Telegram-style)
    * ВАЖНО: Должен быть ПЕРЕД /messages/:username, иначе "sync" будет матчиться как username!
    */
@@ -117,7 +117,7 @@ export async function messagesRoutes(fastify: FastifyInstance) {
       }>;
     }>;
   }>(
-    "/sync",
+    "/messages/sync",
     {
       preHandler: authMiddleware,
     },
