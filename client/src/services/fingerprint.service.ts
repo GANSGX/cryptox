@@ -89,6 +89,31 @@ class FingerprintService {
       return false;
     }
   }
+
+  /**
+   * Получить Browser Session ID
+   * Уникален для каждой СЕССИИ браузера (закрыл окно/incognito → новый ID)
+   * Используется для различения обычного окна и incognito
+   *
+   * Хранится в sessionStorage (очищается при закрытии окна/вкладки)
+   */
+  getBrowserSessionId(): string {
+    const STORAGE_KEY = "cryptox_browser_session_id";
+
+    // Проверяем есть ли уже в sessionStorage
+    let sessionId = sessionStorage.getItem(STORAGE_KEY);
+
+    if (!sessionId) {
+      // Генерируем новый уникальный ID
+      sessionId = `session_${Date.now()}_${Math.random().toString(36).slice(2, 11)}`;
+      sessionStorage.setItem(STORAGE_KEY, sessionId);
+      console.log("🆕 Generated new browser session ID:", sessionId);
+    } else {
+      console.log("♻️  Using existing browser session ID:", sessionId);
+    }
+
+    return sessionId;
+  }
 }
 
 export const fingerprintService = new FingerprintService();

@@ -50,10 +50,17 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       // Генерируем fingerprint устройства
       const deviceFingerprint = await fingerprintService.getFingerprint();
 
+      // Генерируем Browser Session ID (уникален для каждого окна/incognito)
+      const browserSessionId = fingerprintService.getBrowserSessionId();
+
+      // Комбинируем: deviceFingerprint|browserSessionId
+      // Это позволяет различать обычное окно и incognito на ОДНОМ устройстве
+      const combinedFingerprint = `${deviceFingerprint}|${browserSessionId}`;
+
       const response = await apiService.login({
         username,
         password,
-        deviceFingerprint,
+        deviceFingerprint: combinedFingerprint,
       });
 
       if (!response.success || !response.data) {
@@ -124,6 +131,12 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       // Генерируем fingerprint устройства
       const deviceFingerprint = await fingerprintService.getFingerprint();
 
+      // Генерируем Browser Session ID (уникален для каждого окна/incognito)
+      const browserSessionId = fingerprintService.getBrowserSessionId();
+
+      // Комбинируем: deviceFingerprint|browserSessionId
+      const combinedFingerprint = `${deviceFingerprint}|${browserSessionId}`;
+
       // Генерируем валидный public_key (64 hex символа)
       // TODO: Заменить на настоящий Signal Protocol public key
       const public_key = Array.from({ length: 64 }, () =>
@@ -135,7 +148,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
         email,
         password,
         public_key,
-        deviceFingerprint,
+        deviceFingerprint: combinedFingerprint,
       });
 
       if (!response.success || !response.data) {
