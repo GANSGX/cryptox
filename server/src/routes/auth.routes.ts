@@ -356,6 +356,16 @@ export async function authRoutes(fastify: FastifyInstance) {
 
           // ===== НОВАЯ ЛОГИКА С FINGERPRINT =====
           if (deviceFingerprint) {
+            // СНАЧАЛА проверяем есть ли АКТИВНОЕ главное устройство
+            const activePrimaryCheck = await pool.query(
+              `SELECT COUNT(*) as count FROM sessions
+             WHERE username = $1 AND is_primary = TRUE AND expires_at > NOW()`,
+              [username],
+            );
+
+            const hasActivePrimary =
+              parseInt(activePrimaryCheck.rows[0].count) > 0;
+
             // Проверяем, есть ли активная сессия с таким fingerprint
             const existingSession = await pool.query(
               `SELECT id, is_primary FROM sessions
@@ -365,8 +375,69 @@ export async function authRoutes(fastify: FastifyInstance) {
             );
 
             if (existingSession.rows.length > 0) {
-              // Сессия с таким fingerprint существует - ОБНОВЛЯЕМ её
+              // Сессия с таким fingerprint существует
               const session = existingSession.rows[0];
+
+              // ===== STRICT APPROVAL ДАЖЕ ДЛЯ СУЩЕСТВУЮЩЕЙ СЕССИИ =====
+              // Если это НЕ primary сессия И есть другой активный primary → требуется approval
+              if (!session.is_primary && hasActivePrimary) {
+                console.log(
+                  "🚨 Existing non-primary session trying to re-login, requiring approval",
+                );
+
+                // Генерируем 6-значный код
+                const approvalCode = Math.floor(
+                  100000 + Math.random() * 900000,
+                ).toString();
+
+                // Создаем pending_session
+                const pendingSession = await pool.query(
+                  `INSERT INTO pending_sessions (username, device_fingerprint, device_info, ip_address, approval_code, status, created_at, expires_at)
+                 VALUES ($1, $2, $3, $4, $5, 'pending', NOW(), NOW() + INTERVAL '5 minutes')
+                 RETURNING id`,
+                  [
+                    username,
+                    deviceFingerprint,
+                    deviceInfoStr,
+                    request.ip,
+                    approvalCode,
+                  ],
+                );
+
+                const pendingSessionId = pendingSession.rows[0].id;
+
+                console.log(
+                  "✅ Pending session created:",
+                  pendingSessionId,
+                  "code:",
+                  approvalCode,
+                );
+
+                // Отправляем Socket.IO уведомление на primary device
+                fastify.io.to(username).emit("device:approval_required", {
+                  pending_session_id: pendingSessionId,
+                  device_info: deviceInfo,
+                  ip_address: request.ip,
+                  timestamp: new Date().toISOString(),
+                });
+
+                console.log(
+                  "📢 Sent device approval notification to primary device",
+                );
+
+                // Возвращаем клиенту статус "pending_approval"
+                return reply.send({
+                  success: true,
+                  data: {
+                    status: "pending_approval",
+                    pending_session_id: pendingSessionId,
+                    message:
+                      "Device approval required. Check your primary device.",
+                  },
+                } as any);
+              }
+
+              // Это primary сессия ИЛИ нет активного primary → разрешаем UPDATE
               console.log("♻️  Updating existing session:", session.id);
 
               await pool.query(
@@ -382,16 +453,6 @@ export async function authRoutes(fastify: FastifyInstance) {
               );
             } else {
               // Сессии с таким fingerprint НЕТ - требуется новая сессия
-
-              // Проверяем есть ли АКТИВНОЕ главное устройство
-              const activePrimaryCheck = await pool.query(
-                `SELECT COUNT(*) as count FROM sessions
-               WHERE username = $1 AND is_primary = TRUE AND expires_at > NOW()`,
-                [username],
-              );
-
-              const hasActivePrimary =
-                parseInt(activePrimaryCheck.rows[0].count) > 0;
 
               // ===== STRICT DEVICE APPROVAL LOGIC =====
               // Если есть активный primary → ВСЕГДА требуется подтверждение

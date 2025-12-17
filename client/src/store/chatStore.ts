@@ -476,7 +476,7 @@ export const useChatStore = create<ChatState>()(
         try {
           const response = await apiService.syncContacts();
 
-          if (!response.success || !response.data) {
+          if (!response.success || !response.data || !response.data.contacts) {
             console.error("Failed to sync contacts:", response.error);
             return;
           }
