@@ -362,6 +362,10 @@ export async function messagesRoutes(fastify: FastifyInstance) {
           isOnline: false, // TODO: implement online status tracking
         }));
 
+        console.log(
+          `🔄 [/sync] Returning ${contacts.length} contacts to ${currentUsername}`,
+        );
+
         return reply.code(200).send({
           success: true,
           data: { contacts },
