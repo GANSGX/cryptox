@@ -283,4 +283,96 @@ export async function messagesRoutes(fastify: FastifyInstance) {
       });
     },
   );
+
+  /**
+   * GET /sync
+   * Полная синхронизация контактов и истории (Telegram-style)
+   * Возвращает:
+   * - Список всех контактов с последним сообщением
+   * - Количество непрочитанных для каждого
+   */
+  fastify.get<{
+    Reply: ApiResponse<{
+      contacts: Array<{
+        username: string;
+        lastMessage: string;
+        lastMessageTime: string;
+        unreadCount: number;
+        isOnline?: boolean;
+      }>;
+    }>;
+  }>(
+    "/sync",
+    {
+      preHandler: authMiddleware,
+    },
+    async (request, reply) => {
+      const currentUsername = request.user!.username;
+
+      try {
+        const { pool } = await import("../db/pool.js");
+
+        // Запрос для получения всех контактов с последним сообщением
+        const contactsResult = await pool.query(
+          `WITH ranked_messages AS (
+            SELECT
+              CASE
+                WHEN sender_username = $1 THEN recipient_username
+                ELSE sender_username
+              END as contact_username,
+              encrypted_content,
+              created_at,
+              sender_username,
+              ROW_NUMBER() OVER (
+                PARTITION BY
+                  CASE
+                    WHEN sender_username = $1 THEN recipient_username
+                    ELSE sender_username
+                  END
+                ORDER BY created_at DESC
+              ) as rn
+            FROM messages
+            WHERE sender_username = $1 OR recipient_username = $1
+          ),
+          unread_counts AS (
+            SELECT
+              sender_username as contact_username,
+              COUNT(*) as unread_count
+            FROM messages
+            WHERE recipient_username = $1 AND read_at IS NULL
+            GROUP BY sender_username
+          )
+          SELECT
+            rm.contact_username as username,
+            rm.encrypted_content as last_message,
+            rm.created_at as last_message_time,
+            COALESCE(uc.unread_count, 0) as unread_count
+          FROM ranked_messages rm
+          LEFT JOIN unread_counts uc ON rm.contact_username = uc.contact_username
+          WHERE rm.rn = 1
+          ORDER BY rm.created_at DESC`,
+          [currentUsername.toLowerCase()],
+        );
+
+        const contacts = contactsResult.rows.map((row) => ({
+          username: row.username,
+          lastMessage: row.last_message,
+          lastMessageTime: row.last_message_time.toISOString(),
+          unreadCount: parseInt(row.unread_count),
+          isOnline: false, // TODO: implement online status tracking
+        }));
+
+        return reply.code(200).send({
+          success: true,
+          data: { contacts },
+        });
+      } catch (error) {
+        fastify.log.error({ error }, "Error in /sync endpoint");
+        return reply.code(500).send({
+          success: false,
+          error: "Failed to sync contacts",
+        });
+      }
+    },
+  );
 }

@@ -3,6 +3,7 @@ import { apiService } from "@/services/api.service";
 import { socketService } from "@/services/socket.service";
 import { cryptoService } from "@/services/crypto.service";
 import { fingerprintService } from "@/services/fingerprint.service";
+import { useChatStore } from "@/store/chatStore";
 import type { User } from "@/types/user.types";
 
 interface AuthState {
@@ -90,6 +91,11 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       // Загружаем session keys (legacy fallback)
       cryptoService.loadSessionKeys();
 
+      // Синхронизируем контакты с сервера (Telegram-style)
+      setTimeout(() => {
+        useChatStore.getState().syncContacts(user.username);
+      }, 500);
+
       set({
         user: {
           username: user.username,
@@ -147,6 +153,11 @@ export const useAuthStore = create<AuthState>((set, get) => ({
 
       // Подключаем Socket.io
       socketService.connect(token);
+
+      // Синхронизируем контакты с сервера (Telegram-style)
+      setTimeout(() => {
+        useChatStore.getState().syncContacts(user.username);
+      }, 500);
 
       set({
         user: {
@@ -214,18 +225,25 @@ export const useAuthStore = create<AuthState>((set, get) => ({
         return;
       }
 
+      const username = response.data.username;
+
       // Подключаем Socket.io
       socketService.connect(token);
 
       // Инициализируем Signal Protocol
-      await cryptoService.initializeSignal(response.data.username);
+      await cryptoService.initializeSignal(username);
 
       // Загружаем session keys (legacy fallback)
       cryptoService.loadSessionKeys();
 
+      // Синхронизируем контакты с сервера (Telegram-style)
+      setTimeout(() => {
+        useChatStore.getState().syncContacts(username);
+      }, 500);
+
       set({
         user: {
-          username: response.data.username,
+          username,
           email: response.data.email,
           email_verified: response.data.email_verified || false,
         },
@@ -275,6 +293,11 @@ export const useAuthStore = create<AuthState>((set, get) => ({
 
       // Загружаем session keys (legacy fallback)
       cryptoService.loadSessionKeys();
+
+      // Синхронизируем контакты с сервера (Telegram-style)
+      setTimeout(() => {
+        useChatStore.getState().syncContacts(user.username);
+      }, 500);
 
       set({
         user: {

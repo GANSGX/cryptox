@@ -383,6 +383,24 @@ class ApiService {
       body: JSON.stringify(data),
     });
   }
+
+  /**
+   * Полная синхронизация контактов и истории (Telegram-style)
+   * Возвращает список всех контактов с последним сообщением и unread count
+   */
+  async syncContacts(): Promise<
+    ApiResponse<{
+      contacts: Array<{
+        username: string;
+        lastMessage: string;
+        lastMessageTime: string;
+        unreadCount: number;
+        isOnline?: boolean;
+      }>;
+    }>
+  > {
+    return this.request("/messages/sync");
+  }
 }
 
 export const apiService = new ApiService();

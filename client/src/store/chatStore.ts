@@ -40,6 +40,7 @@ interface ChatState {
     messageId: string,
     status: "delivered" | "read",
   ) => void;
+  syncContacts: (myUsername: string) => Promise<void>;
 }
 
 export const useChatStore = create<ChatState>()(
@@ -463,6 +464,69 @@ export const useChatStore = create<ChatState>()(
           );
           return state;
         });
+      },
+
+      /**
+       * Синхронизация контактов с сервера (Telegram-style)
+       * Вызывается при загрузке приложения или подключении Socket.io
+       */
+      syncContacts: async (myUsername: string) => {
+        console.log("🔄 Syncing contacts from server...");
+
+        try {
+          const response = await apiService.syncContacts();
+
+          if (!response.success || !response.data) {
+            console.error("Failed to sync contacts:", response.error);
+            return;
+          }
+
+          const { contacts } = response.data;
+
+          console.log(`✅ Synced ${contacts.length} contacts from server`);
+
+          // Расшифровываем lastMessage для каждого контакта
+          const decryptedContacts = await Promise.all(
+            contacts.map(async (contact) => {
+              try {
+                const decrypted = await cryptoService.decryptMessageFromChat(
+                  contact.lastMessage,
+                  contact.username,
+                  myUsername,
+                );
+
+                return {
+                  username: contact.username,
+                  lastMessage: decrypted || "[Failed to decrypt]",
+                  lastMessageTime: contact.lastMessageTime,
+                  unreadCount: contact.unreadCount,
+                  isOnline: contact.isOnline,
+                };
+              } catch (err) {
+                console.error(
+                  `Failed to decrypt message for ${contact.username}:`,
+                  err,
+                );
+                return {
+                  username: contact.username,
+                  lastMessage: "[Failed to decrypt]",
+                  lastMessageTime: contact.lastMessageTime,
+                  unreadCount: contact.unreadCount,
+                  isOnline: contact.isOnline,
+                };
+              }
+            }),
+          );
+
+          // Обновляем contacts в store
+          set({ contacts: decryptedContacts });
+
+          console.log(
+            `✅ Updated ${decryptedContacts.length} contacts in store`,
+          );
+        } catch (err) {
+          console.error("Sync contacts error:", err);
+        }
       },
     }),
     {

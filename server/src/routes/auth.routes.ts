@@ -381,27 +381,9 @@ export async function authRoutes(fastify: FastifyInstance) {
                 session.is_primary,
               );
             } else {
-              // Сессии с таким fingerprint НЕТ - проверяем was_primary
-              // Была ли раньше primary сессия с таким fingerprint (даже истекшая)?
-              const wasPrimaryCheck = await pool.query(
-                `SELECT COUNT(*) as count FROM sessions
-               WHERE username = $1 AND device_fingerprint = $2 AND is_primary = TRUE`,
-                [username, deviceFingerprint],
-              );
+              // Сессии с таким fingerprint НЕТ - требуется новая сессия
 
-              const wasPrimary = parseInt(wasPrimaryCheck.rows[0].count) > 0;
-
-              // Проверяем было ли ВООБЩЕ это устройство (любая сессия с этим fingerprint)
-              const wasKnownDeviceCheck = await pool.query(
-                `SELECT COUNT(*) as count FROM sessions
-               WHERE username = $1 AND device_fingerprint = $2`,
-                [username, deviceFingerprint],
-              );
-
-              const wasKnownDevice =
-                parseInt(wasKnownDeviceCheck.rows[0].count) > 0;
-
-              // Проверяем есть ли АКТИВНОЕ главное устройство (у других fingerprint)
+              // Проверяем есть ли АКТИВНОЕ главное устройство
               const activePrimaryCheck = await pool.query(
                 `SELECT COUNT(*) as count FROM sessions
                WHERE username = $1 AND is_primary = TRUE AND expires_at > NOW()`,
@@ -411,9 +393,10 @@ export async function authRoutes(fastify: FastifyInstance) {
               const hasActivePrimary =
                 parseInt(activePrimaryCheck.rows[0].count) > 0;
 
-              // ===== DEVICE APPROVAL LOGIC =====
-              // Если устройство СОВСЕМ НОВОЕ (никогда не было) И есть primary устройство → требуется подтверждение
-              if (!wasKnownDevice && hasActivePrimary) {
+              // ===== STRICT DEVICE APPROVAL LOGIC =====
+              // Если есть активный primary → ВСЕГДА требуется подтверждение
+              // (даже если fingerprint был раньше - может быть incognito или очищен кэш)
+              if (hasActivePrimary) {
                 console.log(
                   "🚨 NEW DEVICE detected, requiring approval from primary device",
                 );
@@ -470,15 +453,14 @@ export async function authRoutes(fastify: FastifyInstance) {
                 } as any);
               }
 
-              // Если была primary ИЛИ нет активной primary - делаем новую primary
-              const isPrimary = wasPrimary || !hasActivePrimary;
+              // Если НЕТ активного primary → делаем эту сессию primary
+              // (первый вход или после истечения всех сессий)
+              const isPrimary = !hasActivePrimary;
 
               console.log(
                 "🆕 Creating new session, is_primary:",
                 isPrimary,
-                "(wasPrimary:",
-                wasPrimary,
-                ", hasActivePrimary:",
+                "(hasActivePrimary:",
                 hasActivePrimary,
                 ")",
               );
