@@ -65,8 +65,14 @@ export function ContextMenu({ x, y, items, onClose }: ContextMenuProps) {
 
       const menuWidth = rect.width;
       const menuHeight = rect.height;
-      const edgePaddingX = 150; // Большой отступ от краёв по горизонтали
-      const edgePaddingY = 60; // Отступ сверху/снизу
+      const edgePaddingX = 200; // Ещё больший отступ от краёв по горизонтали
+      const edgePaddingY = 60; // Отступ сверху
+      const inputPadding = 30; // Отступ от поля ввода
+
+      // Найти поле ввода сообщения и получить его верхнюю границу
+      const inputWrapper = document.querySelector(".message-input-wrapper");
+      const inputTop =
+        inputWrapper?.getBoundingClientRect().top || viewportHeight;
 
       // Умное позиционирование по X:
       // Если клик в правой половине экрана (свои сообщения) - меню слева
@@ -85,22 +91,23 @@ export function ContextMenu({ x, y, items, onClose }: ContextMenuProps) {
         finalX = Math.max(x + 30, edgePaddingX);
       }
 
-      // Позиционирование по Y с проверкой нижней границы
+      // Позиционирование по Y с проверкой поля ввода и границ
       let finalY: number;
-      const spaceBelow = viewportHeight - y;
+      const maxBottomY = inputTop - inputPadding; // Максимум - верхняя граница поля ввода минус отступ
+      const spaceBelow = maxBottomY - y;
       const spaceAbove = y;
 
-      if (spaceBelow >= menuHeight + edgePaddingY) {
-        // Достаточно места снизу - показываем ниже курсора
+      if (spaceBelow >= menuHeight) {
+        // Достаточно места снизу до поля ввода - показываем ниже курсора
         finalY = y;
       } else if (spaceAbove >= menuHeight + edgePaddingY) {
         // Не хватает места снизу, но есть сверху - показываем выше курсора
         finalY = y - menuHeight - 10;
       } else {
-        // Совсем мало места - центрируем вертикально с отступом
-        finalY = Math.max(
-          edgePaddingY,
-          viewportHeight - menuHeight - edgePaddingY,
+        // Совсем мало места - размещаем как можно выше, но с учетом поля ввода
+        finalY = Math.min(
+          maxBottomY - menuHeight,
+          Math.max(edgePaddingY, y - menuHeight - 10),
         );
       }
 
@@ -111,7 +118,7 @@ export function ContextMenu({ x, y, items, onClose }: ContextMenuProps) {
       );
       finalY = Math.max(
         edgePaddingY,
-        Math.min(finalY, viewportHeight - menuHeight - edgePaddingY),
+        Math.min(finalY, maxBottomY - menuHeight),
       );
 
       setPosition({ x: finalX, y: finalY });
