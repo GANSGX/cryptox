@@ -167,12 +167,13 @@ export const publicKeySchema = z
 
 /**
  * Device fingerprint validation
+ * Allows pipe (|) separator for combined fingerprint (device|browserSession)
  */
 export const deviceFingerprintSchema = z
   .string()
   .min(10, "Device fingerprint too short")
   .max(200, "Device fingerprint too long")
-  .regex(/^[a-zA-Z0-9_-]+$/, "Invalid device fingerprint format");
+  .regex(/^[a-zA-Z0-9_|-]+$/, "Invalid device fingerprint format");
 
 // ============================================================================
 // ENCRYPTED DATA VALIDATION

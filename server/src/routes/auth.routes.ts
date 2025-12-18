@@ -414,12 +414,14 @@ export async function authRoutes(fastify: FastifyInstance) {
                 );
 
                 // Отправляем Socket.IO уведомление на primary device
-                fastify.io.to(username).emit("device:approval_required", {
-                  pending_session_id: pendingSessionId,
-                  device_info: deviceInfo,
-                  ip_address: request.ip,
-                  timestamp: new Date().toISOString(),
-                });
+                fastify.io
+                  .to(`user:${username}`)
+                  .emit("device:approval_required", {
+                    pending_session_id: pendingSessionId,
+                    device_info: deviceInfo,
+                    ip_address: request.ip,
+                    timestamp: new Date().toISOString(),
+                  });
 
                 console.log(
                   "📢 Sent device approval notification to primary device",
@@ -491,12 +493,14 @@ export async function authRoutes(fastify: FastifyInstance) {
                 );
 
                 // Отправляем Socket.IO уведомление на primary device
-                fastify.io.to(username).emit("device:approval_required", {
-                  pending_session_id: pendingSessionId,
-                  device_info: deviceInfo,
-                  ip_address: request.ip,
-                  timestamp: new Date().toISOString(),
-                });
+                fastify.io
+                  .to(`user:${username}`)
+                  .emit("device:approval_required", {
+                    pending_session_id: pendingSessionId,
+                    device_info: deviceInfo,
+                    ip_address: request.ip,
+                    timestamp: new Date().toISOString(),
+                  });
 
                 console.log(
                   "📢 Sent device approval notification to primary device",
@@ -619,7 +623,7 @@ export async function authRoutes(fastify: FastifyInstance) {
 
           // Уведомляем все устройства пользователя об обновлении сессий
           if (fastify.io) {
-            fastify.io.to(username).emit("sessions:updated");
+            fastify.io.to(`user:${username}`).emit("sessions:updated");
           }
         } catch (error) {
           fastify.log.error({ error }, "Failed to save session");
@@ -690,7 +694,7 @@ export async function authRoutes(fastify: FastifyInstance) {
       if (result.rowCount && result.rowCount > 0) {
         // Уведомляем все устройства пользователя об обновлении списка сессий
         if (fastify.io) {
-          fastify.io.to(payload.username).emit("sessions:updated");
+          fastify.io.to(`user:${payload.username}`).emit("sessions:updated");
         }
       }
 
@@ -1253,7 +1257,7 @@ export async function authRoutes(fastify: FastifyInstance) {
 
       // Уведомляем через Socket.IO о завершении всех сессий
       if (fastify.io) {
-        fastify.io.to(username).emit("session:terminated", {
+        fastify.io.to(`user:${username}`).emit("session:terminated", {
           message: "Your password has been changed. Please log in again.",
         });
       }
@@ -1374,14 +1378,14 @@ export async function authRoutes(fastify: FastifyInstance) {
         // Уведомляем другие устройства о завершении сессий
         if (fastify.io) {
           sessionsToDelete.rows.forEach((session) => {
-            fastify.io.to(username).emit("session:terminated", {
+            fastify.io.to(`user:${username}`).emit("session:terminated", {
               sessionId: session.id,
               message: "Your password has been changed from another device",
             });
           });
 
           // Уведомляем все устройства об обновлении списка сессий
-          fastify.io.to(username).emit("sessions:updated");
+          fastify.io.to(`user:${username}`).emit("sessions:updated");
         }
 
         return reply.code(200).send({
@@ -1606,7 +1610,7 @@ export async function authRoutes(fastify: FastifyInstance) {
 
       // Уведомляем все устройства пользователя об обновлении списка сессий
       if (fastify.io) {
-        fastify.io.to(username).emit("sessions:updated");
+        fastify.io.to(`user:${username}`).emit("sessions:updated");
         console.log("🔔 Sent sessions:updated to all devices for:", username);
       }
 

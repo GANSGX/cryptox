@@ -1,20 +1,23 @@
-import type { FastifyInstance } from 'fastify'
-import { authMiddleware } from '../middleware/auth.middleware'
-import { pool } from '../db/pool'
+import type { FastifyInstance } from "fastify";
+import { authMiddleware } from "../middleware/auth.middleware";
+import { pool } from "../db/pool";
 
 export async function sessionsRoutes(fastify: FastifyInstance) {
   /**
    * GET /sessions
    * Получить список активных сессий пользователя
    */
-  fastify.get('/sessions', { 
-    preHandler: authMiddleware 
-  }, async (request, reply) => {
-    const username = (request as any).user.username
+  fastify.get(
+    "/sessions",
+    {
+      preHandler: authMiddleware,
+    },
+    async (request, reply) => {
+      const username = (request as any).user.username;
 
-    try {
-      const result = await pool.query(
-        `SELECT
+      try {
+        const result = await pool.query(
+          `SELECT
           id,
           device_info,
           ip_address,
@@ -27,30 +30,32 @@ export async function sessionsRoutes(fastify: FastifyInstance) {
          FROM sessions
          WHERE username = $1 AND expires_at > NOW()
          ORDER BY is_primary DESC, last_active DESC`,
-        [username, request.headers.authorization?.replace('Bearer ', '')]
-      )
+          [username, request.headers.authorization?.replace("Bearer ", "")],
+        );
 
-      // Парсим device_info из строки в объект
-      const sessions = result.rows.map(row => ({
-        ...row,
-        device_info: typeof row.device_info === 'string'
-          ? JSON.parse(row.device_info)
-          : row.device_info,
-        seconds_ago: Math.max(0, row.seconds_ago || 0) // Защита от отрицательных значений
-      }))
+        // Парсим device_info из строки в объект
+        const sessions = result.rows.map((row) => ({
+          ...row,
+          device_info:
+            typeof row.device_info === "string"
+              ? JSON.parse(row.device_info)
+              : row.device_info,
+          seconds_ago: Math.max(0, row.seconds_ago || 0), // Защита от отрицательных значений
+        }));
 
-      return reply.send({
-        success: true,
-        sessions,
-      })
-    } catch (error) {
-      fastify.log.error({ error }, 'Get sessions error')
-      return reply.status(500).send({
-        success: false,
-        error: 'Failed to get sessions',
-      })
-    }
-  })
+        return reply.send({
+          success: true,
+          sessions,
+        });
+      } catch (error) {
+        fastify.log.error({ error }, "Get sessions error");
+        return reply.status(500).send({
+          success: false,
+          error: "Failed to get sessions",
+        });
+      }
+    },
+  );
 
   /**
    * DELETE /sessions/others
@@ -58,51 +63,58 @@ export async function sessionsRoutes(fastify: FastifyInstance) {
    * ВАЖНО: Должен быть ПЕРЕД /:sessionId для правильного роутинга
    * ВАЖНО: Не удаляет главную сессию (is_primary = true)
    */
-  fastify.delete('/sessions/others', {
-    preHandler: authMiddleware
-  }, async (request, reply) => {
-    const username = (request as any).user.username
-    const currentToken = request.headers.authorization?.replace('Bearer ', '')
+  fastify.delete(
+    "/sessions/others",
+    {
+      preHandler: authMiddleware,
+    },
+    async (request, reply) => {
+      const username = (request as any).user.username;
+      const currentToken = request.headers.authorization?.replace(
+        "Bearer ",
+        "",
+      );
 
-    try {
-      // Получаем ID сессий которые будут удалены (НЕ текущую и НЕ главную)
-      const sessionsToDelete = await pool.query(
-        'SELECT id FROM sessions WHERE username = $1 AND jwt_token != $2 AND is_primary = FALSE',
-        [username, currentToken]
-      )
+      try {
+        // Получаем ID сессий которые будут удалены (НЕ текущую и НЕ главную)
+        const sessionsToDelete = await pool.query(
+          "SELECT id FROM sessions WHERE username = $1 AND jwt_token != $2 AND is_primary = FALSE",
+          [username, currentToken],
+        );
 
-      // Удаляем сессии (кроме текущей и главной)
-      const result = await pool.query(
-        'DELETE FROM sessions WHERE username = $1 AND jwt_token != $2 AND is_primary = FALSE RETURNING id',
-        [username, currentToken]
-      )
+        // Удаляем сессии (кроме текущей и главной)
+        const result = await pool.query(
+          "DELETE FROM sessions WHERE username = $1 AND jwt_token != $2 AND is_primary = FALSE RETURNING id",
+          [username, currentToken],
+        );
 
-      if (fastify.io) {
-        // Уведомляем каждую удаленную сессию через Socket.IO
-        sessionsToDelete.rows.forEach((session) => {
-          fastify.io.to(username).emit('session:terminated', {
-            sessionId: session.id,
-            message: 'Your session has been terminated from another device'
-          })
-        })
+        if (fastify.io) {
+          // Уведомляем каждую удаленную сессию через Socket.IO
+          sessionsToDelete.rows.forEach((session) => {
+            fastify.io.to(`user:${username}`).emit("session:terminated", {
+              sessionId: session.id,
+              message: "Your session has been terminated from another device",
+            });
+          });
 
-        // Уведомляем все устройства об обновлении списка сессий
-        fastify.io.to(username).emit('sessions:updated')
+          // Уведомляем все устройства об обновлении списка сессий
+          fastify.io.to(`user:${username}`).emit("sessions:updated");
+        }
+
+        return reply.send({
+          success: true,
+          message: `Terminated ${result.rowCount} sessions`,
+          count: result.rowCount,
+        });
+      } catch (error) {
+        fastify.log.error({ error }, "Delete other sessions error");
+        return reply.status(500).send({
+          success: false,
+          error: "Failed to delete sessions",
+        });
       }
-
-      return reply.send({
-        success: true,
-        message: `Terminated ${result.rowCount} sessions`,
-        count: result.rowCount,
-      })
-    } catch (error) {
-      fastify.log.error({ error }, 'Delete other sessions error')
-      return reply.status(500).send({
-        success: false,
-        error: 'Failed to delete sessions',
-      })
-    }
-  })
+    },
+  );
 
   /**
    * DELETE /sessions/:sessionId
@@ -111,78 +123,86 @@ export async function sessionsRoutes(fastify: FastifyInstance) {
    * ВАЖНО: Нельзя удалить главную сессию (is_primary = true)
    */
   fastify.delete<{
-    Params: { sessionId: string }
-  }>('/sessions/:sessionId', { preHandler: authMiddleware }, async (request, reply) => {
-    const username = (request as any).user.username
-    const { sessionId } = request.params
-    const currentToken = request.headers.authorization?.replace('Bearer ', '')
+    Params: { sessionId: string };
+  }>(
+    "/sessions/:sessionId",
+    { preHandler: authMiddleware },
+    async (request, reply) => {
+      const username = (request as any).user.username;
+      const { sessionId } = request.params;
+      const currentToken = request.headers.authorization?.replace(
+        "Bearer ",
+        "",
+      );
 
-    try {
-      // Проверяем сессию перед удалением
-      const sessionCheck = await pool.query(
-        'SELECT jwt_token, is_primary FROM sessions WHERE id = $1 AND username = $2',
-        [sessionId, username]
-      )
+      try {
+        // Проверяем сессию перед удалением
+        const sessionCheck = await pool.query(
+          "SELECT jwt_token, is_primary FROM sessions WHERE id = $1 AND username = $2",
+          [sessionId, username],
+        );
 
-      if (sessionCheck.rowCount === 0) {
-        return reply.status(404).send({
+        if (sessionCheck.rowCount === 0) {
+          return reply.status(404).send({
+            success: false,
+            error: "Session not found",
+          });
+        }
+
+        const session = sessionCheck.rows[0];
+
+        // Проверяем, является ли это текущей сессией
+        if (session.jwt_token === currentToken) {
+          return reply.status(403).send({
+            success: false,
+            error: "Cannot delete your current session. Use /logout instead.",
+          });
+        }
+
+        // Проверяем, является ли это главной сессией
+        if (session.is_primary) {
+          return reply.status(403).send({
+            success: false,
+            error:
+              "Cannot delete the primary device. Transfer primary status first.",
+          });
+        }
+
+        // Удаляем сессию
+        const result = await pool.query(
+          "DELETE FROM sessions WHERE id = $1 AND username = $2 RETURNING id",
+          [sessionId, username],
+        );
+
+        if (result.rowCount === 0) {
+          return reply.status(404).send({
+            success: false,
+            error: "Session not found",
+          });
+        }
+
+        if (fastify.io) {
+          // Уведомляем устройство о завершении сессии
+          fastify.io.to(`user:${username}`).emit("session:terminated", {
+            sessionId,
+            message: "Your session has been terminated from another device",
+          });
+
+          // Уведомляем все устройства об обновлении списка сессий
+          fastify.io.to(`user:${username}`).emit("sessions:updated");
+        }
+
+        return reply.send({
+          success: true,
+          message: "Session terminated",
+        });
+      } catch (error) {
+        fastify.log.error({ error }, "Delete session error");
+        return reply.status(500).send({
           success: false,
-          error: 'Session not found',
-        })
+          error: "Failed to delete session",
+        });
       }
-
-      const session = sessionCheck.rows[0]
-
-      // Проверяем, является ли это текущей сессией
-      if (session.jwt_token === currentToken) {
-        return reply.status(403).send({
-          success: false,
-          error: 'Cannot delete your current session. Use /logout instead.',
-        })
-      }
-
-      // Проверяем, является ли это главной сессией
-      if (session.is_primary) {
-        return reply.status(403).send({
-          success: false,
-          error: 'Cannot delete the primary device. Transfer primary status first.',
-        })
-      }
-
-      // Удаляем сессию
-      const result = await pool.query(
-        'DELETE FROM sessions WHERE id = $1 AND username = $2 RETURNING id',
-        [sessionId, username]
-      )
-
-      if (result.rowCount === 0) {
-        return reply.status(404).send({
-          success: false,
-          error: 'Session not found',
-        })
-      }
-
-      if (fastify.io) {
-        // Уведомляем устройство о завершении сессии
-        fastify.io.to(username).emit('session:terminated', {
-          sessionId,
-          message: 'Your session has been terminated from another device'
-        })
-
-        // Уведомляем все устройства об обновлении списка сессий
-        fastify.io.to(username).emit('sessions:updated')
-      }
-
-      return reply.send({
-        success: true,
-        message: 'Session terminated',
-      })
-    } catch (error) {
-      fastify.log.error({ error }, 'Delete session error')
-      return reply.status(500).send({
-        success: false,
-        error: 'Failed to delete session',
-      })
-    }
-  })
+    },
+  );
 }

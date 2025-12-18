@@ -100,7 +100,7 @@ export async function authMiddleware(
           // После обновления last_active отправляем событие через Socket.IO
           const io = (request.server as any).io;
           if (io) {
-            io.to(payload.username).emit("sessions:updated");
+            io.to(`user:${payload.username}`).emit("sessions:updated");
           }
         })
         .catch(() => {
