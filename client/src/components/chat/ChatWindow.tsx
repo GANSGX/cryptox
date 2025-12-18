@@ -1,4 +1,11 @@
-import { useEffect, useRef, Fragment, useState } from "react";
+import {
+  useEffect,
+  useRef,
+  Fragment,
+  useState,
+  useCallback,
+  useMemo,
+} from "react";
 import { MessageCircle } from "lucide-react";
 import { MessageInput } from "./MessageInput";
 import { MessageStatus } from "./MessageStatus";
@@ -178,98 +185,110 @@ export function ChatWindow({ activeChat }: ChatWindowProps) {
   }, [activeChat]);
 
   // Проверка возможности редактирования (30 минут)
-  const canEdit = (message: Message): boolean => {
-    if (!user || message.sender_username !== user.username) return false;
-    const thirtyMinutesAgo = Date.now() - 30 * 60 * 1000;
-    return new Date(message.created_at).getTime() > thirtyMinutesAgo;
-  };
-
-  // Обработчик правого клика на сообщение
-  const handleContextMenu = (e: React.MouseEvent, message: Message) => {
-    e.preventDefault();
-    e.stopPropagation();
-
-    // Используем координаты клика - ContextMenu сам умно позиционируется
-    setContextMenu({
-      x: e.clientX,
-      y: e.clientY,
-      message,
-    });
-  };
-
-  // Генерация опций контекстного меню
-  const getContextMenuItems = (message: Message): ContextMenuItem[] => {
-    if (!user) {
-      return [];
-    }
-
-    const isOwn = message.sender_username === user.username;
-    const canEditMsg = canEdit(message);
-    const items: ContextMenuItem[] = [];
-
-    // Edit (только свои сообщения + в течение 30 минут)
-    if (isOwn && canEditMsg) {
-      items.push({
-        label: "Edit",
-        icon: "edit",
-        onClick: () => setEditingMessage(message),
-      });
-    }
-
-    // Delete for everyone (только свои, БЕЗ ограничения времени как в Telegram)
-    if (isOwn) {
-      items.push({
-        label: "Delete for everyone",
-        icon: "delete",
-        danger: true,
-        onClick: () => handleDelete(message.id, "for_everyone"),
-      });
-    }
-
-    // Delete for me (всегда доступно)
-    items.push({
-      label: "Delete for me",
-      icon: "delete",
-      danger: true,
-      onClick: () => handleDelete(message.id, "for_me"),
-    });
-
-    return items;
-  };
+  const canEdit = useCallback(
+    (message: Message): boolean => {
+      if (!user || message.sender_username !== user.username) return false;
+      const thirtyMinutesAgo = Date.now() - 30 * 60 * 1000;
+      return new Date(message.created_at).getTime() > thirtyMinutesAgo;
+    },
+    [user],
+  );
 
   // Обработчик удаления
-  const handleDelete = async (
-    messageId: string,
-    type: "for_me" | "for_everyone",
-  ) => {
-    if (
-      !window.confirm(
-        `Are you sure you want to delete this message${type === "for_everyone" ? " for everyone" : ""}?`,
-      )
-    ) {
-      return;
-    }
+  const handleDelete = useCallback(
+    async (messageId: string, type: "for_me" | "for_everyone") => {
+      if (
+        !window.confirm(
+          `Are you sure you want to delete this message${type === "for_everyone" ? " for everyone" : ""}?`,
+        )
+      ) {
+        return;
+      }
 
-    try {
-      await deleteMessage(messageId, type);
-    } catch (err) {
-      console.error("Failed to delete message:", err);
-      alert(err instanceof Error ? err.message : "Failed to delete message");
-    }
-  };
+      try {
+        await deleteMessage(messageId, type);
+      } catch (err) {
+        console.error("Failed to delete message:", err);
+        alert(err instanceof Error ? err.message : "Failed to delete message");
+      }
+    },
+    [deleteMessage],
+  );
+
+  // Обработчик правого клика на сообщение
+  const handleContextMenu = useCallback(
+    (e: React.MouseEvent, message: Message) => {
+      e.preventDefault();
+      e.stopPropagation();
+
+      // Используем координаты клика - ContextMenu сам умно позиционируется
+      setContextMenu({
+        x: e.clientX,
+        y: e.clientY,
+        message,
+      });
+    },
+    [],
+  );
+
+  // Генерация опций контекстного меню
+  const getContextMenuItems = useCallback(
+    (message: Message): ContextMenuItem[] => {
+      if (!user) {
+        return [];
+      }
+
+      const isOwn = message.sender_username === user.username;
+      const canEditMsg = canEdit(message);
+      const items: ContextMenuItem[] = [];
+
+      // Edit (только свои сообщения + в течение 30 минут)
+      if (isOwn && canEditMsg) {
+        items.push({
+          label: "Edit",
+          icon: "edit",
+          onClick: () => setEditingMessage(message),
+        });
+      }
+
+      // Delete for everyone (только свои, БЕЗ ограничения времени как в Telegram)
+      if (isOwn) {
+        items.push({
+          label: "Delete for everyone",
+          icon: "delete",
+          danger: true,
+          onClick: () => handleDelete(message.id, "for_everyone"),
+        });
+      }
+
+      // Delete for me (всегда доступно)
+      items.push({
+        label: "Delete for me",
+        icon: "delete",
+        danger: true,
+        onClick: () => handleDelete(message.id, "for_me"),
+      });
+
+      return items;
+    },
+    [user, canEdit, handleDelete],
+  );
 
   // Обработчик сохранения отредактированного сообщения
-  const handleSaveEdit = async (newContent: string) => {
-    if (!editingMessage || !user) return;
+  const handleSaveEdit = useCallback(
+    async (newContent: string) => {
+      if (!editingMessage || !user) return;
 
-    try {
-      await editMessage(editingMessage.id, newContent, user.username);
-      setEditingMessage(null); // Сбрасываем режим редактирования
-    } catch (err) {
-      console.error("Failed to edit message:", err);
-      alert(err instanceof Error ? err.message : "Failed to edit message");
-    }
-  };
+      try {
+        await editMessage(editingMessage.id, newContent, user.username);
+        setEditingMessage(null); // Сбрасываем режим редактирования
+      } catch (err) {
+        console.error("Failed to edit message:", err);
+        alert(err instanceof Error ? err.message : "Failed to edit message");
+      }
+    },
+    [editingMessage, user, editMessage],
+  );
 
   // Пустое состояние - нет выбранного чата
   if (!activeChat) {
@@ -284,8 +303,14 @@ export function ChatWindow({ activeChat }: ChatWindowProps) {
     );
   }
 
-  const chatMessages = messages[activeChat] || [];
-  const isTyping = typingUsers.has(activeChat);
+  const chatMessages = useMemo(
+    () => messages[activeChat] || [],
+    [messages, activeChat],
+  );
+  const isTyping = useMemo(
+    () => typingUsers.has(activeChat),
+    [typingUsers, activeChat],
+  );
 
   return (
     <div className="chat-window">
