@@ -66,14 +66,15 @@ export function ContextMenu({ x, y, items, onClose }: ContextMenuProps) {
       const menuWidth = rect.width;
       const menuHeight = rect.height;
 
-      // Start at cursor position
-      let finalX = x;
+      // Умное позиционирование:
+      // Если клик в правой половине экрана (свои сообщения) - меню слева
+      // Если клик в левой половине экрана (сообщения оппонента) - меню справа
+      const isRightSide = x > viewportWidth / 2;
+
+      let finalX = isRightSide ? x - menuWidth : x;
       let finalY = y;
 
-      // Only adjust if menu goes off-screen
-      if (finalX + menuWidth > viewportWidth) {
-        finalX = x - menuWidth; // Show to the left of cursor
-      }
+      // Проверка выхода за границы по Y
       if (finalY + menuHeight > viewportHeight) {
         finalY = y - menuHeight; // Show above cursor
       }

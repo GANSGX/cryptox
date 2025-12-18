@@ -18,19 +18,34 @@
     0 8px 24px rgba(0, 0, 0, 0.4),
     inset 0 1px 1px rgba(255, 255, 255, 0.1);
 
-  /* Плавная анимация появления */
-  animation: contextMenuFadeIn 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+  /* Эффект расплывающегося круга на воде */
+  animation: rippleAnimation 0.6s cubic-bezier(0.23, 1, 0.32, 1);
   will-change: opacity, transform;
+  transform-origin: center;
 }
 
-@keyframes contextMenuFadeIn {
+@keyframes rippleAnimation {
   0% {
     opacity: 0;
-    transform: scale(0.88) translateY(-12px);
+    transform: scale(0.3);
+    filter: blur(8px);
+  }
+  40% {
+    opacity: 0.8;
+    filter: blur(2px);
+  }
+  70% {
+    opacity: 1;
+    transform: scale(1.015);
+    filter: blur(0px);
+  }
+  85% {
+    transform: scale(0.995);
   }
   100% {
     opacity: 1;
-    transform: scale(1) translateY(0);
+    transform: scale(1);
+    filter: blur(0px);
   }
 }
 
