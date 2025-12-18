@@ -65,34 +65,54 @@ export function ContextMenu({ x, y, items, onClose }: ContextMenuProps) {
 
       const menuWidth = rect.width;
       const menuHeight = rect.height;
-      const edgePadding = 80; // Отступ от краёв экрана
+      const edgePaddingX = 150; // Большой отступ от краёв по горизонтали
+      const edgePaddingY = 60; // Отступ сверху/снизу
 
-      // Умное позиционирование:
+      // Умное позиционирование по X:
       // Если клик в правой половине экрана (свои сообщения) - меню слева
       // Если клик в левой половине экрана (сообщения оппонента) - меню справа
       const isRightSide = x > viewportWidth / 2;
 
-      let finalX = isRightSide ? x - menuWidth - 20 : x + 20; // +20px отступ от курсора
-      let finalY = y;
-
-      // Дополнительная проверка близости к краям
-      if (finalX + menuWidth > viewportWidth - edgePadding) {
-        // Слишком близко к правому краю - сдвигаем ещё левее
-        finalX = viewportWidth - menuWidth - edgePadding;
-      }
-      if (finalX < edgePadding) {
-        // Слишком близко к левому краю - сдвигаем правее
-        finalX = edgePadding;
-      }
-
-      // Проверка выхода за границы по Y
-      if (finalY + menuHeight > viewportHeight) {
-        finalY = y - menuHeight; // Show above cursor
+      let finalX: number;
+      if (isRightSide) {
+        // Правая сторона - размещаем меню слева, но не ближе edgePaddingX от правого края
+        finalX = Math.min(
+          x - menuWidth - 30,
+          viewportWidth - menuWidth - edgePaddingX,
+        );
+      } else {
+        // Левая сторона - размещаем меню справа, но не ближе edgePaddingX от левого края
+        finalX = Math.max(x + 30, edgePaddingX);
       }
 
-      // Safety: keep minimum padding from edges
-      finalX = Math.max(20, Math.min(finalX, viewportWidth - menuWidth - 20));
-      finalY = Math.max(20, Math.min(finalY, viewportHeight - menuHeight - 20));
+      // Позиционирование по Y с проверкой нижней границы
+      let finalY: number;
+      const spaceBelow = viewportHeight - y;
+      const spaceAbove = y;
+
+      if (spaceBelow >= menuHeight + edgePaddingY) {
+        // Достаточно места снизу - показываем ниже курсора
+        finalY = y;
+      } else if (spaceAbove >= menuHeight + edgePaddingY) {
+        // Не хватает места снизу, но есть сверху - показываем выше курсора
+        finalY = y - menuHeight - 10;
+      } else {
+        // Совсем мало места - центрируем вертикально с отступом
+        finalY = Math.max(
+          edgePaddingY,
+          viewportHeight - menuHeight - edgePaddingY,
+        );
+      }
+
+      // Финальная проверка границ
+      finalX = Math.max(
+        edgePaddingX,
+        Math.min(finalX, viewportWidth - menuWidth - edgePaddingX),
+      );
+      finalY = Math.max(
+        edgePaddingY,
+        Math.min(finalY, viewportHeight - menuHeight - edgePaddingY),
+      );
 
       setPosition({ x: finalX, y: finalY });
       setIsPositioned(true);
