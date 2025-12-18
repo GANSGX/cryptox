@@ -34,15 +34,8 @@ export function ChatLayout() {
       delivered_at: string | null;
       read_at: string | null;
     }) => {
-      console.log(
-        "📨 ChatLayout: New message received, sending delivery receipt",
-      );
-
       // Автоматически отправляем delivery receipt
       socketService.emitMessageDelivered(data.message_id, data.sender_username);
-      console.log(
-        `✅ Sent delivery receipt for message ${data.message_id} to ${data.sender_username}`,
-      );
 
       // Сообщение будет расшифровано и добавлено в store в Chat.tsx
     };
@@ -52,9 +45,7 @@ export function ChatLayout() {
       messageId: string;
       status: "delivered" | "read";
     }) => {
-      console.log("📊 ChatLayout: Received message_status_update event:", data);
       updateMessageStatus(data.messageId, data.status);
-      console.log("📊 ChatLayout: Called updateMessageStatus");
     };
 
     socketService.onNewMessage(handleNewMessage);

@@ -28,8 +28,6 @@ export function Chat() {
   useEffect(() => {
     if (!user) return;
 
-    console.log("🎧 Chat: Setting up WebSocket listeners");
-
     // Обработка новых сообщений
     const handleNewMessage = async (rawData: unknown) => {
       const data = rawData as {
@@ -42,7 +40,6 @@ export function Chat() {
         delivered_at: string | null;
         read_at: string | null;
       };
-      console.log("💬 New message received:", data);
 
       // Расшифровываем сообщение
       const otherUsername =
@@ -67,14 +64,11 @@ export function Chat() {
         read_at: null,
       };
 
-      console.log("📥 Adding message to store:", message);
       addMessage(message, user.username);
-      console.log("✅ Message added to store");
     };
 
     // Обработка typing indicators
     const handleUserTyping = (data: { username: string; chatId: string }) => {
-      console.log("⌨️ User typing:", data.username);
       setUserTyping(data.username);
     };
 
@@ -82,7 +76,6 @@ export function Chat() {
       username: string;
       chatId: string;
     }) => {
-      console.log("⏸️ User stopped typing:", data.username);
       removeUserTyping(data.username);
     };
 
@@ -95,7 +88,6 @@ export function Chat() {
         sender_username: string;
         recipient_username: string;
       };
-      console.log("✏️ Message edited:", typedData);
       handleMessageEdited(
         {
           messageId: typedData.message_id,
@@ -114,7 +106,6 @@ export function Chat() {
         sender_username: string;
         recipient_username: string;
       };
-      console.log("🗑️ Message deleted:", typedData);
       const normalizedType =
         typedData.type === "for_sender" || typedData.type === "for_recipient"
           ? "for_me"
@@ -137,7 +128,6 @@ export function Chat() {
 
     // Отписываемся при размонтировании
     return () => {
-      console.log("🔌 Chat: Cleaning up WebSocket listeners");
       socketService.offNewMessage(handleNewMessage);
       socketService.offUserTyping(handleUserTyping);
       socketService.offUserStoppedTyping(handleUserStoppedTyping);

@@ -127,7 +127,6 @@ export function MessageInput({
             <button
               className="attach-menu-item"
               onClick={() => {
-                console.log("Media selected");
                 setShowAttachMenu(false);
               }}
             >
@@ -139,7 +138,6 @@ export function MessageInput({
             <button
               className="attach-menu-item"
               onClick={() => {
-                console.log("File selected");
                 setShowAttachMenu(false);
               }}
             >
@@ -151,7 +149,6 @@ export function MessageInput({
             <button
               className="attach-menu-item"
               onClick={() => {
-                console.log("Contact selected");
                 setShowAttachMenu(false);
               }}
             >
@@ -163,7 +160,6 @@ export function MessageInput({
             <button
               className="attach-menu-item"
               onClick={() => {
-                console.log("Location selected");
                 setShowAttachMenu(false);
               }}
             >

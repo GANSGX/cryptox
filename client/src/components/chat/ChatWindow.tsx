@@ -178,13 +178,6 @@ export function ChatWindow({ activeChat }: ChatWindowProps) {
     e.preventDefault();
     e.stopPropagation();
 
-    console.log("🖱️ Context menu clicked:", {
-      isOwn: message.sender_username === user?.username,
-      messageId: message.id,
-      clickX: e.clientX,
-      clickY: e.clientY,
-    });
-
     // Используем координаты клика - ContextMenu сам умно позиционируется
     setContextMenu({
       x: e.clientX,
@@ -196,20 +189,12 @@ export function ChatWindow({ activeChat }: ChatWindowProps) {
   // Генерация опций контекстного меню
   const getContextMenuItems = (message: Message): ContextMenuItem[] => {
     if (!user) {
-      console.log("❌ No user, returning empty items");
       return [];
     }
 
     const isOwn = message.sender_username === user.username;
     const canEditMsg = canEdit(message);
     const items: ContextMenuItem[] = [];
-
-    console.log("📋 Generating menu items:", {
-      isOwn,
-      canEdit: canEditMsg,
-      messageAge: Date.now() - new Date(message.created_at).getTime(),
-      thirtyMinutes: 30 * 60 * 1000,
-    });
 
     // Edit (только свои сообщения + в течение 30 минут)
     if (isOwn && canEditMsg) {
@@ -238,7 +223,6 @@ export function ChatWindow({ activeChat }: ChatWindowProps) {
       onClick: () => handleDelete(message.id, "for_me"),
     });
 
-    console.log("✅ Menu items generated:", items.length);
     return items;
   };
 
