@@ -1,11 +1,4 @@
-import {
-  useEffect,
-  useRef,
-  Fragment,
-  useState,
-  useCallback,
-  useMemo,
-} from "react";
+import { useEffect, useRef, Fragment, useState, useCallback } from "react";
 import { MessageCircle } from "lucide-react";
 import { MessageInput } from "./MessageInput";
 import { MessageStatus } from "./MessageStatus";
@@ -303,14 +296,8 @@ export function ChatWindow({ activeChat }: ChatWindowProps) {
     );
   }
 
-  const chatMessages = useMemo(
-    () => messages[activeChat] || [],
-    [messages, activeChat],
-  );
-  const isTyping = useMemo(
-    () => typingUsers.has(activeChat),
-    [typingUsers, activeChat],
-  );
+  const chatMessages = messages[activeChat] || [];
+  const isTyping = typingUsers.has(activeChat);
 
   return (
     <div className="chat-window">
