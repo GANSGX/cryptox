@@ -65,23 +65,34 @@ export function ContextMenu({ x, y, items, onClose }: ContextMenuProps) {
 
       const menuWidth = rect.width;
       const menuHeight = rect.height;
+      const edgePadding = 80; // Отступ от краёв экрана
 
       // Умное позиционирование:
       // Если клик в правой половине экрана (свои сообщения) - меню слева
       // Если клик в левой половине экрана (сообщения оппонента) - меню справа
       const isRightSide = x > viewportWidth / 2;
 
-      let finalX = isRightSide ? x - menuWidth : x;
+      let finalX = isRightSide ? x - menuWidth - 20 : x + 20; // +20px отступ от курсора
       let finalY = y;
+
+      // Дополнительная проверка близости к краям
+      if (finalX + menuWidth > viewportWidth - edgePadding) {
+        // Слишком близко к правому краю - сдвигаем ещё левее
+        finalX = viewportWidth - menuWidth - edgePadding;
+      }
+      if (finalX < edgePadding) {
+        // Слишком близко к левому краю - сдвигаем правее
+        finalX = edgePadding;
+      }
 
       // Проверка выхода за границы по Y
       if (finalY + menuHeight > viewportHeight) {
         finalY = y - menuHeight; // Show above cursor
       }
 
-      // Safety: keep some padding from edges
-      finalX = Math.max(8, Math.min(finalX, viewportWidth - menuWidth - 8));
-      finalY = Math.max(8, Math.min(finalY, viewportHeight - menuHeight - 8));
+      // Safety: keep minimum padding from edges
+      finalX = Math.max(20, Math.min(finalX, viewportWidth - menuWidth - 20));
+      finalY = Math.max(20, Math.min(finalY, viewportHeight - menuHeight - 20));
 
       setPosition({ x: finalX, y: finalY });
       setIsPositioned(true);
