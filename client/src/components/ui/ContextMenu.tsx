@@ -66,12 +66,6 @@ export function ContextMenu({ x, y, items, onClose }: ContextMenuProps) {
       const menuWidth = rect.width;
       const menuHeight = rect.height;
 
-      console.log("🔍 POSITIONING:", {
-        clickPos: { x, y },
-        menuSize: { w: menuWidth, h: menuHeight },
-        viewport: { w: viewportWidth, h: viewportHeight },
-      });
-
       // Start at cursor position
       let finalX = x;
       let finalY = y;
@@ -87,8 +81,6 @@ export function ContextMenu({ x, y, items, onClose }: ContextMenuProps) {
       // Safety: keep some padding from edges
       finalX = Math.max(8, Math.min(finalX, viewportWidth - menuWidth - 8));
       finalY = Math.max(8, Math.min(finalY, viewportHeight - menuHeight - 8));
-
-      console.log("📍 FINAL POSITION:", { x: finalX, y: finalY });
 
       setPosition({ x: finalX, y: finalY });
       setIsPositioned(true);

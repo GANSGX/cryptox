@@ -18,15 +18,17 @@
     0 8px 24px rgba(0, 0, 0, 0.4),
     inset 0 1px 1px rgba(255, 255, 255, 0.1);
 
-  animation: contextMenuFadeIn 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  /* Плавная анимация появления */
+  animation: contextMenuFadeIn 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+  will-change: opacity, transform;
 }
 
 @keyframes contextMenuFadeIn {
-  from {
+  0% {
     opacity: 0;
-    transform: scale(0.92) translateY(-8px);
+    transform: scale(0.88) translateY(-12px);
   }
-  to {
+  100% {
     opacity: 1;
     transform: scale(1) translateY(0);
   }
@@ -46,7 +48,7 @@
   text-align: left;
   font-size: 15px;
   font-weight: 500;
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
   position: relative;
   overflow: hidden;
 }
@@ -59,20 +61,36 @@
   right: 0;
   bottom: 0;
   background: rgba(255, 255, 255, 0);
-  transition: background 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
   z-index: -1;
+  border-radius: 10px;
 }
 
 .context-menu-item:hover:not(.disabled)::before {
-  background: rgba(255, 255, 255, 0.12);
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.14),
+    rgba(255, 255, 255, 0.08)
+  );
+  box-shadow:
+    0 4px 16px rgba(0, 0, 0, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.15);
+}
+
+.context-menu-item:hover:not(.disabled) {
+  transform: translateX(4px);
 }
 
 .context-menu-item:active:not(.disabled) {
-  transform: scale(0.96);
+  transform: scale(0.97) translateX(2px);
 }
 
 .context-menu-item:active:not(.disabled)::before {
-  background: rgba(255, 255, 255, 0.18);
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.2),
+    rgba(255, 255, 255, 0.12)
+  );
 }
 
 .context-menu-item.disabled {
@@ -90,11 +108,22 @@
 }
 
 .context-menu-item.danger:hover:not(.disabled)::before {
-  background: rgba(255, 74, 90, 0.15);
+  background: linear-gradient(
+    135deg,
+    rgba(255, 74, 90, 0.18),
+    rgba(255, 74, 90, 0.12)
+  );
+  box-shadow:
+    0 4px 16px rgba(255, 74, 90, 0.25),
+    inset 0 1px 0 rgba(255, 255, 255, 0.15);
 }
 
 .context-menu-item.danger:active:not(.disabled)::before {
-  background: rgba(255, 74, 90, 0.25);
+  background: linear-gradient(
+    135deg,
+    rgba(255, 74, 90, 0.28),
+    rgba(255, 74, 90, 0.2)
+  );
 }
 
 .context-menu-icon {
