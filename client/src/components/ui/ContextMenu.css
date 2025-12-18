@@ -18,34 +18,46 @@
     0 8px 24px rgba(0, 0, 0, 0.4),
     inset 0 1px 1px rgba(255, 255, 255, 0.1);
 
-  /* Эффект расплывающегося круга на воде */
-  animation: rippleAnimation 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+  /* Эффект расплывающегося круга на воде - ОПТИМИЗИРОВАНО ДЛЯ 120FPS */
+  animation: rippleAnimation 0.5s cubic-bezier(0.23, 1, 0.32, 1);
   will-change: opacity, transform;
   transform-origin: center;
+
+  /* GPU acceleration */
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  perspective: 1000px;
 }
 
 @keyframes rippleAnimation {
   0% {
     opacity: 0;
-    transform: scale(0.3);
-    filter: blur(8px);
+    transform: scale(0.4) translateZ(0);
   }
-  40% {
-    opacity: 0.8;
-    filter: blur(2px);
+  1% {
+    opacity: 0;
   }
-  70% {
+  20% {
+    opacity: 0.5;
+    transform: scale(0.7) translateZ(0);
+  }
+  45% {
+    opacity: 0.95;
+    transform: scale(1.04) translateZ(0);
+  }
+  65% {
     opacity: 1;
-    transform: scale(1.015);
-    filter: blur(0px);
+    transform: scale(0.98) translateZ(0);
   }
-  85% {
-    transform: scale(0.995);
+  80% {
+    transform: scale(1.008) translateZ(0);
+  }
+  92% {
+    transform: scale(0.997) translateZ(0);
   }
   100% {
     opacity: 1;
-    transform: scale(1);
-    filter: blur(0px);
+    transform: scale(1) translateZ(0);
   }
 }
 
@@ -63,9 +75,14 @@
   text-align: left;
   font-size: 15px;
   font-weight: 500;
-  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
   position: relative;
   overflow: hidden;
+
+  /* GPU acceleration для hover */
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  will-change: transform;
 }
 
 .context-menu-item::before {
@@ -76,9 +93,14 @@
   right: 0;
   bottom: 0;
   background: rgba(255, 255, 255, 0);
-  transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+  transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
   z-index: -1;
   border-radius: 10px;
+
+  /* GPU acceleration */
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  will-change: background, box-shadow;
 }
 
 .context-menu-item:hover:not(.disabled)::before {
@@ -93,11 +115,11 @@
 }
 
 .context-menu-item:hover:not(.disabled) {
-  transform: scale(1.03);
+  transform: scale(1.03) translateZ(0);
 }
 
 .context-menu-item:active:not(.disabled) {
-  transform: scale(0.98);
+  transform: scale(0.98) translateZ(0);
 }
 
 .context-menu-item:active:not(.disabled)::before {
