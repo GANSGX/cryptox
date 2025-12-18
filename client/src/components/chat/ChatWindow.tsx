@@ -120,48 +120,59 @@ export function ChatWindow({ activeChat }: ChatWindowProps) {
     if (!messagesContainerRef.current) return;
 
     const container = messagesContainerRef.current;
+    let throttleTimer: NodeJS.Timeout | null = null;
 
     const handleScroll = () => {
-      // Начало скролла → показать floating
-      setIsScrolling(true);
+      // Throttle: выполнять максимум раз в 150ms
+      if (throttleTimer) return;
 
-      // Найти последнюю плашку которая ушла вверх (для обновления даты)
-      const separatorsAboveViewport = Array.from(
-        container.querySelectorAll(".date-separator"),
-      ).filter((el) => {
-        const rect = el.getBoundingClientRect();
-        const containerRect = container.getBoundingClientRect();
-        return rect.bottom < containerRect.top;
-      });
+      throttleTimer = setTimeout(() => {
+        throttleTimer = null;
 
-      if (separatorsAboveViewport.length > 0) {
-        // Последняя плашка из тех что ушли вверх
-        const lastSeparatorAbove =
-          separatorsAboveViewport[separatorsAboveViewport.length - 1];
-        const date = lastSeparatorAbove.getAttribute("data-date");
-        if (date) {
-          setFloatingDate(date);
+        // Начало скролла → показать floating
+        setIsScrolling(true);
+
+        // Найти последнюю плашку которая ушла вверх (для обновления даты)
+        const separatorsAboveViewport = Array.from(
+          container.querySelectorAll(".date-separator"),
+        ).filter((el) => {
+          const rect = el.getBoundingClientRect();
+          const containerRect = container.getBoundingClientRect();
+          return rect.bottom < containerRect.top;
+        });
+
+        if (separatorsAboveViewport.length > 0) {
+          // Последняя плашка из тех что ушли вверх
+          const lastSeparatorAbove =
+            separatorsAboveViewport[separatorsAboveViewport.length - 1];
+          const date = lastSeparatorAbove.getAttribute("data-date");
+          if (date) {
+            setFloatingDate(date);
+          }
         }
-      }
 
-      // Очистить предыдущий таймер
-      if (scrollTimeoutRef.current) {
-        clearTimeout(scrollTimeoutRef.current);
-      }
+        // Очистить предыдущий таймер
+        if (scrollTimeoutRef.current) {
+          clearTimeout(scrollTimeoutRef.current);
+        }
 
-      // Установить таймер на скрытие (0.5s после остановки)
-      scrollTimeoutRef.current = setTimeout(() => {
-        setIsScrolling(false);
-        setShowFloating(false);
-      }, 500);
+        // Установить таймер на скрытие (0.5s после остановки)
+        scrollTimeoutRef.current = setTimeout(() => {
+          setIsScrolling(false);
+          setShowFloating(false);
+        }, 500);
+      }, 150);
     };
 
-    container.addEventListener("scroll", handleScroll);
+    container.addEventListener("scroll", handleScroll, { passive: true });
 
     return () => {
       container.removeEventListener("scroll", handleScroll);
       if (scrollTimeoutRef.current) {
         clearTimeout(scrollTimeoutRef.current);
+      }
+      if (throttleTimer) {
+        clearTimeout(throttleTimer);
       }
     };
   }, [activeChat]);
