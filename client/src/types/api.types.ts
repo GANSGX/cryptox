@@ -74,6 +74,7 @@ export interface Message {
   created_at: string;
   delivered_at: string | null;
   read_at: string | null;
+  edited_at?: string | null;
 }
 
 // Типы для Device Approval

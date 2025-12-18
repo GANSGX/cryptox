@@ -42,6 +42,7 @@ export class MessageService {
 
   /**
    * Получение истории чата
+   * Фильтрует удаленные сообщения в зависимости от пользователя
    */
   static async getMessages(
     username1: string,
@@ -50,23 +51,35 @@ export class MessageService {
     offset: number = 0,
   ): Promise<{ messages: Message[]; total: number }> {
     const chatId = this.createChatId(username1, username2);
+    const currentUser = username1.toLowerCase();
 
-    // Получаем сообщения
+    // Получаем сообщения с учетом флагов удаления
+    // Не показываем сообщения если:
+    // - deleted_for_sender = true И я отправитель
+    // - deleted_for_recipient = true И я получатель
     const messagesResult = await pool.query(
       `SELECT * FROM messages
        WHERE chat_id = $1
        AND deleted_at IS NULL
+       AND NOT (
+         (deleted_for_sender = true AND sender_username = $2) OR
+         (deleted_for_recipient = true AND recipient_username = $2)
+       )
        ORDER BY created_at DESC
-       LIMIT $2 OFFSET $3`,
-      [chatId, limit, offset],
+       LIMIT $3 OFFSET $4`,
+      [chatId, currentUser, limit, offset],
     );
 
     // Подсчёт общего количества
     const countResult = await pool.query(
       `SELECT COUNT(*) as total FROM messages
        WHERE chat_id = $1
-       AND deleted_at IS NULL`,
-      [chatId],
+       AND deleted_at IS NULL
+       AND NOT (
+         (deleted_for_sender = true AND sender_username = $2) OR
+         (deleted_for_recipient = true AND recipient_username = $2)
+       )`,
+      [chatId, currentUser],
     );
 
     return {
@@ -151,5 +164,68 @@ export class MessageService {
     );
 
     return parseInt(result.rows[0].count, 10);
+  }
+
+  /**
+   * Получение сообщения по ID
+   */
+  static async getMessageById(messageId: string): Promise<Message | null> {
+    const result = await pool.query<Message>(
+      `SELECT * FROM messages WHERE id = $1`,
+      [messageId],
+    );
+
+    return result.rows.length > 0 ? result.rows[0] : null;
+  }
+
+  /**
+   * Редактирование сообщения
+   */
+  static async editMessage(
+    messageId: string,
+    encrypted_content: string,
+  ): Promise<void> {
+    await pool.query(
+      `UPDATE messages
+       SET encrypted_content = $1, edited_at = NOW()
+       WHERE id = $2`,
+      [encrypted_content, messageId],
+    );
+  }
+
+  /**
+   * Удаление сообщения для отправителя (deleted_for_sender = true)
+   */
+  static async deleteMessageForSender(messageId: string): Promise<void> {
+    await pool.query(
+      `UPDATE messages
+       SET deleted_for_sender = true
+       WHERE id = $1`,
+      [messageId],
+    );
+  }
+
+  /**
+   * Удаление сообщения для получателя (deleted_for_recipient = true)
+   */
+  static async deleteMessageForRecipient(messageId: string): Promise<void> {
+    await pool.query(
+      `UPDATE messages
+       SET deleted_for_recipient = true
+       WHERE id = $1`,
+      [messageId],
+    );
+  }
+
+  /**
+   * Удаление сообщения для всех (оба флага = true)
+   */
+  static async deleteMessageForEveryone(messageId: string): Promise<void> {
+    await pool.query(
+      `UPDATE messages
+       SET deleted_for_sender = true, deleted_for_recipient = true
+       WHERE id = $1`,
+      [messageId],
+    );
   }
 }

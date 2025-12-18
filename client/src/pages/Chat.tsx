@@ -9,7 +9,13 @@ import { debugLogger } from "@/utils/debugLogger";
 
 export function Chat() {
   const { user } = useAuthStore();
-  const { addMessage, setUserTyping, removeUserTyping } = useChatStore();
+  const {
+    addMessage,
+    setUserTyping,
+    removeUserTyping,
+    handleMessageEdited,
+    handleMessageDeleted,
+  } = useChatStore();
 
   useEffect(() => {
     // Initialize debug logger (Ctrl+Shift+D to toggle)
@@ -80,10 +86,54 @@ export function Chat() {
       removeUserTyping(data.username);
     };
 
+    // Обработка редактирования сообщений
+    const handleMessageEditedEvent = (data: unknown) => {
+      const typedData = data as {
+        message_id: string;
+        encrypted_content: string;
+        edited_at: string;
+        sender_username: string;
+        recipient_username: string;
+      };
+      console.log("✏️ Message edited:", typedData);
+      handleMessageEdited(
+        {
+          messageId: typedData.message_id,
+          encrypted_content: typedData.encrypted_content,
+          edited_at: typedData.edited_at,
+        },
+        user.username,
+      );
+    };
+
+    // Обработка удаления сообщений
+    const handleMessageDeletedEvent = (data: unknown) => {
+      const typedData = data as {
+        message_id: string;
+        type: "for_everyone" | "for_sender" | "for_recipient";
+        sender_username: string;
+        recipient_username: string;
+      };
+      console.log("🗑️ Message deleted:", typedData);
+      const normalizedType =
+        typedData.type === "for_sender" || typedData.type === "for_recipient"
+          ? "for_me"
+          : typedData.type;
+      handleMessageDeleted(
+        {
+          messageId: typedData.message_id,
+          type: normalizedType,
+        },
+        user.username,
+      );
+    };
+
     // Подписываемся на события
     socketService.onNewMessage(handleNewMessage);
     socketService.onUserTyping(handleUserTyping);
     socketService.onUserStoppedTyping(handleUserStoppedTyping);
+    socketService.on("message:edited", handleMessageEditedEvent);
+    socketService.on("message:deleted", handleMessageDeletedEvent);
 
     // Отписываемся при размонтировании
     return () => {
@@ -91,8 +141,17 @@ export function Chat() {
       socketService.offNewMessage(handleNewMessage);
       socketService.offUserTyping(handleUserTyping);
       socketService.offUserStoppedTyping(handleUserStoppedTyping);
+      socketService.off("message:edited", handleMessageEditedEvent);
+      socketService.off("message:deleted", handleMessageDeletedEvent);
     };
-  }, [user, addMessage, setUserTyping, removeUserTyping]);
+  }, [
+    user,
+    addMessage,
+    setUserTyping,
+    removeUserTyping,
+    handleMessageEdited,
+    handleMessageDeleted,
+  ]);
 
   return <ChatLayout />;
 }

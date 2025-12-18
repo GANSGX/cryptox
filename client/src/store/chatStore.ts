@@ -41,6 +41,30 @@ interface ChatState {
     status: "delivered" | "read",
   ) => void;
   syncContacts: (myUsername: string) => Promise<void>;
+  editMessage: (
+    messageId: string,
+    newContent: string,
+    myUsername: string,
+  ) => Promise<void>;
+  deleteMessage: (
+    messageId: string,
+    type: "for_me" | "for_everyone",
+  ) => Promise<void>;
+  handleMessageEdited: (
+    data: {
+      messageId: string;
+      encrypted_content: string;
+      edited_at: string;
+    },
+    myUsername: string,
+  ) => Promise<void>;
+  handleMessageDeleted: (
+    data: {
+      messageId: string;
+      type: "for_me" | "for_everyone";
+    },
+    myUsername: string,
+  ) => void;
 }
 
 export const useChatStore = create<ChatState>()(
@@ -130,6 +154,7 @@ export const useChatStore = create<ChatState>()(
                 created_at: msg.created_at,
                 delivered_at: msg.delivered_at,
                 read_at: msg.read_at,
+                edited_at: msg.edited_at || null,
               };
             }),
           );
@@ -463,6 +488,197 @@ export const useChatStore = create<ChatState>()(
             `ℹ️ No update needed for message ${messageId} (already ${status})`,
           );
           return state;
+        });
+      },
+
+      /**
+       * Редактирование сообщения
+       */
+      editMessage: async (
+        messageId: string,
+        newContent: string,
+        myUsername: string,
+      ) => {
+        console.log(`✏️ Editing message ${messageId}`);
+
+        // Найти сообщение в store
+        const state = get();
+        let message: Message | undefined;
+        let chatUsername: string | undefined;
+
+        for (const [chat, msgs] of Object.entries(state.messages)) {
+          const found = msgs.find((m) => m.id === messageId);
+          if (found) {
+            message = found;
+            chatUsername = chat;
+            break;
+          }
+        }
+
+        if (!message || !chatUsername) {
+          throw new Error("Message not found");
+        }
+
+        // Шифруем новое содержимое
+        const otherUsername =
+          message.sender_username === myUsername
+            ? message.recipient_username
+            : message.sender_username;
+
+        const encrypted = await cryptoService.encryptMessageForChat(
+          newContent,
+          otherUsername,
+          myUsername,
+        );
+
+        // Отправляем на сервер
+        const response = await apiService.editMessage(messageId, encrypted);
+
+        if (!response.success) {
+          throw new Error(response.error || "Failed to edit message");
+        }
+
+        // Обновляем локально (Socket.IO обновит у получателя)
+        set((state) => {
+          const updatedMessages = { ...state.messages };
+          if (updatedMessages[chatUsername!]) {
+            updatedMessages[chatUsername!] = updatedMessages[chatUsername!].map(
+              (msg) =>
+                msg.id === messageId
+                  ? {
+                      ...msg,
+                      encrypted_content: newContent,
+                      edited_at: new Date().toISOString(),
+                    }
+                  : msg,
+            );
+          }
+          return { messages: updatedMessages };
+        });
+
+        console.log(`✅ Message ${messageId} edited successfully`);
+      },
+
+      /**
+       * Удаление сообщения
+       */
+      deleteMessage: async (
+        messageId: string,
+        type: "for_me" | "for_everyone",
+      ) => {
+        console.log(`🗑️ Deleting message ${messageId} (${type})`);
+
+        // Отправляем на сервер
+        const response = await apiService.deleteMessage(messageId, type);
+
+        if (!response.success) {
+          throw new Error(response.error || "Failed to delete message");
+        }
+
+        // Локальное удаление (Socket.IO обновит у получателя)
+        set((state) => {
+          const updatedMessages = { ...state.messages };
+
+          for (const chat of Object.keys(updatedMessages)) {
+            updatedMessages[chat] = updatedMessages[chat].filter(
+              (msg) => msg.id !== messageId,
+            );
+          }
+
+          return { messages: updatedMessages };
+        });
+
+        console.log(`✅ Message ${messageId} deleted successfully`);
+      },
+
+      /**
+       * Обработка события редактирования сообщения (Socket.IO)
+       */
+      handleMessageEdited: async (
+        data: {
+          messageId: string;
+          encrypted_content: string;
+          edited_at: string;
+        },
+        myUsername: string,
+      ) => {
+        console.log(`📝 Received message:edited event for ${data.messageId}`);
+
+        const state = get();
+        let found = false;
+
+        for (const [chat, msgs] of Object.entries(state.messages)) {
+          const msgIndex = msgs.findIndex((m) => m.id === data.messageId);
+
+          if (msgIndex !== -1) {
+            found = true;
+            const message = msgs[msgIndex];
+
+            // Определяем другого пользователя для расшифровки
+            const otherUsername =
+              message.sender_username === myUsername
+                ? message.recipient_username
+                : message.sender_username;
+
+            // Расшифровываем новое содержимое
+            try {
+              const decrypted = await cryptoService.decryptMessageFromChat(
+                data.encrypted_content,
+                otherUsername,
+                myUsername,
+              );
+
+              set((state) => {
+                const updatedMessages = { ...state.messages };
+                if (updatedMessages[chat]) {
+                  updatedMessages[chat][msgIndex] = {
+                    ...message,
+                    encrypted_content: decrypted || "[Failed to decrypt]",
+                    edited_at: data.edited_at,
+                  };
+                }
+                return { messages: updatedMessages };
+              });
+            } catch (err) {
+              console.error("Failed to decrypt edited message:", err);
+            }
+
+            break;
+          }
+        }
+
+        if (!found) {
+          console.warn(`Message ${data.messageId} not found in store`);
+        }
+      },
+
+      /**
+       * Обработка события удаления сообщения (Socket.IO)
+       */
+      handleMessageDeleted: (
+        data: {
+          messageId: string;
+          type: "for_me" | "for_everyone";
+        },
+        myUsername: string,
+      ) => {
+        console.log(
+          `🗑️ Received message:deleted event for ${data.messageId} (${data.type})`,
+        );
+
+        void myUsername; // Может понадобиться для проверки прав
+
+        // Удаляем сообщение из store
+        set((state) => {
+          const updatedMessages = { ...state.messages };
+
+          for (const chat of Object.keys(updatedMessages)) {
+            updatedMessages[chat] = updatedMessages[chat].filter(
+              (msg) => msg.id !== data.messageId,
+            );
+          }
+
+          return { messages: updatedMessages };
         });
       },
 

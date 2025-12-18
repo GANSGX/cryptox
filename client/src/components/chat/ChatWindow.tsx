@@ -4,9 +4,11 @@ import { MessageInput } from "./MessageInput";
 import { MessageStatus } from "./MessageStatus";
 import { DateSeparator } from "./DateSeparator";
 import { FloatingDateHeader } from "./FloatingDateHeader";
+import { ContextMenu, type ContextMenuItem } from "@/components/ui/ContextMenu";
 import { useChatStore } from "@/store/chatStore";
 import { useAuthStore } from "@/store/authStore";
 import { formatMessageTime, isSameDay } from "@/utils/dateTime";
+import type { Message } from "@/types/message.types";
 
 interface ChatWindowProps {
   activeChat: string | null;
@@ -14,7 +16,14 @@ interface ChatWindowProps {
 
 export function ChatWindow({ activeChat }: ChatWindowProps) {
   const { user } = useAuthStore();
-  const { messages, loadMessages, isLoading, typingUsers } = useChatStore();
+  const {
+    messages,
+    loadMessages,
+    isLoading,
+    typingUsers,
+    editMessage,
+    deleteMessage,
+  } = useChatStore();
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const messagesContainerRef = useRef<HTMLDivElement>(null);
   const scrollTimeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -23,6 +32,16 @@ export function ChatWindow({ activeChat }: ChatWindowProps) {
   const [floatingDate, setFloatingDate] = useState<string | null>(null);
   const [isScrolling, setIsScrolling] = useState(false);
   const [showFloating, setShowFloating] = useState(false);
+
+  // Состояние для ContextMenu
+  const [contextMenu, setContextMenu] = useState<{
+    x: number;
+    y: number;
+    message: Message;
+  } | null>(null);
+
+  // Состояние для EditMessageModal
+  const [editingMessage, setEditingMessage] = useState<Message | null>(null);
 
   // Загрузка сообщений при выборе чата
   useEffect(() => {
@@ -147,6 +166,116 @@ export function ChatWindow({ activeChat }: ChatWindowProps) {
     };
   }, [activeChat]);
 
+  // Проверка возможности редактирования (30 минут)
+  const canEdit = (message: Message): boolean => {
+    if (!user || message.sender_username !== user.username) return false;
+    const thirtyMinutesAgo = Date.now() - 30 * 60 * 1000;
+    return new Date(message.created_at).getTime() > thirtyMinutesAgo;
+  };
+
+  // Обработчик правого клика на сообщение
+  const handleContextMenu = (e: React.MouseEvent, message: Message) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    console.log("🖱️ Context menu clicked:", {
+      isOwn: message.sender_username === user?.username,
+      messageId: message.id,
+      clickX: e.clientX,
+      clickY: e.clientY,
+    });
+
+    // Используем координаты клика - ContextMenu сам умно позиционируется
+    setContextMenu({
+      x: e.clientX,
+      y: e.clientY,
+      message,
+    });
+  };
+
+  // Генерация опций контекстного меню
+  const getContextMenuItems = (message: Message): ContextMenuItem[] => {
+    if (!user) {
+      console.log("❌ No user, returning empty items");
+      return [];
+    }
+
+    const isOwn = message.sender_username === user.username;
+    const canEditMsg = canEdit(message);
+    const items: ContextMenuItem[] = [];
+
+    console.log("📋 Generating menu items:", {
+      isOwn,
+      canEdit: canEditMsg,
+      messageAge: Date.now() - new Date(message.created_at).getTime(),
+      thirtyMinutes: 30 * 60 * 1000,
+    });
+
+    // Edit (только свои сообщения + в течение 30 минут)
+    if (isOwn && canEditMsg) {
+      items.push({
+        label: "Edit",
+        icon: "edit",
+        onClick: () => setEditingMessage(message),
+      });
+    }
+
+    // Delete for everyone (только свои, БЕЗ ограничения времени как в Telegram)
+    if (isOwn) {
+      items.push({
+        label: "Delete for everyone",
+        icon: "delete",
+        danger: true,
+        onClick: () => handleDelete(message.id, "for_everyone"),
+      });
+    }
+
+    // Delete for me (всегда доступно)
+    items.push({
+      label: "Delete for me",
+      icon: "delete",
+      danger: true,
+      onClick: () => handleDelete(message.id, "for_me"),
+    });
+
+    console.log("✅ Menu items generated:", items.length);
+    return items;
+  };
+
+  // Обработчик удаления
+  const handleDelete = async (
+    messageId: string,
+    type: "for_me" | "for_everyone",
+  ) => {
+    if (
+      !window.confirm(
+        `Are you sure you want to delete this message${type === "for_everyone" ? " for everyone" : ""}?`,
+      )
+    ) {
+      return;
+    }
+
+    try {
+      await deleteMessage(messageId, type);
+    } catch (err) {
+      console.error("Failed to delete message:", err);
+      alert(err instanceof Error ? err.message : "Failed to delete message");
+    }
+  };
+
+  // Обработчик сохранения отредактированного сообщения
+  const handleSaveEdit = async (newContent: string) => {
+    if (!editingMessage || !user) return;
+
+    try {
+      await editMessage(editingMessage.id, newContent, user.username);
+      setEditingMessage(null); // Сбрасываем режим редактирования
+    } catch (err) {
+      console.error("Failed to edit message:", err);
+      alert(err instanceof Error ? err.message : "Failed to edit message");
+    }
+  };
+
   // Пустое состояние - нет выбранного чата
   if (!activeChat) {
     return (
@@ -203,11 +332,19 @@ export function ChatWindow({ activeChat }: ChatWindowProps) {
                 {showDateSeparator && <DateSeparator date={msg.created_at} />}
 
                 {/* Само сообщение */}
-                <div className={`message ${isOwn ? "own" : ""}`}>
+                <div
+                  className={`message ${isOwn ? "own" : ""} ${editingMessage?.id === msg.id ? "editing-mode" : ""}`}
+                  onContextMenu={(e) => handleContextMenu(e, msg)}
+                >
                   <div className="message-bubble">
                     {msg.encrypted_content}
                     <div className="message-time">
                       {formatMessageTime(msg.created_at)}
+                      {msg.edited_at && (
+                        <span className="edited-indicator" title="Edited">
+                          (edited)
+                        </span>
+                      )}
                       <MessageStatus
                         createdAt={msg.created_at}
                         deliveredAt={msg.delivered_at}
@@ -237,7 +374,27 @@ export function ChatWindow({ activeChat }: ChatWindowProps) {
       </div>
 
       {/* Input */}
-      <MessageInput activeChat={activeChat} />
+      <MessageInput
+        activeChat={activeChat}
+        editingMessage={editingMessage}
+        onCancelEdit={() => setEditingMessage(null)}
+        onSaveEdit={handleSaveEdit}
+      />
+
+      {/* Context Menu */}
+      {contextMenu &&
+        (() => {
+          const items = getContextMenuItems(contextMenu.message);
+          if (items.length === 0) return null;
+          return (
+            <ContextMenu
+              x={contextMenu.x}
+              y={contextMenu.y}
+              items={items}
+              onClose={() => setContextMenu(null)}
+            />
+          );
+        })()}
     </div>
   );
 }

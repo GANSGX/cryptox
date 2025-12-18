@@ -258,6 +258,7 @@ export async function messagesRoutes(fastify: FastifyInstance) {
         created_at: msg.created_at.toISOString(),
         delivered_at: msg.delivered_at ? msg.delivered_at.toISOString() : null,
         read_at: msg.read_at ? msg.read_at.toISOString() : null,
+        edited_at: msg.edited_at ? msg.edited_at.toISOString() : null,
       }));
 
       return reply.code(200).send({
@@ -375,6 +376,212 @@ export async function messagesRoutes(fastify: FastifyInstance) {
         success: true,
         data: { count },
       });
+    },
+  );
+
+  /**
+   * PATCH /messages/:id
+   * Редактирование сообщения (30 минут с момента отправки)
+   */
+  fastify.patch<{
+    Params: { id: string };
+    Body: { encrypted_content: string };
+    Reply: ApiResponse;
+  }>(
+    "/messages/:id",
+    {
+      preHandler: authMiddleware,
+    },
+    async (request, reply) => {
+      const { id: messageId } = request.params;
+      const { encrypted_content } = request.body;
+      const currentUsername = request.user!.username;
+
+      // Валидация encrypted_content
+      if (!encrypted_content || typeof encrypted_content !== "string") {
+        return reply.code(400).send({
+          success: false,
+          error: "Missing or invalid encrypted_content",
+        });
+      }
+
+      // Проверка максимальной длины (50KB)
+      if (encrypted_content.length > 50000) {
+        return reply.code(400).send({
+          success: false,
+          error: "Message too long (max 50KB encrypted)",
+        });
+      }
+
+      // Проверка формата (base64-подобный)
+      if (!/^[A-Za-z0-9+/=:]+$/.test(encrypted_content)) {
+        return reply.code(400).send({
+          success: false,
+          error: "Invalid encrypted_content format",
+        });
+      }
+
+      // Получить сообщение из БД
+      const message = await MessageService.getMessageById(messageId);
+
+      if (!message) {
+        return reply.code(404).send({
+          success: false,
+          error: "Message not found",
+        });
+      }
+
+      // Проверка: только отправитель может редактировать
+      if (message.sender_username !== currentUsername) {
+        return reply.code(403).send({
+          success: false,
+          error: "You can only edit your own messages",
+        });
+      }
+
+      // Проверка: не более 30 минут с момента отправки
+      const thirtyMinutesAgo = new Date(Date.now() - 30 * 60 * 1000);
+      const createdAt = new Date(message.created_at);
+
+      if (createdAt < thirtyMinutesAgo) {
+        return reply.code(403).send({
+          success: false,
+          error: "Message can only be edited within 30 minutes",
+        });
+      }
+
+      // Обновить сообщение
+      await MessageService.editMessage(messageId, encrypted_content);
+
+      // Отправить Socket.IO уведомление обоим участникам
+      const io = fastify.io;
+      const recipientUsername = message.recipient_username;
+
+      const updateData = {
+        messageId,
+        encrypted_content,
+        edited_at: new Date().toISOString(),
+      };
+
+      io.to(`user:${currentUsername}`).emit("message:edited", updateData);
+      io.to(`user:${recipientUsername}`).emit("message:edited", updateData);
+
+      return reply.code(200).send({
+        success: true,
+        message: "Message edited successfully",
+      });
+    },
+  );
+
+  /**
+   * DELETE /messages/:id
+   * Удаление сообщения (у себя или у всех)
+   * Query: type=for_me|for_everyone
+   */
+  fastify.delete<{
+    Params: { id: string };
+    Querystring: { type: "for_me" | "for_everyone" };
+    Reply: ApiResponse;
+  }>(
+    "/messages/:id",
+    {
+      preHandler: authMiddleware,
+    },
+    async (request, reply) => {
+      const { id: messageId } = request.params;
+      const { type } = request.query;
+      const currentUsername = request.user!.username;
+
+      // Валидация type
+      if (!type || !["for_me", "for_everyone"].includes(type)) {
+        return reply.code(400).send({
+          success: false,
+          error: "Invalid type. Must be 'for_me' or 'for_everyone'",
+        });
+      }
+
+      // Получить сообщение из БД
+      const message = await MessageService.getMessageById(messageId);
+
+      if (!message) {
+        return reply.code(404).send({
+          success: false,
+          error: "Message not found",
+        });
+      }
+
+      const isSender = message.sender_username === currentUsername;
+      const isRecipient = message.recipient_username === currentUsername;
+
+      // Проверка: пользователь должен быть участником чата
+      if (!isSender && !isRecipient) {
+        return reply.code(403).send({
+          success: false,
+          error: "You are not a participant of this chat",
+        });
+      }
+
+      if (type === "for_everyone") {
+        // Удалить у всех: только отправитель + в течение 30 минут
+        if (!isSender) {
+          return reply.code(403).send({
+            success: false,
+            error: "Only sender can delete message for everyone",
+          });
+        }
+
+        const thirtyMinutesAgo = new Date(Date.now() - 30 * 60 * 1000);
+        const createdAt = new Date(message.created_at);
+
+        if (createdAt < thirtyMinutesAgo) {
+          return reply.code(403).send({
+            success: false,
+            error: "Message can only be deleted for everyone within 30 minutes",
+          });
+        }
+
+        // Удалить для обоих
+        await MessageService.deleteMessageForEveryone(messageId);
+
+        // Отправить Socket.IO уведомление обоим участникам
+        const io = fastify.io;
+        const recipientUsername = message.recipient_username;
+
+        const deleteData = {
+          messageId,
+          type: "for_everyone",
+        };
+
+        io.to(`user:${currentUsername}`).emit("message:deleted", deleteData);
+        io.to(`user:${recipientUsername}`).emit("message:deleted", deleteData);
+
+        return reply.code(200).send({
+          success: true,
+          message: "Message deleted for everyone",
+        });
+      } else {
+        // Удалить у себя
+        if (isSender) {
+          await MessageService.deleteMessageForSender(messageId);
+        } else {
+          await MessageService.deleteMessageForRecipient(messageId);
+        }
+
+        // Отправить Socket.IO уведомление только текущему пользователю
+        const io = fastify.io;
+
+        const deleteData = {
+          messageId,
+          type: "for_me",
+        };
+
+        io.to(`user:${currentUsername}`).emit("message:deleted", deleteData);
+
+        return reply.code(200).send({
+          success: true,
+          message: "Message deleted",
+        });
+      }
     },
   );
 }

@@ -438,6 +438,31 @@
   gap: 4px;
 }
 
+/* Edited indicator */
+.edited-indicator {
+  font-size: 10px;
+  color: rgba(255, 255, 255, 0.4);
+  font-style: italic;
+  margin-left: 2px;
+  margin-right: 4px;
+}
+
+/* Editing mode - подсветка редактируемого сообщения */
+.message.editing-mode .message-bubble {
+  border: 2px solid rgba(255, 120, 60, 0.6);
+  box-shadow: 0 0 20px rgba(255, 120, 60, 0.3);
+  animation: pulse-edit 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse-edit {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(255, 120, 60, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 30px rgba(255, 120, 60, 0.5);
+  }
+}
+
 /* Message Status Checkmarks */
 .message-status {
   display: inline-flex;
@@ -817,6 +842,48 @@
 }
 
 .send-button-inline:active {
+  transform: scale(0.95);
+}
+
+/* ========================================
+   EDIT BUTTONS (Cancel & Save)
+   ======================================== */
+.edit-button-inline {
+  width: 36px;
+  height: 36px;
+  border-radius: 18px;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-right: 4px;
+  flex-shrink: 0;
+}
+
+.edit-button-inline.cancel {
+  background: rgba(255, 68, 68, 0.15);
+  color: #ff4444;
+}
+
+.edit-button-inline.cancel:hover {
+  background: rgba(255, 68, 68, 0.25);
+  transform: scale(1.1);
+}
+
+.edit-button-inline.save {
+  background: linear-gradient(135deg, #4ade80, #22c55e);
+  color: white;
+  box-shadow: 0 4px 12px rgba(74, 222, 128, 0.35);
+}
+
+.edit-button-inline.save:hover {
+  transform: scale(1.1);
+  box-shadow: 0 6px 16px rgba(74, 222, 128, 0.45);
+}
+
+.edit-button-inline:active {
   transform: scale(0.95);
 }
 

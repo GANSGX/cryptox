@@ -7,17 +7,28 @@ import {
   FileText,
   User,
   MapPin,
+  X,
+  Check,
 } from "lucide-react";
 import { useState, KeyboardEvent, useRef, useEffect } from "react";
 import { useChatStore } from "@/store/chatStore";
 import { useAuthStore } from "@/store/authStore";
 import { cryptoService } from "@/services/crypto.service";
+import type { Message } from "@/types/message.types";
 
 interface MessageInputProps {
   activeChat: string;
+  editingMessage?: Message | null;
+  onCancelEdit?: () => void;
+  onSaveEdit?: (newContent: string) => Promise<void>;
 }
 
-export function MessageInput({ activeChat }: MessageInputProps) {
+export function MessageInput({
+  activeChat,
+  editingMessage,
+  onCancelEdit,
+  onSaveEdit,
+}: MessageInputProps) {
   const { user } = useAuthStore();
   const { sendMessage, startTyping, stopTyping } = useChatStore();
   const [message, setMessage] = useState("");
@@ -25,6 +36,14 @@ export function MessageInput({ activeChat }: MessageInputProps) {
   const [recordMode, setRecordMode] = useState<"voice" | "video">("voice");
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Загрузить текст редактируемого сообщения
+  useEffect(() => {
+    if (editingMessage) {
+      setMessage(editingMessage.encrypted_content);
+      textareaRef.current?.focus();
+    }
+  }, [editingMessage]);
 
   // Auto-resize textarea
   useEffect(() => {
@@ -60,17 +79,34 @@ export function MessageInput({ activeChat }: MessageInputProps) {
   const handleSend = async () => {
     if (!message.trim() || !user) return;
 
-    const chatId = cryptoService.createChatId(user.username, activeChat);
-    stopTyping(chatId);
+    if (editingMessage && onSaveEdit) {
+      // Режим редактирования
+      await onSaveEdit(message);
+      setMessage("");
+    } else {
+      // Обычная отправка
+      const chatId = cryptoService.createChatId(user.username, activeChat);
+      stopTyping(chatId);
 
-    await sendMessage(activeChat, message, user.username);
-    setMessage("");
+      await sendMessage(activeChat, message, user.username);
+      setMessage("");
+    }
+  };
+
+  const handleCancel = () => {
+    if (onCancelEdit) {
+      onCancelEdit();
+      setMessage("");
+    }
   };
 
   const handleKeyPress = (e: KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
       handleSend();
+    } else if (e.key === "Escape" && editingMessage) {
+      e.preventDefault();
+      handleCancel();
     }
   };
 
@@ -142,37 +178,60 @@ export function MessageInput({ activeChat }: MessageInputProps) {
 
       {/* Main Input Container */}
       <div className="message-input-container-new">
-        {/* Attach Button */}
-        <button
-          className="action-button attach-button"
-          onClick={() => setShowAttachMenu(!showAttachMenu)}
-          title="Attach"
-        >
-          <Paperclip size={20} />
-        </button>
+        {/* Attach Button - только в обычном режиме */}
+        {!editingMessage && (
+          <button
+            className="action-button attach-button"
+            onClick={() => setShowAttachMenu(!showAttachMenu)}
+            title="Attach"
+          >
+            <Paperclip size={20} />
+          </button>
+        )}
 
         {/* Input Field Wrapper */}
         <div className="input-field-wrapper">
           <textarea
             ref={textareaRef}
             className="message-input-new"
-            placeholder="Message"
+            placeholder={editingMessage ? "Edit message..." : "Message"}
             value={message}
             onChange={(e) => setMessage(e.target.value)}
             onKeyPress={handleKeyPress}
             rows={1}
           />
 
-          {/* Send Button - показывается только при наличии текста */}
-          {message.trim() && (
+          {/* Режим редактирования - крестик и галочка */}
+          {editingMessage && (
+            <>
+              <button
+                className="edit-button-inline cancel"
+                onClick={handleCancel}
+                title="Cancel (Esc)"
+              >
+                <X size={20} />
+              </button>
+              <button
+                className="edit-button-inline save"
+                onClick={handleSend}
+                title="Save (Enter)"
+                disabled={!message.trim()}
+              >
+                <Check size={20} />
+              </button>
+            </>
+          )}
+
+          {/* Обычный режим - Send кнопка */}
+          {!editingMessage && message.trim() && (
             <button className="send-button-inline" onClick={handleSend}>
               <Send size={20} />
             </button>
           )}
         </div>
 
-        {/* Voice/Video Button - показывается когда нет текста */}
-        {!message.trim() && (
+        {/* Voice/Video Button - показывается когда нет текста и не в режиме редактирования */}
+        {!editingMessage && !message.trim() && (
           <button
             className="action-button record-button"
             onClick={toggleRecordMode}

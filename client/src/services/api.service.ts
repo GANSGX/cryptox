@@ -385,6 +385,32 @@ class ApiService {
   }
 
   /**
+   * Редактирование сообщения
+   */
+  async editMessage(
+    messageId: string,
+    encrypted_content: string,
+  ): Promise<ApiResponse> {
+    return this.request(`/messages/${messageId}`, {
+      method: "PATCH",
+      body: JSON.stringify({ encrypted_content }),
+    });
+  }
+
+  /**
+   * Удаление сообщения
+   * @param type - 'for_me' (удалить только у себя) или 'for_everyone' (удалить у всех)
+   */
+  async deleteMessage(
+    messageId: string,
+    type: "for_me" | "for_everyone",
+  ): Promise<ApiResponse> {
+    return this.request(`/messages/${messageId}?type=${type}`, {
+      method: "DELETE",
+    });
+  }
+
+  /**
    * Полная синхронизация контактов и истории (Telegram-style)
    * Возвращает список всех контактов с последним сообщением и unread count
    */
