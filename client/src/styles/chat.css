@@ -424,18 +424,17 @@
 }
 
 .message.own .message-bubble {
-  /* Liquid glass: затемненный градиент с blur */
+  /* Liquid glass: темно-оранжевый градиент с blur */
   background: linear-gradient(
     135deg,
-    rgba(30, 58, 138, 0.75),
-    rgba(29, 78, 216, 0.7),
-    rgba(37, 99, 235, 0.75)
+    rgba(140, 50, 20, 0.75),
+    rgba(170, 70, 30, 0.7),
+    rgba(190, 85, 40, 0.75)
   );
   backdrop-filter: blur(16px) saturate(150%);
-  border: 1px solid rgba(59, 130, 246, 0.3);
+  border: 1px solid rgba(200, 90, 40, 0.3);
   color: #ffffff;
   box-shadow:
-    0 4px 20px rgba(29, 78, 216, 0.25),
     0 2px 8px rgba(0, 0, 0, 0.3),
     inset 0 1px 0 rgba(255, 255, 255, 0.1);
 }
@@ -542,6 +541,8 @@
 .date-separator-text {
   padding: 7px 18px;
   border-radius: 20px;
+  min-width: 140px; /* Фиксированная ширина для всех дат */
+  text-align: center;
   /* Liquid glass: градиент + blur */
   background: linear-gradient(
     135deg,
