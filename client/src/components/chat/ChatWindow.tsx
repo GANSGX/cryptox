@@ -26,10 +26,11 @@ export function ChatWindow({ activeChat }: ChatWindowProps) {
   } = useChatStore();
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const messagesContainerRef = useRef<HTMLDivElement>(null);
+  const scrollTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   // Состояние для floating date header
   const [floatingDate, setFloatingDate] = useState<string | null>(null);
-  const [showFloating, setShowFloating] = useState(false);
+  const [isScrolling, setIsScrolling] = useState(false);
 
   // Состояние для ContextMenu
   const [contextMenu, setContextMenu] = useState<{
@@ -54,7 +55,38 @@ export function ChatWindow({ activeChat }: ChatWindowProps) {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messagesLength]);
 
-  // Оптимизированный IntersectionObserver для floating date header
+  // Легкий scroll handler - только для показа/скрытия floating header
+  useEffect(() => {
+    if (!messagesContainerRef.current) return;
+
+    const container = messagesContainerRef.current;
+
+    const handleScroll = () => {
+      // Показываем floating при скролле
+      setIsScrolling(true);
+
+      // Очистить предыдущий таймер
+      if (scrollTimeoutRef.current) {
+        clearTimeout(scrollTimeoutRef.current);
+      }
+
+      // Скрыть через 500ms после остановки скролла
+      scrollTimeoutRef.current = setTimeout(() => {
+        setIsScrolling(false);
+      }, 500);
+    };
+
+    container.addEventListener("scroll", handleScroll, { passive: true });
+
+    return () => {
+      container.removeEventListener("scroll", handleScroll);
+      if (scrollTimeoutRef.current) {
+        clearTimeout(scrollTimeoutRef.current);
+      }
+    };
+  }, [activeChat]);
+
+  // IntersectionObserver для определения текущей даты
   useEffect(() => {
     if (!messagesContainerRef.current || !activeChat) return;
 
@@ -65,30 +97,26 @@ export function ChatWindow({ activeChat }: ChatWindowProps) {
 
     const observer = new IntersectionObserver(
       (entries) => {
-        entries.forEach((entry) => {
-          const target = entry.target as HTMLElement;
-          const date = target.getAttribute("data-date");
+        // Находим самую верхнюю видимую плашку
+        const topVisibleSeparator = entries
+          .filter((entry) => entry.isIntersecting)
+          .sort(
+            (a, b) => a.boundingClientRect.top - b.boundingClientRect.top,
+          )[0];
 
-          if (!entry.isIntersecting && entry.boundingClientRect.top < 0) {
-            // Плашка ушла ВВЕРХ за viewport - показываем floating с её датой
-            if (date) {
-              setFloatingDate(date);
-              setShowFloating(true);
-            }
-          } else if (
-            entry.isIntersecting &&
-            entry.boundingClientRect.top >= 0 &&
-            entry.boundingClientRect.top < 100
-          ) {
-            // Плашка видна сверху viewport - прячем floating
-            setShowFloating(false);
+        if (topVisibleSeparator) {
+          const date = (topVisibleSeparator.target as HTMLElement).getAttribute(
+            "data-date",
+          );
+          if (date) {
+            setFloatingDate(date);
           }
-        });
+        }
       },
       {
         root: container,
         rootMargin: "-80px 0px 0px 0px",
-        threshold: [0, 0.1],
+        threshold: 0.1,
       },
     );
 
@@ -231,7 +259,7 @@ export function ChatWindow({ activeChat }: ChatWindowProps) {
       </div>
 
       {/* Floating Date Header (оптимизированный) */}
-      <FloatingDateHeader date={floatingDate} visible={showFloating} />
+      <FloatingDateHeader date={floatingDate} visible={isScrolling} />
 
       {/* Messages */}
       <div className="messages-container" ref={messagesContainerRef}>
