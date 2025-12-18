@@ -3,7 +3,6 @@ import { MessageCircle } from "lucide-react";
 import { MessageInput } from "./MessageInput";
 import { MessageStatus } from "./MessageStatus";
 import { DateSeparator } from "./DateSeparator";
-import { FloatingDateHeader } from "./FloatingDateHeader";
 import { ContextMenu, type ContextMenuItem } from "@/components/ui/ContextMenu";
 import { useChatStore } from "@/store/chatStore";
 import { useAuthStore } from "@/store/authStore";
@@ -26,11 +25,6 @@ export function ChatWindow({ activeChat }: ChatWindowProps) {
   } = useChatStore();
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const messagesContainerRef = useRef<HTMLDivElement>(null);
-  const scrollTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-
-  // Состояние для floating date header
-  const [floatingDate, setFloatingDate] = useState<string | null>(null);
-  const [isScrolling, setIsScrolling] = useState(false);
 
   // Состояние для ContextMenu
   const [contextMenu, setContextMenu] = useState<{
@@ -54,76 +48,6 @@ export function ChatWindow({ activeChat }: ChatWindowProps) {
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messagesLength]);
-
-  // Легкий scroll handler - только для показа/скрытия floating header
-  useEffect(() => {
-    if (!messagesContainerRef.current) return;
-
-    const container = messagesContainerRef.current;
-
-    const handleScroll = () => {
-      // Показываем floating при скролле
-      setIsScrolling(true);
-
-      // Очистить предыдущий таймер
-      if (scrollTimeoutRef.current) {
-        clearTimeout(scrollTimeoutRef.current);
-      }
-
-      // Скрыть через 500ms после остановки скролла
-      scrollTimeoutRef.current = setTimeout(() => {
-        setIsScrolling(false);
-      }, 500);
-    };
-
-    container.addEventListener("scroll", handleScroll, { passive: true });
-
-    return () => {
-      container.removeEventListener("scroll", handleScroll);
-      if (scrollTimeoutRef.current) {
-        clearTimeout(scrollTimeoutRef.current);
-      }
-    };
-  }, [activeChat]);
-
-  // IntersectionObserver для определения текущей даты
-  useEffect(() => {
-    if (!messagesContainerRef.current || !activeChat) return;
-
-    const container = messagesContainerRef.current;
-    const dateSeparators = container.querySelectorAll(".date-separator");
-
-    if (dateSeparators.length === 0) return;
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        // Находим самую верхнюю видимую плашку
-        const topVisibleSeparator = entries
-          .filter((entry) => entry.isIntersecting)
-          .sort(
-            (a, b) => a.boundingClientRect.top - b.boundingClientRect.top,
-          )[0];
-
-        if (topVisibleSeparator) {
-          const date = (topVisibleSeparator.target as HTMLElement).getAttribute(
-            "data-date",
-          );
-          if (date) {
-            setFloatingDate(date);
-          }
-        }
-      },
-      {
-        root: container,
-        rootMargin: "-80px 0px 0px 0px",
-        threshold: 0.1,
-      },
-    );
-
-    dateSeparators.forEach((separator) => observer.observe(separator));
-
-    return () => observer.disconnect();
-  }, [activeChat, messagesLength]);
 
   // Проверка возможности редактирования (30 минут)
   const canEdit = useCallback(
@@ -257,9 +181,6 @@ export function ChatWindow({ activeChat }: ChatWindowProps) {
           <p>{isTyping ? "typing..." : "online"}</p>
         </div>
       </div>
-
-      {/* Floating Date Header (оптимизированный) */}
-      <FloatingDateHeader date={floatingDate} visible={isScrolling} />
 
       {/* Messages */}
       <div className="messages-container" ref={messagesContainerRef}>

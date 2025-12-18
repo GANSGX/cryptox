@@ -414,37 +414,50 @@
 
 .message-bubble {
   padding: 10px 14px;
-  border-radius: 12px;
+  border-radius: 18px;
   background: rgba(255, 255, 255, 0.08);
   color: var(--text-primary);
-  font-size: 14px;
+  font-size: 14.5px;
   line-height: 1.5;
   word-wrap: break-word;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
 }
 
 .message.own .message-bubble {
-  background: linear-gradient(135deg, rgba(255, 120, 60, 0.8), rgba(255, 90, 40, 0.8));
-  color: white;
+  /* Более темный градиент чтобы синие галочки не сливались */
+  background: linear-gradient(135deg, #2a5298, #1e3a8a);
+  color: #ffffff;
+  box-shadow: 0 2px 8px rgba(30, 58, 138, 0.3);
 }
 
 .message-time {
   font-size: 11px;
-  color: rgba(255, 255, 255, 0.5);
+  color: rgba(255, 255, 255, 0.6);
   margin-top: 4px;
   text-align: right;
   display: flex;
   align-items: center;
   justify-content: flex-end;
   gap: 4px;
+  font-weight: 500;
+}
+
+.message.own .message-time {
+  color: rgba(255, 255, 255, 0.85);
 }
 
 /* Edited indicator */
 .edited-indicator {
-  font-size: 10px;
-  color: rgba(255, 255, 255, 0.4);
+  font-size: 10.5px;
+  color: rgba(255, 255, 255, 0.5);
   font-style: italic;
-  margin-left: 2px;
+  margin-left: 3px;
   margin-right: 4px;
+  font-weight: 400;
+}
+
+.message.own .edited-indicator {
+  color: rgba(255, 255, 255, 0.75);
 }
 
 /* Editing mode - подсветка редактируемого сообщения */
@@ -468,7 +481,7 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  opacity: 0.7;
+  opacity: 0.8;
   position: relative;
 }
 
@@ -490,12 +503,12 @@
 
 /* 1 серая галочка - отправлено */
 .message-status.sent {
-  color: rgba(255, 255, 255, 0.5);
+  color: rgba(255, 255, 255, 0.6);
 }
 
 /* 2 серые галочки - доставлено */
 .message-status.delivered {
-  color: rgba(255, 255, 255, 0.5);
+  color: rgba(255, 255, 255, 0.6);
 }
 
 /* ========================================
@@ -505,32 +518,32 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 12px 0;
-  margin: 20px 0;
+  padding: 16px 0;
+  margin: 24px 0;
   user-select: none;
 }
 
 .date-separator-text {
-  padding: 8px 18px;
-  border-radius: 20px;
-  background: linear-gradient(135deg, rgba(255, 120, 60, 0.15), rgba(255, 90, 40, 0.1));
-  backdrop-filter: blur(16px);
-  border: 1.5px solid rgba(255, 120, 60, 0.3);
-  color: var(--text-primary);
-  font-size: 14px;
+  padding: 6px 16px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 12.5px;
   font-weight: 600;
   text-transform: capitalize;
-  letter-spacing: 0.3px;
-  box-shadow: 0 4px 20px rgba(255, 120, 60, 0.15),
-              0 2px 8px rgba(0, 0, 0, 0.2);
+  letter-spacing: 0.5px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15);
   white-space: nowrap;
-  transition: all 0.3s ease;
+  transition: all 0.2s ease;
 }
 
 .date-separator-text:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.18);
   transform: translateY(-1px);
-  box-shadow: 0 6px 24px rgba(255, 120, 60, 0.2),
-              0 3px 10px rgba(0, 0, 0, 0.25);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
 }
 
 /* ========================================
@@ -573,10 +586,11 @@
 }
 
 
-/* 2 синие галочки - прочитано */
+/* 2 светлые галочки - прочитано (хорошо видны на синем фоне) */
 .message-status.read {
-  color: #00b4ff;
+  color: #7dd3fc; /* Светло-голубой, контрастный к темно-синему фону */
   opacity: 1;
+  filter: drop-shadow(0 0 2px rgba(125, 211, 252, 0.5));
 }
 
 /* ========================================
