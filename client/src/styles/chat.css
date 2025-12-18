@@ -424,40 +424,56 @@
 }
 
 .message.own .message-bubble {
-  /* Более темный градиент чтобы синие галочки не сливались */
-  background: linear-gradient(135deg, #2a5298, #1e3a8a);
+  /* Liquid glass: затемненный градиент с blur */
+  background: linear-gradient(
+    135deg,
+    rgba(30, 58, 138, 0.75),
+    rgba(29, 78, 216, 0.7),
+    rgba(37, 99, 235, 0.75)
+  );
+  backdrop-filter: blur(16px) saturate(150%);
+  border: 1px solid rgba(59, 130, 246, 0.3);
   color: #ffffff;
-  box-shadow: 0 2px 8px rgba(30, 58, 138, 0.3);
+  box-shadow:
+    0 4px 20px rgba(29, 78, 216, 0.25),
+    0 2px 8px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
 }
 
 .message-time {
-  font-size: 11px;
-  color: rgba(255, 255, 255, 0.6);
-  margin-top: 4px;
+  font-size: 11.5px;
+  color: rgba(255, 255, 255, 0.55);
+  margin-top: 5px;
   text-align: right;
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  gap: 4px;
+  gap: 5px;
   font-weight: 500;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
 }
 
 .message.own .message-time {
-  color: rgba(255, 255, 255, 0.85);
+  color: rgba(255, 255, 255, 0.9);
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
 }
 
 /* Edited indicator */
 .edited-indicator {
   font-size: 10.5px;
-  color: rgba(255, 255, 255, 0.5);
+  color: rgba(255, 255, 255, 0.45);
   font-style: italic;
   margin-left: 3px;
   margin-right: 4px;
   font-weight: 400;
+  background: rgba(0, 0, 0, 0.15);
+  padding: 1px 5px;
+  border-radius: 8px;
 }
 
 .message.own .edited-indicator {
-  color: rgba(255, 255, 255, 0.75);
+  color: rgba(255, 255, 255, 0.85);
+  background: rgba(0, 0, 0, 0.2);
 }
 
 /* Editing mode - подсветка редактируемого сообщения */
@@ -524,26 +540,43 @@
 }
 
 .date-separator-text {
-  padding: 6px 16px;
-  border-radius: 16px;
-  background: rgba(255, 255, 255, 0.06);
-  backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  color: rgba(255, 255, 255, 0.7);
+  padding: 7px 18px;
+  border-radius: 20px;
+  /* Liquid glass: градиент + blur */
+  background: linear-gradient(
+    135deg,
+    rgba(99, 102, 241, 0.15),
+    rgba(139, 92, 246, 0.12),
+    rgba(168, 85, 247, 0.15)
+  );
+  backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid rgba(139, 92, 246, 0.3);
+  color: rgba(196, 181, 253, 0.95);
   font-size: 12.5px;
   font-weight: 600;
   text-transform: capitalize;
   letter-spacing: 0.5px;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15);
+  box-shadow:
+    0 4px 20px rgba(139, 92, 246, 0.15),
+    0 2px 8px rgba(0, 0, 0, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
   white-space: nowrap;
-  transition: all 0.2s ease;
+  transition: all 0.3s ease;
 }
 
 .date-separator-text:hover {
-  background: rgba(255, 255, 255, 0.08);
-  border-color: rgba(255, 255, 255, 0.18);
-  transform: translateY(-1px);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+  background: linear-gradient(
+    135deg,
+    rgba(99, 102, 241, 0.22),
+    rgba(139, 92, 246, 0.18),
+    rgba(168, 85, 247, 0.22)
+  );
+  border-color: rgba(139, 92, 246, 0.45);
+  transform: translateY(-2px);
+  box-shadow:
+    0 6px 28px rgba(139, 92, 246, 0.25),
+    0 3px 12px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.15);
 }
 
 /* ========================================
