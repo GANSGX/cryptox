@@ -73,16 +73,16 @@
     rgba(255, 255, 255, 0.08)
   );
   box-shadow:
-    0 4px 16px rgba(0, 0, 0, 0.2),
+    0 6px 20px rgba(0, 0, 0, 0.3),
     inset 0 1px 0 rgba(255, 255, 255, 0.15);
 }
 
 .context-menu-item:hover:not(.disabled) {
-  transform: translateX(4px);
+  transform: scale(1.03);
 }
 
 .context-menu-item:active:not(.disabled) {
-  transform: scale(0.97) translateX(2px);
+  transform: scale(0.98);
 }
 
 .context-menu-item:active:not(.disabled)::before {
