@@ -120,14 +120,14 @@ export function ChatWindow({ activeChat }: ChatWindowProps) {
     if (!messagesContainerRef.current) return;
 
     const container = messagesContainerRef.current;
-    let throttleTimer: NodeJS.Timeout | null = null;
+    let rafId: number | null = null;
 
     const handleScroll = () => {
-      // Throttle: выполнять максимум раз в 150ms
-      if (throttleTimer) return;
+      // requestAnimationFrame для плавности - вызывается синхронно с браузерным рендером
+      if (rafId) return;
 
-      throttleTimer = setTimeout(() => {
-        throttleTimer = null;
+      rafId = requestAnimationFrame(() => {
+        rafId = null;
 
         // Начало скролла → показать floating
         setIsScrolling(true);
@@ -161,7 +161,7 @@ export function ChatWindow({ activeChat }: ChatWindowProps) {
           setIsScrolling(false);
           setShowFloating(false);
         }, 500);
-      }, 150);
+      });
     };
 
     container.addEventListener("scroll", handleScroll, { passive: true });
@@ -171,8 +171,8 @@ export function ChatWindow({ activeChat }: ChatWindowProps) {
       if (scrollTimeoutRef.current) {
         clearTimeout(scrollTimeoutRef.current);
       }
-      if (throttleTimer) {
-        clearTimeout(throttleTimer);
+      if (rafId) {
+        cancelAnimationFrame(rafId);
       }
     };
   }, [activeChat]);
