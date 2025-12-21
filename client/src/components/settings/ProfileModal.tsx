@@ -1,5 +1,5 @@
-import { X, Calendar } from "lucide-react";
-import { useState, useEffect } from "react";
+import { X, Calendar, Camera } from "lucide-react";
+import { useState, useEffect, useRef } from "react";
 import { useAuthStore } from "@/store/authStore";
 import { CustomSelect } from "@/components/ui/CustomSelect";
 import { apiService } from "@/services/api.service";
@@ -17,8 +17,10 @@ export function ProfileModal({ isOpen, onClose }: ProfileModalProps) {
   const [isMounted, setIsMounted] = useState(false);
   const [isAnimated, setIsAnimated] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Profile data
+  const [avatar, setAvatar] = useState<string | null>(null);
   const [status, setStatus] = useState("");
   const [birthday, setBirthday] = useState("");
 
@@ -75,6 +77,21 @@ export function ProfileModal({ isOpen, onClose }: ProfileModalProps) {
 
   if (!isMounted) return null;
 
+  const handleAvatarClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        setAvatar(event.target?.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   const handleSave = async () => {
     setIsSaving(true);
     try {
@@ -130,9 +147,23 @@ export function ProfileModal({ isOpen, onClose }: ProfileModalProps) {
           {/* Avatar Section */}
           <div className="profile-section">
             <div className="profile-avatar-container">
-              <div className="profile-avatar-large">
-                <span>{user?.username.charAt(0).toUpperCase()}</span>
+              <div className="profile-avatar-large" onClick={handleAvatarClick}>
+                {avatar ? (
+                  <img src={avatar} alt="Avatar" />
+                ) : (
+                  <span>{user?.username.charAt(0).toUpperCase()}</span>
+                )}
+                <div className="profile-avatar-overlay">
+                  <Camera size={20} />
+                </div>
               </div>
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                style={{ display: "none" }}
+                onChange={handleAvatarChange}
+              />
             </div>
             <div className="profile-username">{user?.username}</div>
           </div>

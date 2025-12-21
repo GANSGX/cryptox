@@ -153,24 +153,32 @@ export function UserProfileModal({
               <div className="user-profile-info">
                 <h3 className="user-profile-section-title">About</h3>
 
-                {profile?.status ? (
-                  <div className="user-profile-info-item">
-                    <label>Status</label>
-                    <p>{profile.status}</p>
-                  </div>
-                ) : null}
+                {profile?.status || profile?.birthday ? (
+                  <>
+                    {profile?.status && (
+                      <div className="user-profile-info-item">
+                        <label>Status</label>
+                        <p>{profile.status}</p>
+                      </div>
+                    )}
 
-                {profile?.birthday ? (
-                  <div className="user-profile-info-item">
-                    <label>Birthday</label>
-                    <p>{formatBirthday(profile.birthday)}</p>
-                  </div>
-                ) : null}
-
-                {!profile?.status && !profile?.birthday && (
+                    {profile?.birthday && (
+                      <div className="user-profile-info-item">
+                        <label>Birthday</label>
+                        <p>{formatBirthday(profile.birthday)}</p>
+                      </div>
+                    )}
+                  </>
+                ) : (
                   <div className="user-profile-empty">
-                    <p>This profile is not filled out yet</p>
-                    <span>👤</span>
+                    <div className="user-profile-empty-icon">👤</div>
+                    <p>
+                      This profile is not filled out yet
+                      <br />
+                      <span style={{ opacity: 0.6, fontSize: "13px" }}>
+                        No information available
+                      </span>
+                    </p>
                   </div>
                 )}
               </div>

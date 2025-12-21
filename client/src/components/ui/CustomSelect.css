@@ -177,7 +177,6 @@
     rgba(255, 120, 60, 0.8),
     rgba(255, 90, 40, 0.8)
   );
-  box-shadow: 0 0 8px rgba(255, 120, 60, 0.5);
 }
 
 .custom-select-option.selected:hover {

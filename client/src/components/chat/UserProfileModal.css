@@ -1,5 +1,5 @@
 /* ========================================
-   USER PROFILE MODAL - LIQUID GLASS STYLE
+   USER PROFILE MODAL - LIQUID GLASS STYLE (NO GLOW)
    ======================================== */
 
 /* Overlay */
@@ -31,7 +31,7 @@
   left: 50%;
   transform: translate(-50%, -50%) scale(0.9);
   width: 90%;
-  max-width: 500px;
+  max-width: 480px;
   max-height: 85vh;
   z-index: 1000;
   opacity: 0;
@@ -41,7 +41,7 @@
   flex-direction: column;
   border-radius: 24px;
 
-  /* Liquid glass: темный градиент с blur */
+  /* Liquid glass БЕЗ свечения */
   background: linear-gradient(
     135deg,
     rgba(25, 25, 40, 0.85),
@@ -51,10 +51,7 @@
   backdrop-filter: blur(40px) saturate(180%);
   -webkit-backdrop-filter: blur(40px) saturate(180%);
   border: 1px solid rgba(255, 255, 255, 0.15);
-  box-shadow:
-    0 24px 60px rgba(0, 0, 0, 0.6),
-    0 12px 30px rgba(0, 0, 0, 0.4),
-    inset 0 1px 2px rgba(255, 255, 255, 0.1);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.5);
 }
 
 .user-profile-modal.open {
@@ -65,7 +62,7 @@
 
 /* Header */
 .user-profile-modal-header {
-  padding: 24px 28px;
+  padding: 20px 24px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   display: flex;
   justify-content: space-between;
@@ -74,11 +71,10 @@
 }
 
 .user-profile-modal-header h2 {
-  font-size: 22px;
+  font-size: 20px;
   font-weight: 600;
   color: var(--text-primary);
   margin: 0;
-  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
 }
 
 .user-profile-close-button {
@@ -92,25 +88,15 @@
   cursor: pointer;
   transition: all 0.2s ease;
 
-  /* Liquid glass */
-  background: linear-gradient(
-    135deg,
-    rgba(50, 50, 70, 0.35),
-    rgba(40, 40, 60, 0.3)
-  );
+  background: linear-gradient(135deg, rgba(50, 50, 70, 0.35), rgba(40, 40, 60, 0.3));
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   border: 1px solid rgba(255, 255, 255, 0.1);
   color: rgba(255, 255, 255, 0.7);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 }
 
 .user-profile-close-button:hover {
-  background: linear-gradient(
-    135deg,
-    rgba(65, 65, 85, 0.45),
-    rgba(55, 55, 75, 0.4)
-  );
+  background: linear-gradient(135deg, rgba(65, 65, 85, 0.45), rgba(55, 55, 75, 0.4));
   border-color: rgba(255, 255, 255, 0.15);
   color: rgba(255, 255, 255, 0.95);
   transform: scale(1.05);
@@ -120,14 +106,14 @@
 .user-profile-modal-content {
   flex: 1;
   overflow-y: auto;
-  padding: 28px;
+  padding: 24px;
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 20px;
 }
 
 .user-profile-modal-content::-webkit-scrollbar {
-  width: 8px;
+  width: 6px;
 }
 
 .user-profile-modal-content::-webkit-scrollbar-track {
@@ -135,21 +121,12 @@
 }
 
 .user-profile-modal-content::-webkit-scrollbar-thumb {
-  background: linear-gradient(
-    180deg,
-    rgba(255, 255, 255, 0.12),
-    rgba(255, 255, 255, 0.08)
-  );
-  border-radius: 6px;
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
 }
 
 .user-profile-modal-content::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(
-    180deg,
-    rgba(255, 255, 255, 0.18),
-    rgba(255, 255, 255, 0.14)
-  );
+  background: rgba(255, 255, 255, 0.15);
 }
 
 /* Loading State */
@@ -164,29 +141,25 @@
 .user-profile-section {
   display: flex;
   flex-direction: column;
+  align-items: center;
   gap: 12px;
+  padding: 20px 0 10px 0;
 }
 
 .user-profile-avatar-container {
-  display: flex;
-  justify-content: center;
-  margin-bottom: 8px;
+  position: relative;
 }
 
 .user-profile-avatar-large {
-  width: 120px;
-  height: 120px;
+  width: 110px;
+  height: 110px;
   border-radius: 50%;
   position: relative;
   overflow: hidden;
 
-  /* Liquid glass */
   background: linear-gradient(135deg, #5227FF, #B19EEF);
   border: 3px solid rgba(255, 255, 255, 0.2);
-  box-shadow:
-    0 8px 24px rgba(82, 39, 255, 0.4),
-    0 4px 12px rgba(0, 0, 0, 0.4),
-    inset 0 2px 4px rgba(255, 255, 255, 0.15);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
 }
 
 .user-profile-avatar-large img {
@@ -201,7 +174,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 48px;
+  font-size: 44px;
   font-weight: 600;
   color: white;
   text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
@@ -209,61 +182,52 @@
 
 .user-profile-username {
   text-align: center;
-  font-size: 20px;
+  font-size: 22px;
   font-weight: 600;
   color: var(--text-primary);
-  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  margin-bottom: 4px;
 }
 
 /* Action Buttons */
 .user-profile-actions {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 12px;
-  padding: 12px 0;
+  gap: 10px;
+  padding: 16px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .user-profile-action-button {
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
   gap: 8px;
-  padding: 16px 12px;
-  border-radius: 14px;
+  padding: 18px 8px;
+  border-radius: 16px;
   border: none;
   cursor: pointer;
   transition: all 0.25s ease;
 
-  /* Liquid glass */
-  background: linear-gradient(
-    135deg,
-    rgba(40, 40, 60, 0.35),
-    rgba(30, 30, 50, 0.3)
-  );
+  background: linear-gradient(135deg, rgba(40, 40, 60, 0.3), rgba(30, 30, 50, 0.25));
   backdrop-filter: blur(20px) saturate(160%);
   -webkit-backdrop-filter: blur(20px) saturate(160%);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow:
-    0 4px 16px rgba(0, 0, 0, 0.3),
-    inset 0 1px 1px rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.08);
 
-  color: rgba(255, 255, 255, 0.85);
-  font-size: 13px;
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 12px;
   font-weight: 500;
 }
 
+.user-profile-action-button svg {
+  stroke-width: 1.5px;
+}
+
 .user-profile-action-button:hover {
-  background: linear-gradient(
-    135deg,
-    rgba(50, 50, 70, 0.45),
-    rgba(40, 40, 60, 0.4)
-  );
-  border-color: rgba(255, 120, 60, 0.3);
+  background: linear-gradient(135deg, rgba(50, 50, 70, 0.4), rgba(40, 40, 60, 0.35));
+  border-color: rgba(255, 255, 255, 0.12);
   color: rgba(255, 255, 255, 0.95);
   transform: translateY(-2px);
-  box-shadow:
-    0 6px 20px rgba(255, 120, 60, 0.15),
-    inset 0 1px 2px rgba(255, 255, 255, 0.12);
 }
 
 .user-profile-action-button:active {
@@ -274,15 +238,17 @@
 .user-profile-info {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 12px;
 }
 
 .user-profile-section-title {
-  font-size: 16px;
+  font-size: 14px;
   font-weight: 600;
-  color: var(--text-primary);
-  margin: 0;
-  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  color: rgba(255, 255, 255, 0.5);
+  margin: 8px 0 4px 0;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  font-size: 12px;
 }
 
 .user-profile-info-item {
@@ -290,22 +256,18 @@
   flex-direction: column;
   gap: 6px;
   padding: 14px 16px;
-  border-radius: 12px;
+  border-radius: 14px;
 
-  background: linear-gradient(
-    135deg,
-    rgba(40, 40, 60, 0.25),
-    rgba(30, 30, 50, 0.2)
-  );
+  background: linear-gradient(135deg, rgba(40, 40, 60, 0.2), rgba(30, 30, 50, 0.15));
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.06);
 }
 
 .user-profile-info-item label {
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 500;
-  color: rgba(255, 255, 255, 0.6);
+  color: rgba(255, 255, 255, 0.5);
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
@@ -320,20 +282,22 @@
 /* Empty State */
 .user-profile-empty {
   text-align: center;
-  padding: 40px 20px;
+  padding: 50px 20px;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 16px;
   align-items: center;
 }
 
-.user-profile-empty p {
-  color: rgba(255, 255, 255, 0.5);
-  font-size: 15px;
-  margin: 0;
+.user-profile-empty-icon {
+  font-size: 56px;
+  opacity: 0.2;
+  filter: grayscale(1);
 }
 
-.user-profile-empty span {
-  font-size: 48px;
-  opacity: 0.3;
+.user-profile-empty p {
+  color: rgba(255, 255, 255, 0.4);
+  font-size: 14px;
+  margin: 0;
+  line-height: 1.6;
 }
