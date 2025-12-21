@@ -127,7 +127,17 @@ class ApiService {
    * Проверка авторизации
    */
   async me(): Promise<
-    ApiResponse<{ username: string; email: string; email_verified: boolean }>
+    ApiResponse<{
+      username: string;
+      email: string;
+      email_verified: boolean;
+      status: string | null;
+      birthday: string | null;
+      avatar_path: string | null;
+      status_privacy: string;
+      online_privacy: string;
+      typing_privacy: string;
+    }>
   > {
     return this.request("/me");
   }
@@ -426,6 +436,35 @@ class ApiService {
     }>
   > {
     return this.request("/messages/sync");
+  }
+
+  /**
+   * Обновление профиля пользователя
+   */
+  async updateProfile(data: {
+    status?: string;
+    birthday?: string | null;
+    avatar_path?: string | null;
+    status_privacy?: "everyone" | "chats" | "friends" | "nobody";
+    online_privacy?: "everyone" | "chats" | "friends" | "nobody";
+    typing_privacy?: "everyone" | "chats" | "friends" | "nobody";
+  }): Promise<
+    ApiResponse<{
+      username: string;
+      email: string;
+      email_verified: boolean;
+      status: string | null;
+      birthday: string | null;
+      avatar_path: string | null;
+      status_privacy: string;
+      online_privacy: string;
+      typing_privacy: string;
+    }>
+  > {
+    return this.request("/profile", {
+      method: "PATCH",
+      body: JSON.stringify(data),
+    });
   }
 }
 
