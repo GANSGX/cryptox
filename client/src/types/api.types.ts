@@ -22,6 +22,7 @@ export interface RegisterResponse {
     email: string;
     email_verified: boolean;
     created_at: string;
+    avatar_path?: string | null;
   };
 }
 
@@ -39,6 +40,7 @@ export interface LoginResponse {
     email: string;
     email_verified: boolean;
     last_seen: string;
+    avatar_path?: string | null;
   };
   status?: "pending_approval";
   pending_session_id?: string;
@@ -108,6 +110,7 @@ export interface VerifyDeviceCodeResponse {
     username: string;
     email: string;
     email_verified: boolean;
+    avatar_path?: string | null;
   };
 }
 

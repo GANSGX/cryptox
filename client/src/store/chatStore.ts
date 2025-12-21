@@ -11,6 +11,7 @@ interface Contact {
   lastMessageTime: string;
   unreadCount: number;
   isOnline?: boolean;
+  avatar_path?: string | null;
 }
 
 interface ChatState {

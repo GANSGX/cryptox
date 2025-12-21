@@ -113,7 +113,14 @@ export function Sidebar({ activeChat, onChatSelect }: SidebarProps) {
                 }}
               >
                 <div className="chat-avatar">
-                  {searchUser.username.charAt(0).toUpperCase()}
+                  {searchUser.avatar_path ? (
+                    <img
+                      src={`http://localhost:3001${searchUser.avatar_path}`}
+                      alt="Avatar"
+                    />
+                  ) : (
+                    searchUser.username.charAt(0).toUpperCase()
+                  )}
                 </div>
                 <div className="chat-info">
                   <h4>{searchUser.username}</h4>
@@ -136,7 +143,14 @@ export function Sidebar({ activeChat, onChatSelect }: SidebarProps) {
                 onClick={() => onChatSelect(contact.username)}
               >
                 <div className="chat-avatar">
-                  {contact.username.charAt(0).toUpperCase()}
+                  {contact.avatar_path ? (
+                    <img
+                      src={`http://localhost:3001${contact.avatar_path}`}
+                      alt="Avatar"
+                    />
+                  ) : (
+                    contact.username.charAt(0).toUpperCase()
+                  )}
                 </div>
                 <div className="chat-info">
                   <div className="chat-info-top">

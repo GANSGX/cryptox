@@ -13,7 +13,7 @@ import type { FastifyRequest, FastifyReply } from "fastify";
 
 /**
  * Validate Content-Type header for POST/PUT/PATCH requests
- * Only allows application/json
+ * Only allows application/json (except for file upload endpoints)
  */
 export async function validateContentType(
   request: FastifyRequest,
@@ -23,6 +23,12 @@ export async function validateContentType(
   const methodsWithBody = ["POST", "PUT", "PATCH"];
 
   if (!methodsWithBody.includes(request.method)) {
+    return;
+  }
+
+  // Skip validation for file upload endpoints (multipart/form-data)
+  const fileUploadPaths = ["/api/upload-avatar", "/api/profile/photos"];
+  if (fileUploadPaths.some((path) => request.url.startsWith(path))) {
     return;
   }
 

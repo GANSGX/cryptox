@@ -117,7 +117,14 @@ export function UserProfileModal({
               <div className="user-profile-section">
                 <div className="user-profile-avatar-container">
                   <div className="user-profile-avatar-large">
-                    <span>{username.charAt(0).toUpperCase()}</span>
+                    {profile?.avatar_path ? (
+                      <img
+                        src={`http://localhost:3001${profile.avatar_path}`}
+                        alt="Avatar"
+                      />
+                    ) : (
+                      <span>{username.charAt(0).toUpperCase()}</span>
+                    )}
                   </div>
                 </div>
                 <div className="user-profile-username">{username}</div>

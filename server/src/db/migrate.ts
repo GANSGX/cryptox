@@ -35,6 +35,7 @@ async function runMigrations() {
       "010_add_delivered_at.sql",
       "011_add_message_edit_delete.sql",
       "012_add_profile_fields.sql",
+      "013_add_profile_photos.sql",
     ];
 
     for (const migration of migrations) {

@@ -23,6 +23,7 @@ export function ChatWindow({ activeChat }: ChatWindowProps) {
     typingUsers,
     editMessage,
     deleteMessage,
+    contacts,
   } = useChatStore();
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const messagesContainerRef = useRef<HTMLDivElement>(null);
@@ -183,6 +184,10 @@ export function ChatWindow({ activeChat }: ChatWindowProps) {
   const chatMessages = messages[activeChat] || [];
   const isTyping = typingUsers.has(activeChat);
 
+  // Найти контакт для получения аватарки
+  const contact = contacts.find((c) => c.username === activeChat);
+  const avatarPath = contact?.avatar_path;
+
   return (
     <div className="chat-window">
       {/* Header */}
@@ -191,7 +196,13 @@ export function ChatWindow({ activeChat }: ChatWindowProps) {
         onClick={() => setShowUserProfile(true)}
         style={{ cursor: "pointer" }}
       >
-        <div className="chat-avatar">{activeChat.charAt(0).toUpperCase()}</div>
+        <div className="chat-avatar">
+          {avatarPath ? (
+            <img src={`http://localhost:3001${avatarPath}`} alt="Avatar" />
+          ) : (
+            activeChat.charAt(0).toUpperCase()
+          )}
+        </div>
         <div>
           <h3>{activeChat}</h3>
           <p>{isTyping ? "typing..." : "online"}</p>

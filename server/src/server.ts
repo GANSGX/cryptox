@@ -2,13 +2,21 @@ import Fastify from "fastify";
 import cors from "@fastify/cors";
 import helmet from "@fastify/helmet";
 import rateLimit from "@fastify/rate-limit";
+import multipart from "@fastify/multipart";
+import fastifyStatic from "@fastify/static";
+import { fileURLToPath } from "url";
+import { dirname, join } from "path";
 import { env } from "./config/env.js";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 import { authRoutes } from "./routes/auth.routes.js";
 import { protectedRoutes } from "./routes/protected.routes.js";
 import { usersRoutes } from "./routes/users.routes.js";
 import { messagesRoutes } from "./routes/messages.routes.js";
 import { sessionsRoutes } from "./routes/sessions.routes";
 import { keysRoutes } from "./routes/keys.routes.js";
+import { profilePhotosRoutes } from "./routes/profile-photos.routes.js";
 import {
   errorHandler,
   notFoundHandler,
@@ -29,7 +37,7 @@ const fastify = Fastify({
   logger: false,
   ignoreTrailingSlash: true,
   // Body parser limits (prevent DoS via large payloads)
-  bodyLimit: 1048576, // 1MB max body size
+  bodyLimit: 10485760, // 10MB max body size (для файлов)
   // Request timeout (prevent slowloris attacks)
   connectionTimeout: 30000, // 30 seconds
   keepAliveTimeout: 5000, // 5 seconds
@@ -37,6 +45,26 @@ const fastify = Fastify({
   disableRequestLogging: false,
   // Trust proxy (for correct IP behind reverse proxy)
   trustProxy: true,
+});
+
+// Multipart для загрузки файлов
+await fastify.register(multipart, {
+  limits: {
+    fileSize: 5242880, // 5MB max file size
+    files: 1, // только 1 файл за раз
+  },
+});
+
+// Static files для раздачи аватарок
+await fastify.register(fastifyStatic, {
+  root: join(__dirname, "..", "uploads"),
+  prefix: "/uploads/",
+  constraints: {},
+  decorateReply: false,
+  setHeaders: (res) => {
+    res.setHeader("Access-Control-Allow-Origin", "*");
+    res.setHeader("Cross-Origin-Resource-Policy", "cross-origin");
+  },
 });
 
 // Plugins
@@ -75,7 +103,7 @@ await fastify.register(helmet, {
       defaultSrc: ["'self'"],
       scriptSrc: ["'self'"],
       styleSrc: ["'self'", "'unsafe-inline'"],
-      imgSrc: ["'self'", "data:", "https:"],
+      imgSrc: ["'self'", "data:", "https:", "http://localhost:3001"],
       connectSrc: ["'self'", "ws:", "wss:"],
       fontSrc: ["'self'"],
       objectSrc: ["'none'"],
@@ -110,7 +138,7 @@ await fastify.register(helmet, {
   // Cross-Origin policies
   crossOriginEmbedderPolicy: false,
   crossOriginOpenerPolicy: { policy: "same-origin" },
-  crossOriginResourcePolicy: { policy: "same-origin" },
+  crossOriginResourcePolicy: false, // Отключаем для статики
 });
 
 // Rate limiting - отключен в тестах (иначе тесты падают из-за кэша в памяти)
@@ -172,6 +200,7 @@ fastify.addHook("onRequest", async (request, reply) => {
 
 // Security middleware (XSS, SQL injection, command injection, etc.)
 // Skip for /api/auth/* routes - they have strict Zod validation + manual sanitization
+// Skip for /uploads/* routes - they are static files served by fastifyStatic
 fastify.addHook("preHandler", async (request, reply) => {
   // Auth routes already have:
   // 1. Zod schema validation (very strict)
@@ -181,6 +210,12 @@ fastify.addHook("preHandler", async (request, reply) => {
   if (request.url.startsWith("/api/auth")) {
     return;
   }
+
+  // Skip static files - they are served by fastifyStatic plugin
+  if (request.url.startsWith("/uploads/")) {
+    return;
+  }
+
   return securityMiddleware(request, reply);
 });
 
@@ -224,6 +259,7 @@ await fastify.register(usersRoutes, { prefix: "/api/users" });
 await fastify.register(messagesRoutes, { prefix: "/api" });
 await fastify.register(sessionsRoutes, { prefix: "/api" });
 await fastify.register(keysRoutes, { prefix: "/api" });
+await fastify.register(profilePhotosRoutes, { prefix: "/api" });
 
 // Error handlers (enhanced - no information disclosure)
 fastify.setErrorHandler(enhancedErrorHandler);

@@ -31,6 +31,7 @@ interface AuthState {
   clearError: () => void;
   verifyDeviceCode: (code: string) => Promise<boolean>;
   clearPendingApproval: () => void;
+  updateUserAvatar: (avatar_path: string | null) => void;
 }
 
 export const useAuthStore = create<AuthState>((set, get) => ({
@@ -108,6 +109,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
           username: user.username,
           email: user.email,
           email_verified: user.email_verified || false,
+          avatar_path: user.avatar_path || null,
         },
         token,
         isLoading: false,
@@ -177,6 +179,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
           username: user.username,
           email: user.email,
           email_verified: user.email_verified || false,
+          avatar_path: user.avatar_path || null,
         },
         token,
         isLoading: false,
@@ -259,6 +262,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
           username,
           email: response.data.email,
           email_verified: response.data.email_verified || false,
+          avatar_path: response.data.avatar_path || null,
         },
         token,
         isLoading: false,
@@ -317,6 +321,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
           username: user.username,
           email: user.email,
           email_verified: user.email_verified || false,
+          avatar_path: user.avatar_path || null,
         },
         token,
         pendingApproval: null,
@@ -340,4 +345,12 @@ export const useAuthStore = create<AuthState>((set, get) => ({
    * Очистка ошибки
    */
   clearError: () => set({ error: null }),
+
+  /**
+   * Обновление аватара пользователя
+   */
+  updateUserAvatar: (avatar_path: string | null) =>
+    set((state) => ({
+      user: state.user ? { ...state.user, avatar_path } : null,
+    })),
 }));

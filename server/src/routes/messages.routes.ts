@@ -114,6 +114,7 @@ export async function messagesRoutes(fastify: FastifyInstance) {
         lastMessageTime: string;
         unreadCount: number;
         isOnline?: boolean;
+        avatar_path?: string | null;
       }>;
     }>;
   }>(
@@ -161,9 +162,11 @@ export async function messagesRoutes(fastify: FastifyInstance) {
             rm.contact_username as username,
             rm.encrypted_content as last_message,
             rm.created_at as last_message_time,
-            COALESCE(uc.unread_count, 0) as unread_count
+            COALESCE(uc.unread_count, 0) as unread_count,
+            u.avatar_path
           FROM ranked_messages rm
           LEFT JOIN unread_counts uc ON rm.contact_username = uc.contact_username
+          LEFT JOIN users u ON rm.contact_username = u.username
           WHERE rm.rn = 1
           ORDER BY rm.created_at DESC`,
           [currentUsername.toLowerCase()],
@@ -175,6 +178,7 @@ export async function messagesRoutes(fastify: FastifyInstance) {
           lastMessageTime: row.last_message_time.toISOString(),
           unreadCount: parseInt(row.unread_count),
           isOnline: false, // TODO: implement online status tracking
+          avatar_path: row.avatar_path || null,
         }));
 
         console.log(

@@ -61,7 +61,14 @@ export function BurgerMenu({ isOpen, onClose }: BurgerMenuProps) {
 
           <div className="burger-menu-profile">
             <div className="profile-avatar">
-              {user?.username.charAt(0).toUpperCase()}
+              {user?.avatar_path ? (
+                <img
+                  src={`http://localhost:3001${user.avatar_path}`}
+                  alt="Avatar"
+                />
+              ) : (
+                user?.username.charAt(0).toUpperCase()
+              )}
             </div>
             <div className="profile-info">
               <h3>{user?.username}</h3>

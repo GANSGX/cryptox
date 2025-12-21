@@ -432,6 +432,7 @@ class ApiService {
         lastMessageTime: string;
         unreadCount: number;
         isOnline?: boolean;
+        avatar_path?: string | null;
       }>;
     }>
   > {
@@ -465,6 +466,129 @@ class ApiService {
       method: "PATCH",
       body: JSON.stringify(data),
     });
+  }
+
+  /**
+   * Загрузка аватарки
+   */
+  async uploadAvatar(file: File): Promise<
+    ApiResponse<{
+      avatar_path: string;
+    }>
+  > {
+    const token = this.getToken();
+    const formData = new FormData();
+    formData.append("file", file);
+
+    try {
+      const response = await fetch(`${API_URL}/upload-avatar`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        body: formData,
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        return {
+          success: false,
+          error: data.error || "Upload failed",
+        };
+      }
+
+      return data;
+    } catch (err) {
+      console.error("Upload error:", err);
+      return {
+        success: false,
+        error: "Network error",
+      };
+    }
+  }
+
+  /**
+   * Загрузка фото в галерею профиля
+   */
+  async uploadProfilePhoto(file: File): Promise<
+    ApiResponse<{
+      id: string;
+      photo_path: string;
+      is_primary: boolean;
+      position: number;
+    }>
+  > {
+    const token = this.getToken();
+    const formData = new FormData();
+    formData.append("file", file);
+
+    try {
+      const response = await fetch(`${API_URL}/profile/photos`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        body: formData,
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        return {
+          success: false,
+          error: data.error || "Upload failed",
+        };
+      }
+
+      return data;
+    } catch (err) {
+      console.error("Upload error:", err);
+      return {
+        success: false,
+        error: "Network error",
+      };
+    }
+  }
+
+  /**
+   * Получить все фото профиля
+   */
+  async getProfilePhotos(): Promise<
+    ApiResponse<{
+      photos: Array<{
+        id: string;
+        photo_path: string;
+        is_primary: boolean;
+        position: number;
+        created_at: string;
+      }>;
+    }>
+  > {
+    return this.request("/profile/photos");
+  }
+
+  /**
+   * Удалить фото из галереи
+   */
+  async deleteProfilePhoto(photoId: string): Promise<ApiResponse> {
+    return this.request(`/profile/photos/${photoId}`, {
+      method: "DELETE",
+    });
+  }
+
+  /**
+   * Установить фото как основное
+   */
+  async setPrimaryPhoto(
+    photoId: string,
+  ): Promise<ApiResponse<{ photo_path: string }>> {
+    return this.request<{ photo_path: string }>(
+      `/profile/photos/${photoId}/set-primary`,
+      {
+        method: "PATCH",
+      },
+    );
   }
 }
 

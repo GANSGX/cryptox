@@ -1,6 +1,13 @@
 import type { FastifyInstance } from "fastify";
 import { authMiddleware } from "../middleware/auth.middleware.js";
 import { UserService } from "../services/user.service.js";
+import { writeFile } from "fs/promises";
+import { join, dirname } from "path";
+import { fileURLToPath } from "url";
+import { randomBytes } from "crypto";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 export async function protectedRoutes(fastify: FastifyInstance) {
   /**
@@ -162,6 +169,77 @@ export async function protectedRoutes(fastify: FastifyInstance) {
         return reply.code(500).send({
           success: false,
           error: "Failed to update profile",
+        });
+      }
+    },
+  );
+
+  /**
+   * POST /upload-avatar
+   * Загрузка аватарки
+   */
+  fastify.post(
+    "/upload-avatar",
+    {
+      preHandler: authMiddleware,
+    },
+    async (request, reply) => {
+      try {
+        const data = await request.file();
+
+        if (!data) {
+          return reply.code(400).send({
+            success: false,
+            error: "No file uploaded",
+          });
+        }
+
+        // Проверка типа файла
+        const allowedMimeTypes = [
+          "image/jpeg",
+          "image/jpg",
+          "image/png",
+          "image/gif",
+          "image/webp",
+        ];
+        if (!allowedMimeTypes.includes(data.mimetype)) {
+          return reply.code(400).send({
+            success: false,
+            error: "Only image files are allowed (JPEG, PNG, GIF, WEBP)",
+          });
+        }
+
+        // Генерируем уникальное имя файла
+        const ext = data.filename.split(".").pop() || "jpg";
+        const filename = `${request.user!.username}_${randomBytes(8).toString("hex")}.${ext}`;
+
+        // Путь для сохранения
+        const uploadsDir = join(__dirname, "..", "..", "uploads", "avatars");
+        const filepath = join(uploadsDir, filename);
+
+        // Сохраняем файл
+        const buffer = await data.toBuffer();
+        await writeFile(filepath, buffer);
+
+        // Обновляем путь аватарки в БД
+        const avatarPath = `/uploads/avatars/${filename}`;
+        await UserService.updateProfile(request.user!.username, {
+          avatar_path: avatarPath,
+        });
+
+        return reply.code(200).send({
+          success: true,
+          data: {
+            avatar_path: avatarPath,
+          },
+          message: "Avatar uploaded successfully",
+        });
+      } catch (error) {
+        console.error("❌ Error in /upload-avatar:", error);
+
+        return reply.code(500).send({
+          success: false,
+          error: "Failed to upload avatar",
         });
       }
     },
