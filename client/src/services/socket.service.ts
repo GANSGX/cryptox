@@ -248,6 +248,24 @@ class SocketService {
   }
 
   /**
+   * Подписка на обновление аватарки пользователя
+   */
+  onAvatarUpdated(
+    callback: (data: { username: string; avatar_path: string | null }) => void,
+  ) {
+    this.socket?.on("avatar_updated", callback);
+  }
+
+  /**
+   * Отписка от обновления аватарки
+   */
+  offAvatarUpdated(
+    callback: (data: { username: string; avatar_path: string | null }) => void,
+  ) {
+    this.socket?.off("avatar_updated", callback);
+  }
+
+  /**
    * Подписка на произвольное событие
    */
   on(event: string, callback: (...args: unknown[]) => void) {

@@ -5,6 +5,7 @@ import { join, dirname } from "path";
 import { fileURLToPath } from "url";
 import { randomBytes } from "crypto";
 import { pool } from "../db/pool.js";
+import type { Server as SocketIOServer } from "socket.io";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -95,6 +96,14 @@ export async function profilePhotosRoutes(fastify: FastifyInstance) {
             "UPDATE users SET avatar_path = $1 WHERE username = $2",
             [photoPath, request.user!.username.toLowerCase()],
           );
+
+          // Broadcast avatar update to all connected clients
+          if (fastify.io) {
+            fastify.io.emit("avatar_updated", {
+              username: request.user!.username.toLowerCase(),
+              avatar_path: photoPath,
+            });
+          }
         }
 
         return reply.code(201).send({
@@ -237,6 +246,14 @@ export async function profilePhotosRoutes(fastify: FastifyInstance) {
                   request.user!.username.toLowerCase(),
                 ],
               );
+
+              // Broadcast avatar update
+              if (fastify.io) {
+                fastify.io.emit("avatar_updated", {
+                  username: request.user!.username.toLowerCase(),
+                  avatar_path: updatedPhoto.rows[0].photo_path,
+                });
+              }
             }
           } else {
             // No more photos, clear avatar_path
@@ -244,6 +261,14 @@ export async function profilePhotosRoutes(fastify: FastifyInstance) {
               "UPDATE users SET avatar_path = NULL WHERE username = $1",
               [request.user!.username.toLowerCase()],
             );
+
+            // Broadcast avatar removal
+            if (fastify.io) {
+              fastify.io.emit("avatar_updated", {
+                username: request.user!.username.toLowerCase(),
+                avatar_path: null,
+              });
+            }
           }
         }
 
@@ -317,6 +342,14 @@ export async function profilePhotosRoutes(fastify: FastifyInstance) {
           "UPDATE users SET avatar_path = $1 WHERE username = $2",
           [photo.photo_path, request.user!.username.toLowerCase()],
         );
+
+        // Broadcast avatar update to all connected clients
+        if (fastify.io) {
+          fastify.io.emit("avatar_updated", {
+            username: request.user!.username.toLowerCase(),
+            avatar_path: photo.photo_path,
+          });
+        }
 
         return reply.code(200).send({
           success: true,

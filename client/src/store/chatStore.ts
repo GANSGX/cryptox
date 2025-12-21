@@ -66,6 +66,7 @@ interface ChatState {
     },
     myUsername: string,
   ) => void;
+  updateUserAvatar: (username: string, avatar_path: string | null) => void;
 }
 
 export const useChatStore = create<ChatState>()(
@@ -750,6 +751,26 @@ export const useChatStore = create<ChatState>()(
         } catch (err) {
           console.error("Sync contacts error:", err);
         }
+      },
+
+      /**
+       * Обновление аватарки пользователя в контактах
+       */
+      updateUserAvatar: (username: string, avatar_path: string | null) => {
+        console.log(
+          `🔄 Updating avatar for ${username} to ${avatar_path || "null"}`,
+        );
+
+        set((state) => {
+          const updatedContacts = state.contacts.map((contact) => {
+            if (contact.username === username) {
+              return { ...contact, avatar_path };
+            }
+            return contact;
+          });
+
+          return { contacts: updatedContacts };
+        });
       },
     }),
     {

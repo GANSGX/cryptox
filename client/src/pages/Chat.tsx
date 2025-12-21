@@ -8,13 +8,14 @@ import type { Message } from "@/types/message.types";
 import { debugLogger } from "@/utils/debugLogger";
 
 export function Chat() {
-  const { user } = useAuthStore();
+  const { user, updateUserAvatar: updateAuthAvatar } = useAuthStore();
   const {
     addMessage,
     setUserTyping,
     removeUserTyping,
     handleMessageEdited,
     handleMessageDeleted,
+    updateUserAvatar,
   } = useChatStore();
 
   useEffect(() => {
@@ -119,12 +120,31 @@ export function Chat() {
       );
     };
 
+    // Обработка обновления аватарки
+    const handleAvatarUpdated = (data: {
+      username: string;
+      avatar_path: string | null;
+    }) => {
+      console.log(
+        `🔄 Received avatar_updated event: ${data.username} -> ${data.avatar_path || "null"}`,
+      );
+
+      // Обновляем аватарку в контактах
+      updateUserAvatar(data.username, data.avatar_path);
+
+      // Если это наша собственная аватарка - обновляем в authStore
+      if (data.username === user.username) {
+        updateAuthAvatar(data.avatar_path);
+      }
+    };
+
     // Подписываемся на события
     socketService.onNewMessage(handleNewMessage);
     socketService.onUserTyping(handleUserTyping);
     socketService.onUserStoppedTyping(handleUserStoppedTyping);
     socketService.on("message:edited", handleMessageEditedEvent);
     socketService.on("message:deleted", handleMessageDeletedEvent);
+    socketService.onAvatarUpdated(handleAvatarUpdated);
 
     // Отписываемся при размонтировании
     return () => {
@@ -133,6 +153,7 @@ export function Chat() {
       socketService.offUserStoppedTyping(handleUserStoppedTyping);
       socketService.off("message:edited", handleMessageEditedEvent);
       socketService.off("message:deleted", handleMessageDeletedEvent);
+      socketService.offAvatarUpdated(handleAvatarUpdated);
     };
   }, [
     user,
@@ -141,6 +162,8 @@ export function Chat() {
     removeUserTyping,
     handleMessageEdited,
     handleMessageDeleted,
+    updateUserAvatar,
+    updateAuthAvatar,
   ]);
 
   return <ChatLayout />;
