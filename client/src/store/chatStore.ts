@@ -321,6 +321,7 @@ export const useChatStore = create<ChatState>()(
                   ? 0 // Сбрасываем если я отправитель или в активном чате
                   : existingContact?.unreadCount || 0,
             isOnline: existingContact?.isOnline,
+            avatar_path: existingContact?.avatar_path || null,
           };
 
           console.log("✅ Updated contact:", updatedContact);
@@ -725,6 +726,7 @@ export const useChatStore = create<ChatState>()(
                   lastMessageTime: contact.lastMessageTime,
                   unreadCount: contact.unreadCount,
                   isOnline: contact.isOnline,
+                  avatar_path: contact.avatar_path || null,
                 };
               } catch (err) {
                 console.error(
@@ -737,6 +739,7 @@ export const useChatStore = create<ChatState>()(
                   lastMessageTime: contact.lastMessageTime,
                   unreadCount: contact.unreadCount,
                   isOnline: contact.isOnline,
+                  avatar_path: contact.avatar_path || null,
                 };
               }
             }),
