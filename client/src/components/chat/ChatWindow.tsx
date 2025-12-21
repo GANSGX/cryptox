@@ -144,6 +144,14 @@ export function ChatWindow({ activeChat }: ChatWindowProps) {
     async (newContent: string) => {
       if (!editingMessage || !user) return;
 
+      // Проверяем, изменился ли текст
+      if (newContent.trim() === editingMessage.encrypted_content.trim()) {
+        // Текст не изменился - просто закрываем режим редактирования
+        console.log("Message not changed, skipping edit request");
+        setEditingMessage(null);
+        return;
+      }
+
       try {
         await editMessage(editingMessage.id, newContent, user.username);
         setEditingMessage(null); // Сбрасываем режим редактирования
@@ -215,12 +223,12 @@ export function ChatWindow({ activeChat }: ChatWindowProps) {
                   <div className="message-bubble">
                     {msg.encrypted_content}
                     <div className="message-time">
-                      {formatMessageTime(msg.created_at)}
                       {msg.edited_at && (
                         <span className="edited-indicator" title="Edited">
-                          (edited)
+                          edited
                         </span>
                       )}
+                      {formatMessageTime(msg.created_at)}
                       <MessageStatus
                         createdAt={msg.created_at}
                         deliveredAt={msg.delivered_at}
