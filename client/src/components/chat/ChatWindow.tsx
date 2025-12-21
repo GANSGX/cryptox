@@ -3,6 +3,7 @@ import { MessageCircle } from "lucide-react";
 import { MessageInput } from "./MessageInput";
 import { MessageStatus } from "./MessageStatus";
 import { DateSeparator } from "./DateSeparator";
+import { UserProfileModal } from "./UserProfileModal";
 import { ContextMenu, type ContextMenuItem } from "@/components/ui/ContextMenu";
 import { useChatStore } from "@/store/chatStore";
 import { useAuthStore } from "@/store/authStore";
@@ -35,6 +36,9 @@ export function ChatWindow({ activeChat }: ChatWindowProps) {
 
   // Состояние для EditMessageModal
   const [editingMessage, setEditingMessage] = useState<Message | null>(null);
+
+  // Состояние для UserProfileModal
+  const [showUserProfile, setShowUserProfile] = useState(false);
 
   // Загрузка сообщений при выборе чата
   useEffect(() => {
@@ -182,7 +186,11 @@ export function ChatWindow({ activeChat }: ChatWindowProps) {
   return (
     <div className="chat-window">
       {/* Header */}
-      <div className="chat-header">
+      <div
+        className="chat-header"
+        onClick={() => setShowUserProfile(true)}
+        style={{ cursor: "pointer" }}
+      >
         <div className="chat-avatar">{activeChat.charAt(0).toUpperCase()}</div>
         <div>
           <h3>{activeChat}</h3>
@@ -279,6 +287,13 @@ export function ChatWindow({ activeChat }: ChatWindowProps) {
             />
           );
         })()}
+
+      {/* User Profile Modal */}
+      <UserProfileModal
+        isOpen={showUserProfile}
+        onClose={() => setShowUserProfile(false)}
+        username={activeChat}
+      />
     </div>
   );
 }
