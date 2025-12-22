@@ -1,6 +1,22 @@
-import { X, Phone, Video, Image, FileText } from "lucide-react";
-import { useState, useEffect } from "react";
+import {
+  X,
+  MessageCircle,
+  Phone,
+  Bell,
+  MoreVertical,
+  Image as ImageIcon,
+  Video,
+  File,
+  Music,
+  Link,
+  Mic,
+  FileImage,
+  Users,
+  ChevronRight,
+} from "lucide-react";
+import { useState, useEffect, useRef } from "react";
 import { apiService } from "@/services/api.service";
+import { ContextMenu, type ContextMenuItem } from "@/components/ui/ContextMenu";
 import "./UserProfileModal.css";
 
 interface UserProfileModalProps {
@@ -26,15 +42,18 @@ export function UserProfileModal({
   const [isAnimated, setIsAnimated] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [profile, setProfile] = useState<UserProfile | null>(null);
+  const [contextMenu, setContextMenu] = useState<{
+    x: number;
+    y: number;
+  } | null>(null);
+  const moreButtonRef = useRef<HTMLButtonElement>(null);
 
-  // Загрузка профиля пользователя
   useEffect(() => {
     if (isOpen && username) {
       loadUserProfile();
     }
   }, [isOpen, username]);
 
-  // Анимация открытия/закрытия
   useEffect(() => {
     if (isOpen) {
       setIsMounted(true);
@@ -58,7 +77,6 @@ export function UserProfileModal({
 
     setIsLoading(true);
     try {
-      // Пока используем search для получения базовой информации
       const response = await apiService.searchUsers(username);
       if (response.success && response.data) {
         const user = response.data.users.find((u) => u.username === username);
@@ -66,7 +84,7 @@ export function UserProfileModal({
           setProfile({
             username: user.username,
             avatar_path: user.avatar_path,
-            status: user.bio, // Временно используем bio как status
+            status: user.bio,
           });
         }
       }
@@ -77,122 +95,141 @@ export function UserProfileModal({
     }
   };
 
-  if (!isMounted || !username) return null;
+  const handleMoreClick = () => {
+    if (!moreButtonRef.current) return;
 
-  const formatBirthday = (birthday: string | null | undefined) => {
-    if (!birthday) return null;
-    const date = new Date(birthday);
-    return date.toLocaleDateString("en-US", {
-      month: "long",
-      day: "numeric",
-      year: "numeric",
+    const rect = moreButtonRef.current.getBoundingClientRect();
+    setContextMenu({
+      x: rect.left,
+      y: rect.bottom + 8,
     });
   };
 
+  const moreMenuItems: ContextMenuItem[] = [
+    {
+      label: "Block User",
+      danger: true,
+      onClick: () => {
+        console.log("Block user:", username);
+        setContextMenu(null);
+      },
+    },
+    {
+      label: "Delete Contact",
+      icon: "delete",
+      danger: true,
+      onClick: () => {
+        console.log("Delete contact:", username);
+        setContextMenu(null);
+      },
+    },
+  ];
+
+  const mediaItems = [
+    { icon: ImageIcon, label: "Photos", count: 0 },
+    { icon: Video, label: "Videos", count: 0 },
+    { icon: File, label: "Files", count: 0 },
+    { icon: Music, label: "Music", count: 0 },
+    { icon: Link, label: "Links", count: 0 },
+    { icon: Mic, label: "Voice", count: 0 },
+    { icon: FileImage, label: "GIFs", count: 0 },
+    { icon: Users, label: "Groups in Common", count: 0 },
+  ];
+
+  if (!isMounted || !username) return null;
+
   return (
     <>
-      {/* Overlay */}
       <div
         className={`user-profile-overlay ${isAnimated ? "visible" : ""}`}
         onClick={onClose}
       />
 
-      {/* Modal */}
       <div className={`user-profile-modal ${isAnimated ? "open" : ""}`}>
-        {/* Header */}
-        <div className="user-profile-modal-header">
-          <h2>Profile</h2>
-          <button className="user-profile-close-button" onClick={onClose}>
-            <X size={24} />
-          </button>
-        </div>
+        <button className="user-profile-close-btn" onClick={onClose}>
+          <X size={22} strokeWidth={2} />
+        </button>
 
-        {/* Content */}
         <div className="user-profile-modal-content">
           {isLoading ? (
-            <div className="loading-profile">Loading profile...</div>
+            <div className="loading-profile">Loading...</div>
           ) : (
             <>
-              {/* Avatar Section */}
-              <div className="user-profile-section">
-                <div className="user-profile-avatar-container">
-                  <div className="user-profile-avatar-large">
-                    {profile?.avatar_path ? (
-                      <img
-                        src={`http://localhost:3001${profile.avatar_path}`}
-                        alt="Avatar"
-                      />
-                    ) : (
-                      <span>{username.charAt(0).toUpperCase()}</span>
-                    )}
-                  </div>
+              <div className="user-profile-header">
+                <div className="user-profile-avatar">
+                  {profile?.avatar_path ? (
+                    <img
+                      src={`http://localhost:3001${profile.avatar_path}`}
+                      alt="Avatar"
+                    />
+                  ) : (
+                    <span>{username.charAt(0).toUpperCase()}</span>
+                  )}
                 </div>
-                <div className="user-profile-username">{username}</div>
+                <h2 className="user-profile-name">{username}</h2>
+                <p className="user-profile-online">last seen recently</p>
               </div>
 
-              {/* Action Buttons */}
               <div className="user-profile-actions">
-                <button
-                  className="user-profile-action-button"
-                  title="Voice Call"
-                >
-                  <Phone size={20} />
-                  <span>Call</span>
+                <button className="action-btn">
+                  <MessageCircle size={22} strokeWidth={1.5} />
+                </button>
+                <button className="action-btn">
+                  <Bell size={22} strokeWidth={1.5} />
+                </button>
+                <button className="action-btn">
+                  <Phone size={22} strokeWidth={1.5} />
                 </button>
                 <button
-                  className="user-profile-action-button"
-                  title="Video Call"
+                  ref={moreButtonRef}
+                  className="action-btn"
+                  onClick={handleMoreClick}
                 >
-                  <Video size={20} />
-                  <span>Video</span>
-                </button>
-                <button className="user-profile-action-button" title="Media">
-                  <Image size={20} />
-                  <span>Media</span>
-                </button>
-                <button className="user-profile-action-button" title="Files">
-                  <FileText size={20} />
-                  <span>Files</span>
+                  <MoreVertical size={22} strokeWidth={1.5} />
                 </button>
               </div>
 
-              {/* Profile Info */}
-              <div className="user-profile-info">
-                <h3 className="user-profile-section-title">About</h3>
+              {profile?.status && (
+                <div className="status-section">
+                  <p className="status-text">{profile.status}</p>
+                </div>
+              )}
 
-                {profile?.status || profile?.birthday ? (
-                  <>
-                    {profile?.status && (
-                      <div className="user-profile-info-item">
-                        <label>Status</label>
-                        <p>{profile.status}</p>
-                      </div>
-                    )}
-
-                    {profile?.birthday && (
-                      <div className="user-profile-info-item">
-                        <label>Birthday</label>
-                        <p>{formatBirthday(profile.birthday)}</p>
-                      </div>
-                    )}
-                  </>
-                ) : (
-                  <div className="user-profile-empty">
-                    <div className="user-profile-empty-icon">👤</div>
-                    <p>
-                      This profile is not filled out yet
-                      <br />
-                      <span style={{ opacity: 0.6, fontSize: "13px" }}>
-                        No information available
-                      </span>
-                    </p>
-                  </div>
-                )}
+              <div className="media-list">
+                {mediaItems.map((item, index) => (
+                  <button key={index} className="media-row">
+                    <div className="media-row-left">
+                      <item.icon
+                        size={22}
+                        strokeWidth={1.5}
+                        className="media-row-icon"
+                      />
+                      <span className="media-row-label">{item.label}</span>
+                    </div>
+                    <div className="media-row-right">
+                      <span className="media-row-count">{item.count}</span>
+                      <ChevronRight
+                        size={18}
+                        strokeWidth={1.5}
+                        className="media-row-chevron"
+                      />
+                    </div>
+                  </button>
+                ))}
               </div>
             </>
           )}
         </div>
       </div>
+
+      {contextMenu && (
+        <ContextMenu
+          x={contextMenu.x}
+          y={contextMenu.y}
+          items={moreMenuItems}
+          onClose={() => setContextMenu(null)}
+        />
+      )}
     </>
   );
 }
