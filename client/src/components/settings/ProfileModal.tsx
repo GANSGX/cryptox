@@ -5,10 +5,12 @@ import {
   ChevronLeft,
   ChevronRight,
   Trash2,
+  Check,
+  ChevronDown,
+  Star,
 } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
 import { useAuthStore } from "@/store/authStore";
-import { CustomSelect } from "@/components/ui/CustomSelect";
 import { apiService } from "@/services/api.service";
 import "./ProfileModal.css";
 
@@ -26,6 +28,28 @@ interface ProfilePhoto {
   position: number;
   created_at: string;
 }
+
+const privacyOptions: { value: PrivacyOption; label: string }[] = [
+  { value: "everyone", label: "Everyone" },
+  { value: "chats", label: "My Chats" },
+  { value: "friends", label: "Friends" },
+  { value: "nobody", label: "Nobody" },
+];
+
+const months = [
+  "January",
+  "February",
+  "March",
+  "April",
+  "May",
+  "June",
+  "July",
+  "August",
+  "September",
+  "October",
+  "November",
+  "December",
+];
 
 export function ProfileModal({ isOpen, onClose }: ProfileModalProps) {
   const { user, updateUserAvatar } = useAuthStore();
@@ -47,14 +71,131 @@ export function ProfileModal({ isOpen, onClose }: ProfileModalProps) {
   const [photos, setPhotos] = useState<ProfilePhoto[]>([]);
   const [currentPhotoIndex, setCurrentPhotoIndex] = useState(0);
 
-  // Загрузка данных профиля при открытии модалки
+  // Focus states
+  const [statusFocused, setStatusFocused] = useState(false);
+
+  // Birthday picker
+  const [showDatePicker, setShowDatePicker] = useState(false);
+  const [selectedDay, setSelectedDay] = useState(1);
+  const [selectedMonth, setSelectedMonth] = useState(0);
+  const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
+
+  // Dropdown states
+  const [statusPrivacyOpen, setStatusPrivacyOpen] = useState(false);
+  const [onlinePrivacyOpen, setOnlinePrivacyOpen] = useState(false);
+  const [typingPrivacyOpen, setTypingPrivacyOpen] = useState(false);
+
+  // Dropdown refs for positioning
+  const statusDropdownRef = useRef<HTMLDivElement>(null);
+  const onlineDropdownRef = useRef<HTMLDivElement>(null);
+  const typingDropdownRef = useRef<HTMLDivElement>(null);
+
   useEffect(() => {
     if (isOpen) {
       loadProfileData();
     }
   }, [isOpen]);
 
-  // Анимация открытия/закрытия
+  // Close dropdowns when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      const target = e.target as Node;
+      if (
+        statusDropdownRef.current &&
+        !statusDropdownRef.current.contains(target)
+      ) {
+        setStatusPrivacyOpen(false);
+      }
+      if (
+        onlineDropdownRef.current &&
+        !onlineDropdownRef.current.contains(target)
+      ) {
+        setOnlinePrivacyOpen(false);
+      }
+      if (
+        typingDropdownRef.current &&
+        !typingDropdownRef.current.contains(target)
+      ) {
+        setTypingPrivacyOpen(false);
+      }
+    };
+
+    if (
+      isOpen &&
+      (statusPrivacyOpen || onlinePrivacyOpen || typingPrivacyOpen)
+    ) {
+      document.addEventListener("mousedown", handleClickOutside);
+      return () => {
+        document.removeEventListener("mousedown", handleClickOutside);
+      };
+    }
+  }, [isOpen, statusPrivacyOpen, onlinePrivacyOpen, typingPrivacyOpen]);
+
+  // Smart positioning for dropdowns relative to modal
+  useEffect(() => {
+    const positionDropdown = (
+      wrapperRef: React.RefObject<HTMLDivElement | null>,
+      isOpen: boolean,
+    ) => {
+      if (!isOpen || !wrapperRef.current) return;
+
+      const wrapper = wrapperRef.current;
+      const dropdown = wrapper.querySelector(
+        ".custom-select-dropdown",
+      ) as HTMLElement;
+      const modal = document.querySelector(".profile-modal") as HTMLElement;
+
+      if (!dropdown || !modal) return;
+
+      // Get positions
+      const wrapperRect = wrapper.getBoundingClientRect();
+      const modalRect = modal.getBoundingClientRect();
+      const dropdownRect = dropdown.getBoundingClientRect();
+
+      const dropdownWidth = dropdownRect.width || 160;
+      const dropdownHeight = dropdownRect.height || 200;
+      const padding = 16;
+
+      // Calculate position relative to wrapper (default: below and aligned right)
+      let top = "calc(100% + 6px)";
+      let bottom = "auto";
+      let right = "0";
+      let left = "auto";
+
+      // Check if dropdown goes beyond modal's right edge
+      const dropdownRight = wrapperRect.right;
+      if (dropdownRight > modalRect.right - padding) {
+        // Too close to right, align to right edge of wrapper
+        right = "0";
+      }
+
+      // Check if dropdown goes beyond modal's left edge
+      const dropdownLeft = wrapperRect.right - dropdownWidth;
+      if (dropdownLeft < modalRect.left + padding) {
+        // Too close to left, align to left edge of wrapper
+        right = "auto";
+        left = "0";
+      }
+
+      // Check if dropdown goes beyond modal's bottom edge
+      const dropdownBottom = wrapperRect.bottom + 6 + dropdownHeight;
+      if (dropdownBottom > modalRect.bottom - padding) {
+        // Too close to bottom, show above
+        top = "auto";
+        bottom = "calc(100% + 6px)";
+      }
+
+      dropdown.style.top = top;
+      dropdown.style.bottom = bottom;
+      dropdown.style.right = right;
+      dropdown.style.left = left;
+    };
+
+    positionDropdown(statusDropdownRef, statusPrivacyOpen);
+    positionDropdown(onlineDropdownRef, onlinePrivacyOpen);
+    positionDropdown(typingDropdownRef, typingPrivacyOpen);
+  }, [statusPrivacyOpen, onlinePrivacyOpen, typingPrivacyOpen]);
+
   useEffect(() => {
     if (isOpen) {
       setIsMounted(true);
@@ -74,11 +215,29 @@ export function ProfileModal({ isOpen, onClose }: ProfileModalProps) {
 
   const loadProfileData = async () => {
     try {
-      // Загружаем профиль
       const response = await apiService.me();
       if (response.success && response.data) {
         setStatus(response.data.status || "");
-        setBirthday(response.data.birthday || "");
+        const birthdayValue = response.data.birthday || "";
+        setBirthday(birthdayValue);
+
+        // Parse birthday for picker, or use current date
+        if (birthdayValue) {
+          const parts = birthdayValue.split("-");
+          if (parts.length === 3) {
+            const [year, month, day] = parts;
+            setSelectedYear(parseInt(year));
+            setSelectedMonth(parseInt(month) - 1);
+            setSelectedDay(parseInt(day));
+          }
+        } else {
+          // If no birthday, initialize with current date
+          const now = new Date();
+          setSelectedYear(now.getFullYear());
+          setSelectedMonth(now.getMonth());
+          setSelectedDay(now.getDate());
+        }
+
         setStatusPrivacy(
           (response.data.status_privacy as PrivacyOption) || "everyone",
         );
@@ -90,19 +249,15 @@ export function ProfileModal({ isOpen, onClose }: ProfileModalProps) {
         );
       }
 
-      // Загружаем галерею фотографий
       const photosResponse = await apiService.getProfilePhotos();
       if (photosResponse.success && photosResponse.data) {
         setPhotos(photosResponse.data.photos);
-        // Устанавливаем текущую фотографию на первую (primary)
         setCurrentPhotoIndex(0);
       }
     } catch (error) {
       console.error("Failed to load profile data:", error);
     }
   };
-
-  if (!isMounted) return null;
 
   const handleAvatarClick = () => {
     fileInputRef.current?.click();
@@ -112,19 +267,13 @@ export function ProfileModal({ isOpen, onClose }: ProfileModalProps) {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    // Загружаем фото в галерею
     try {
       const response = await apiService.uploadProfilePhoto(file);
       if (response.success && response.data) {
-        console.log("Photo uploaded:", response.data.photo_path);
-
-        // Перезагружаем данные пользователя чтобы обновить avatar_path в authStore
         const meResponse = await apiService.me();
         if (meResponse.success && meResponse.data) {
           updateUserAvatar(meResponse.data.avatar_path || null);
         }
-
-        // Перезагружаем галерею
         await loadProfileData();
       } else {
         alert(response.error || "Failed to upload photo");
@@ -149,7 +298,7 @@ export function ProfileModal({ isOpen, onClose }: ProfileModalProps) {
     const currentPhoto = photos[currentPhotoIndex];
     if (
       !window.confirm(
-        "Are you sure you want to delete this photo" +
+        "Delete this photo" +
           (currentPhoto.is_primary ? " (current avatar)" : "") +
           "?",
       )
@@ -160,15 +309,11 @@ export function ProfileModal({ isOpen, onClose }: ProfileModalProps) {
     try {
       const response = await apiService.deleteProfilePhoto(currentPhoto.id);
       if (response.success) {
-        // Перезагружаем данные пользователя чтобы обновить avatar_path в authStore
         const meResponse = await apiService.me();
         if (meResponse.success && meResponse.data) {
           updateUserAvatar(meResponse.data.avatar_path || null);
         }
-
-        // Перезагружаем галерею
         await loadProfileData();
-        // Корректируем индекс если нужно
         if (currentPhotoIndex >= photos.length - 1) {
           setCurrentPhotoIndex(Math.max(0, photos.length - 2));
         }
@@ -185,18 +330,15 @@ export function ProfileModal({ isOpen, onClose }: ProfileModalProps) {
     if (photos.length === 0) return;
 
     const currentPhoto = photos[currentPhotoIndex];
-    if (currentPhoto.is_primary) return; // Уже primary
+    if (currentPhoto.is_primary) return;
 
     try {
       const response = await apiService.setPrimaryPhoto(currentPhoto.id);
       if (response.success) {
-        // Перезагружаем данные пользователя чтобы обновить avatar_path в authStore
         const meResponse = await apiService.me();
         if (meResponse.success && meResponse.data) {
           updateUserAvatar(meResponse.data.avatar_path || null);
         }
-
-        // Перезагружаем галерею
         await loadProfileData();
       } else {
         alert(response.error || "Failed to set primary photo");
@@ -210,9 +352,12 @@ export function ProfileModal({ isOpen, onClose }: ProfileModalProps) {
   const handleSave = async () => {
     setIsSaving(true);
     try {
+      // Format birthday as YYYY-MM-DD
+      const birthdayValue = `${selectedYear}-${String(selectedMonth + 1).padStart(2, "0")}-${String(selectedDay).padStart(2, "0")}`;
+
       const response = await apiService.updateProfile({
         status: status || undefined,
-        birthday: birthday || undefined,
+        birthday: birthdayValue || undefined,
         status_privacy: statusPrivacy,
         online_privacy: onlinePrivacy,
         typing_privacy: typingPrivacy,
@@ -232,60 +377,291 @@ export function ProfileModal({ isOpen, onClose }: ProfileModalProps) {
     }
   };
 
-  const privacyOptions: { value: PrivacyOption; label: string }[] = [
-    { value: "everyone", label: "Everyone" },
-    { value: "chats", label: "My Chats" },
-    { value: "friends", label: "Friends Only" },
-    { value: "nobody", label: "Nobody" },
-  ];
+  // Format birthday for display
+  const formatBirthday = () => {
+    if (!birthday) return "Not set";
+    return `${String(selectedDay).padStart(2, "0")} ${months[selectedMonth]} ${selectedYear}`;
+  };
+
+  // Generate years array from 1875 to current year
+  const generateYears = () => {
+    const currentYear = new Date().getFullYear();
+    const years = [];
+    for (let year = 1875; year <= currentYear; year++) {
+      years.push(year);
+    }
+    return years;
+  };
+
+  // Auto-scroll to selected items when picker opens
+  useEffect(() => {
+    if (showDatePicker) {
+      setTimeout(() => {
+        const wheels = document.querySelectorAll(".wheel");
+        wheels.forEach((wheel) => {
+          const selected = wheel.querySelector(".selected");
+          if (selected) {
+            selected.scrollIntoView({ block: "center", behavior: "smooth" });
+          }
+        });
+      }, 100);
+    }
+  }, [showDatePicker]);
+
+  // Snap to nearest item
+  const snapToNearestItem = (wheelElement: HTMLElement) => {
+    const items = Array.from(
+      wheelElement.querySelectorAll<HTMLElement>(".wheel-item:not(.spacer)"),
+    );
+    if (items.length === 0) return;
+
+    const wheelCenter = wheelElement.scrollTop + wheelElement.clientHeight / 2;
+    let closestItem: HTMLElement | null = null;
+    let minDistance = Infinity;
+
+    items.forEach((item) => {
+      const itemTop = item.offsetTop;
+      const itemHeight = item.offsetHeight;
+      const itemCenter = itemTop + itemHeight / 2;
+      const distance = Math.abs(wheelCenter - itemCenter);
+
+      if (distance < minDistance) {
+        minDistance = distance;
+        closestItem = item;
+      }
+    });
+
+    if (closestItem) {
+      const item = closestItem as HTMLElement;
+      const itemTop = item.offsetTop;
+      const itemHeight = item.offsetHeight;
+      const itemCenter = itemTop + itemHeight / 2;
+      const wheelHalfHeight = wheelElement.clientHeight / 2;
+      const targetScroll = itemCenter - wheelHalfHeight;
+
+      wheelElement.scrollTo({
+        top: targetScroll,
+        behavior: "smooth",
+      });
+    }
+  };
+
+  // Drag-scroll functionality
+  const setupDragScroll = (wheelElement: HTMLElement) => {
+    let isDragging = false;
+    let startY = 0;
+    let startScrollTop = 0;
+
+    const handleMouseDown = (e: MouseEvent) => {
+      isDragging = true;
+      startY = e.clientY;
+      startScrollTop = wheelElement.scrollTop;
+      wheelElement.style.cursor = "grabbing";
+      wheelElement.style.userSelect = "none";
+      e.preventDefault();
+    };
+
+    const handleMouseMove = (e: MouseEvent) => {
+      if (!isDragging) return;
+      e.preventDefault();
+
+      const totalDelta = startY - e.clientY;
+      wheelElement.scrollTop = startScrollTop + totalDelta;
+    };
+
+    const handleMouseUp = () => {
+      if (!isDragging) return;
+      isDragging = false;
+      wheelElement.style.cursor = "grab";
+      wheelElement.style.userSelect = "auto";
+
+      // Snap to nearest item after drag
+      setTimeout(() => snapToNearestItem(wheelElement), 50);
+    };
+
+    wheelElement.addEventListener("mousedown", handleMouseDown);
+    document.addEventListener("mousemove", handleMouseMove);
+    document.addEventListener("mouseup", handleMouseUp);
+
+    return () => {
+      wheelElement.removeEventListener("mousedown", handleMouseDown);
+      document.removeEventListener("mousemove", handleMouseMove);
+      document.removeEventListener("mouseup", handleMouseUp);
+    };
+  };
+
+  // Update selected values based on scroll position
+  const updateSelectedFromScroll = (
+    wheelElement: HTMLElement,
+    setter: (value: number) => void,
+  ) => {
+    const items = Array.from(
+      wheelElement.querySelectorAll<HTMLElement>(".wheel-item:not(.spacer)"),
+    );
+    const wheelCenter = wheelElement.scrollTop + wheelElement.clientHeight / 2;
+
+    let closestItem: HTMLElement | null = null;
+    let closestValue = 0;
+    let minDistance = Infinity;
+
+    items.forEach((item, index) => {
+      const itemTop = item.offsetTop;
+      const itemCenter = itemTop + item.offsetHeight / 2;
+      const distance = Math.abs(wheelCenter - itemCenter);
+
+      if (distance < minDistance) {
+        minDistance = distance;
+        closestItem = item;
+        closestValue = index;
+      }
+    });
+
+    if (closestItem) {
+      const wheelContainer = wheelElement.closest(".wheel-container");
+      if (wheelContainer) {
+        const label = wheelContainer.querySelector(".wheel-label")?.textContent;
+        if (label === "Day") {
+          setter(closestValue + 1);
+        } else if (label === "Month") {
+          setter(closestValue);
+        } else if (label === "Year") {
+          const years = generateYears();
+          setter(years[closestValue]);
+        }
+      }
+    }
+  };
+
+  // Setup drag-scroll for all wheels when picker opens
+  useEffect(() => {
+    if (showDatePicker) {
+      setTimeout(() => {
+        const wheels = document.querySelectorAll(".wheel");
+        const cleanups: (() => void)[] = [];
+
+        wheels.forEach((wheel, index) => {
+          const wheelElement = wheel as HTMLElement;
+          const cleanup = setupDragScroll(wheelElement);
+          cleanups.push(cleanup);
+
+          // Wheel event - scroll by one item at a time
+          let wheelTimeout: NodeJS.Timeout;
+          const handleWheel = (e: WheelEvent) => {
+            e.preventDefault();
+
+            const items = Array.from(
+              wheelElement.querySelectorAll<HTMLElement>(
+                ".wheel-item:not(.spacer)",
+              ),
+            );
+            if (items.length === 0) return;
+
+            const wheelCenter =
+              wheelElement.scrollTop + wheelElement.clientHeight / 2;
+            let currentIndex = 0;
+            let minDistance = Infinity;
+
+            items.forEach((item, idx) => {
+              const itemTop = item.offsetTop;
+              const itemHeight = item.offsetHeight;
+              const itemCenter = itemTop + itemHeight / 2;
+              const distance = Math.abs(wheelCenter - itemCenter);
+
+              if (distance < minDistance) {
+                minDistance = distance;
+                currentIndex = idx;
+              }
+            });
+
+            // Scroll up or down by one item
+            const direction = e.deltaY > 0 ? 1 : -1;
+            const targetIndex = Math.max(
+              0,
+              Math.min(items.length - 1, currentIndex + direction),
+            );
+            const targetItem = items[targetIndex];
+
+            const itemTop = targetItem.offsetTop;
+            const itemHeight = targetItem.offsetHeight;
+            const itemCenter = itemTop + itemHeight / 2;
+            const wheelHalfHeight = wheelElement.clientHeight / 2;
+            const targetScroll = itemCenter - wheelHalfHeight;
+
+            wheelElement.scrollTo({
+              top: targetScroll,
+              behavior: "smooth",
+            });
+
+            // Update selected value after scroll
+            clearTimeout(wheelTimeout);
+            wheelTimeout = setTimeout(() => {
+              if (index === 0) {
+                updateSelectedFromScroll(wheelElement, setSelectedDay);
+              } else if (index === 1) {
+                updateSelectedFromScroll(wheelElement, setSelectedMonth);
+              } else if (index === 2) {
+                updateSelectedFromScroll(wheelElement, setSelectedYear);
+              }
+            }, 200);
+          };
+
+          wheelElement.addEventListener("wheel", handleWheel, {
+            passive: false,
+          });
+          cleanups.push(() => {
+            wheelElement.removeEventListener("wheel", handleWheel);
+            clearTimeout(wheelTimeout);
+          });
+
+          // Update selected value on scroll end (for drag)
+          let scrollTimeout: NodeJS.Timeout;
+          const handleScroll = () => {
+            clearTimeout(scrollTimeout);
+            scrollTimeout = setTimeout(() => {
+              if (index === 0) {
+                updateSelectedFromScroll(wheelElement, setSelectedDay);
+              } else if (index === 1) {
+                updateSelectedFromScroll(wheelElement, setSelectedMonth);
+              } else if (index === 2) {
+                updateSelectedFromScroll(wheelElement, setSelectedYear);
+              }
+            }, 150);
+          };
+
+          wheelElement.addEventListener("scroll", handleScroll);
+          cleanups.push(() => {
+            wheelElement.removeEventListener("scroll", handleScroll);
+            clearTimeout(scrollTimeout);
+          });
+        });
+
+        return () => {
+          cleanups.forEach((cleanup) => cleanup());
+        };
+      }, 100);
+    }
+  }, [showDatePicker]);
+
+  if (!isMounted) return null;
 
   return (
     <>
-      {/* Overlay */}
       <div
         className={`profile-overlay ${isAnimated ? "visible" : ""}`}
         onClick={onClose}
       />
 
-      {/* Modal */}
       <div className={`profile-modal ${isAnimated ? "open" : ""}`}>
-        {/* Header */}
-        <div className="profile-modal-header">
-          <h2>Edit Profile</h2>
-          <button className="profile-close-button" onClick={onClose}>
-            <X size={24} />
-          </button>
-        </div>
+        <button className="profile-close-btn" onClick={onClose}>
+          <X size={22} strokeWidth={2} />
+        </button>
 
-        {/* Content */}
         <div className="profile-modal-content">
-          {/* Avatar Gallery Section */}
-          <div className="profile-section">
-            <div className="profile-avatar-container">
-              <div className="profile-avatar-gallery">
-                {/* Navigation arrows */}
-                {photos.length > 1 && (
-                  <>
-                    <button
-                      className="gallery-nav gallery-nav-left"
-                      onClick={handlePreviousPhoto}
-                    >
-                      <ChevronLeft size={24} />
-                    </button>
-                    <button
-                      className="gallery-nav gallery-nav-right"
-                      onClick={handleNextPhoto}
-                    >
-                      <ChevronRight size={24} />
-                    </button>
-                  </>
-                )}
-
-                {/* Avatar display */}
-                <div
-                  className="profile-avatar-large"
-                  onClick={handleAvatarClick}
-                >
+          {/* Avatar Gallery */}
+          <div className="profile-header">
+            <div className="profile-avatar-gallery">
+              <div className="avatar-wrapper">
+                <div className="profile-avatar" onClick={handleAvatarClick}>
                   {photos.length > 0 && photos[currentPhotoIndex] ? (
                     <img
                       src={`http://localhost:3001${photos[currentPhotoIndex].photo_path}`}
@@ -299,141 +675,352 @@ export function ProfileModal({ isOpen, onClose }: ProfileModalProps) {
                   ) : (
                     <span>{user?.username.charAt(0).toUpperCase()}</span>
                   )}
-                  <div className="profile-avatar-overlay">
-                    <Camera size={20} />
+                  <div className="avatar-overlay">
+                    <Camera size={24} strokeWidth={2} />
                   </div>
                 </div>
 
-                {/* Delete button */}
-                {photos.length > 0 && (
-                  <button
-                    className="gallery-delete-btn"
-                    onClick={handleDeletePhoto}
-                  >
-                    <Trash2 size={18} />
-                  </button>
+                {photos.length > 1 && (
+                  <>
+                    <button
+                      className="gallery-nav gallery-nav-left"
+                      onClick={handlePreviousPhoto}
+                    >
+                      <ChevronLeft size={18} strokeWidth={2.5} />
+                    </button>
+                    <button
+                      className="gallery-nav gallery-nav-right"
+                      onClick={handleNextPhoto}
+                    >
+                      <ChevronRight size={18} strokeWidth={2.5} />
+                    </button>
+                  </>
                 )}
+              </div>
 
-                {/* Photo counter */}
-                {photos.length > 0 && (
+              {photos.length > 0 && (
+                <div className="gallery-controls">
                   <div className="gallery-counter">
                     {currentPhotoIndex + 1} / {photos.length}
-                    {photos[currentPhotoIndex]?.is_primary && (
-                      <span className="primary-badge">Main</span>
-                    )}
                   </div>
-                )}
 
-                {/* Set as primary button (if not primary) */}
-                {photos.length > 0 &&
-                  !photos[currentPhotoIndex]?.is_primary && (
+                  <div className="gallery-buttons">
+                    {photos[currentPhotoIndex]?.is_primary ? (
+                      <div className="primary-indicator">
+                        <Star size={14} strokeWidth={2} fill="currentColor" />
+                        <span>Main Photo</span>
+                      </div>
+                    ) : (
+                      <button
+                        className="gallery-action-btn set-main"
+                        onClick={handleSetPrimary}
+                        title="Set as main photo"
+                      >
+                        <Star size={16} strokeWidth={2} />
+                        <span>Set as Main</span>
+                      </button>
+                    )}
                     <button
-                      className="set-primary-btn"
-                      onClick={handleSetPrimary}
+                      className="gallery-action-btn delete"
+                      onClick={handleDeletePhoto}
+                      title="Delete photo"
                     >
-                      Set as Main
+                      <Trash2 size={16} strokeWidth={2} />
+                      <span>Delete</span>
                     </button>
-                  )}
+                  </div>
+                </div>
+              )}
 
-                <input
-                  ref={fileInputRef}
-                  type="file"
-                  accept="image/*"
-                  style={{ display: "none" }}
-                  onChange={handleAvatarChange}
-                />
-              </div>
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                style={{ display: "none" }}
+                onChange={handleAvatarChange}
+              />
             </div>
-            <div className="profile-username">{user?.username}</div>
+
+            <h2 className="profile-name">{user?.username}</h2>
+            <p className="profile-email">{user?.email}</p>
           </div>
 
-          {/* Status */}
-          <div className="profile-section">
-            <label className="profile-label">Status</label>
-            <input
-              type="text"
-              className="profile-input"
-              placeholder="What's on your mind?"
-              value={status}
-              onChange={(e) => setStatus(e.target.value)}
-              maxLength={70}
-            />
-          </div>
-
-          {/* Birthday */}
-          <div className="profile-section">
-            <label className="profile-label">
-              <Calendar size={16} />
-              Birthday
+          {/* Status Input */}
+          <div className="input-group">
+            <label className="input-label">
+              <span className="label-text">Status Message</span>
             </label>
-            <input
-              type="date"
-              className="profile-input"
-              value={birthday}
-              onChange={(e) => setBirthday(e.target.value)}
-            />
+            <div
+              className={`custom-input ${statusFocused ? "focused" : ""} ${status ? "filled" : ""}`}
+            >
+              <input
+                type="text"
+                placeholder="What's on your mind?"
+                value={status}
+                onChange={(e) => setStatus(e.target.value)}
+                onFocus={() => setStatusFocused(true)}
+                onBlur={() => setStatusFocused(false)}
+                maxLength={70}
+              />
+              <span className="input-length">{status.length}/70</span>
+            </div>
+          </div>
+
+          {/* Birthday Picker Button */}
+          <div className="input-group">
+            <label className="input-label">
+              <Calendar size={15} strokeWidth={2} />
+              <span className="label-text">Date of Birth</span>
+            </label>
+            <button
+              className="birthday-button"
+              onClick={() => setShowDatePicker(true)}
+            >
+              <span className="birthday-value">{formatBirthday()}</span>
+              <ChevronRight size={18} strokeWidth={2} />
+            </button>
           </div>
 
           {/* Privacy Settings */}
-          <div className="profile-section">
-            <h3 className="profile-section-title">Privacy Settings</h3>
+          <div className="privacy-section">
+            <h3 className="section-title">Privacy</h3>
 
-            {/* Who can see my status */}
-            <div className="profile-privacy-setting">
-              <label className="profile-privacy-label">
-                Who can see my status
-              </label>
-              <CustomSelect
-                value={statusPrivacy}
-                onChange={(value) => setStatusPrivacy(value as PrivacyOption)}
-                options={privacyOptions}
-              />
+            <div className="privacy-row">
+              <span className="privacy-label">Status visibility</span>
+              <div className="custom-select-wrapper" ref={statusDropdownRef}>
+                <button
+                  className="custom-select"
+                  onClick={() => setStatusPrivacyOpen(!statusPrivacyOpen)}
+                >
+                  <span>
+                    {
+                      privacyOptions.find((opt) => opt.value === statusPrivacy)
+                        ?.label
+                    }
+                  </span>
+                  <ChevronDown
+                    size={16}
+                    strokeWidth={2}
+                    className={statusPrivacyOpen ? "rotated" : ""}
+                  />
+                </button>
+                {statusPrivacyOpen && (
+                  <div className="custom-select-dropdown">
+                    {privacyOptions.map((opt) => (
+                      <button
+                        key={opt.value}
+                        className={`dropdown-option ${statusPrivacy === opt.value ? "selected" : ""}`}
+                        onClick={() => {
+                          setStatusPrivacy(opt.value);
+                          setStatusPrivacyOpen(false);
+                        }}
+                      >
+                        {opt.label}
+                        {statusPrivacy === opt.value && (
+                          <Check size={16} strokeWidth={2.5} />
+                        )}
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
             </div>
 
-            {/* Who can see my online status */}
-            <div className="profile-privacy-setting">
-              <label className="profile-privacy-label">
-                Who can see when I'm online
-              </label>
-              <CustomSelect
-                value={onlinePrivacy}
-                onChange={(value) => setOnlinePrivacy(value as PrivacyOption)}
-                options={privacyOptions}
-              />
+            <div className="privacy-row">
+              <span className="privacy-label">Online status</span>
+              <div className="custom-select-wrapper" ref={onlineDropdownRef}>
+                <button
+                  className="custom-select"
+                  onClick={() => setOnlinePrivacyOpen(!onlinePrivacyOpen)}
+                >
+                  <span>
+                    {
+                      privacyOptions.find((opt) => opt.value === onlinePrivacy)
+                        ?.label
+                    }
+                  </span>
+                  <ChevronDown
+                    size={16}
+                    strokeWidth={2}
+                    className={onlinePrivacyOpen ? "rotated" : ""}
+                  />
+                </button>
+                {onlinePrivacyOpen && (
+                  <div className="custom-select-dropdown">
+                    {privacyOptions.map((opt) => (
+                      <button
+                        key={opt.value}
+                        className={`dropdown-option ${onlinePrivacy === opt.value ? "selected" : ""}`}
+                        onClick={() => {
+                          setOnlinePrivacy(opt.value);
+                          setOnlinePrivacyOpen(false);
+                        }}
+                      >
+                        {opt.label}
+                        {onlinePrivacy === opt.value && (
+                          <Check size={16} strokeWidth={2.5} />
+                        )}
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
             </div>
 
-            {/* Who can see my typing status */}
-            <div className="profile-privacy-setting">
-              <label className="profile-privacy-label">
-                Who can see typing indicators
-              </label>
-              <CustomSelect
-                value={typingPrivacy}
-                onChange={(value) => setTypingPrivacy(value as PrivacyOption)}
-                options={privacyOptions}
-              />
+            <div className="privacy-row">
+              <span className="privacy-label">Typing indicators</span>
+              <div className="custom-select-wrapper" ref={typingDropdownRef}>
+                <button
+                  className="custom-select"
+                  onClick={() => setTypingPrivacyOpen(!typingPrivacyOpen)}
+                >
+                  <span>
+                    {
+                      privacyOptions.find((opt) => opt.value === typingPrivacy)
+                        ?.label
+                    }
+                  </span>
+                  <ChevronDown
+                    size={16}
+                    strokeWidth={2}
+                    className={typingPrivacyOpen ? "rotated" : ""}
+                  />
+                </button>
+                {typingPrivacyOpen && (
+                  <div className="custom-select-dropdown">
+                    {privacyOptions.map((opt) => (
+                      <button
+                        key={opt.value}
+                        className={`dropdown-option ${typingPrivacy === opt.value ? "selected" : ""}`}
+                        onClick={() => {
+                          setTypingPrivacy(opt.value);
+                          setTypingPrivacyOpen(false);
+                        }}
+                      >
+                        {opt.label}
+                        {typingPrivacy === opt.value && (
+                          <Check size={16} strokeWidth={2.5} />
+                        )}
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         </div>
 
-        {/* Footer with Save button */}
-        <div className="profile-modal-footer">
+        {/* Save Button */}
+        <div className="profile-footer">
           <button
-            className="profile-cancel-button"
-            onClick={onClose}
-            disabled={isSaving}
-          >
-            Cancel
-          </button>
-          <button
-            className="profile-save-button"
+            className={`save-btn ${isSaving ? "saving" : ""}`}
             onClick={handleSave}
             disabled={isSaving}
           >
-            {isSaving ? "Saving..." : "Save Changes"}
+            {isSaving ? (
+              <>
+                <div className="spinner" />
+                Saving...
+              </>
+            ) : (
+              <>
+                <Check size={18} strokeWidth={2} />
+                Save Changes
+              </>
+            )}
           </button>
         </div>
       </div>
+
+      {/* Date Picker Wheel */}
+      {showDatePicker && (
+        <>
+          <div
+            className="date-picker-overlay"
+            onClick={() => setShowDatePicker(false)}
+          />
+          <div className="date-picker-modal">
+            <div className="date-picker-header">
+              <button
+                className="date-picker-btn cancel"
+                onClick={() => setShowDatePicker(false)}
+              >
+                Cancel
+              </button>
+              <h3 className="date-picker-title">Date of Birth</h3>
+              <button
+                className="date-picker-btn done"
+                onClick={() => {
+                  setBirthday(
+                    `${selectedYear}-${String(selectedMonth + 1).padStart(2, "0")}-${String(selectedDay).padStart(2, "0")}`,
+                  );
+                  setShowDatePicker(false);
+                }}
+              >
+                Done
+              </button>
+            </div>
+
+            <div className="date-picker-wheels">
+              {/* Day Wheel */}
+              <div className="wheel-container">
+                <div className="wheel-label">Day</div>
+                <div className="wheel">
+                  <div className="wheel-item spacer"></div>
+                  {Array.from({ length: 31 }, (_, i) => i + 1).map((day) => (
+                    <div
+                      key={day}
+                      className={`wheel-item ${selectedDay === day ? "selected" : ""}`}
+                      onClick={() => setSelectedDay(day)}
+                    >
+                      {day}
+                    </div>
+                  ))}
+                  <div className="wheel-item spacer"></div>
+                </div>
+              </div>
+
+              {/* Month Wheel */}
+              <div className="wheel-container">
+                <div className="wheel-label">Month</div>
+                <div className="wheel">
+                  <div className="wheel-item spacer"></div>
+                  {months.map((month, index) => (
+                    <div
+                      key={index}
+                      className={`wheel-item ${selectedMonth === index ? "selected" : ""}`}
+                      onClick={() => setSelectedMonth(index)}
+                    >
+                      {month}
+                    </div>
+                  ))}
+                  <div className="wheel-item spacer"></div>
+                </div>
+              </div>
+
+              {/* Year Wheel */}
+              <div className="wheel-container">
+                <div className="wheel-label">Year</div>
+                <div className="wheel">
+                  <div className="wheel-item spacer"></div>
+                  {generateYears().map((year) => (
+                    <div
+                      key={year}
+                      className={`wheel-item ${selectedYear === year ? "selected" : ""}`}
+                      onClick={() => setSelectedYear(year)}
+                    >
+                      {year}
+                    </div>
+                  ))}
+                  <div className="wheel-item spacer"></div>
+                </div>
+              </div>
+            </div>
+
+            <div className="wheel-selector-line" />
+          </div>
+        </>
+      )}
     </>
   );
 }
