@@ -17,6 +17,8 @@ import {
 import { useState, useEffect, useRef } from "react";
 import { apiService } from "@/services/api.service";
 import { ContextMenu, type ContextMenuItem } from "@/components/ui/ContextMenu";
+import { useChatStore } from "@/store/chatStore";
+import { useAuthStore } from "@/store/authStore";
 import "./UserProfileModal.css";
 
 interface UserProfileModalProps {
@@ -38,6 +40,8 @@ export function UserProfileModal({
   onClose,
   username,
 }: UserProfileModalProps) {
+  const { user } = useAuthStore();
+  const { setActiveChat } = useChatStore();
   const [isMounted, setIsMounted] = useState(false);
   const [isAnimated, setIsAnimated] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -93,6 +97,16 @@ export function UserProfileModal({
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const handleOpenChat = () => {
+    if (!username || !user) return;
+
+    // Открываем чат с этим пользователем
+    setActiveChat(username, user.username);
+
+    // Закрываем модалку профиля
+    onClose();
   };
 
   const handleMoreClick = () => {
@@ -172,7 +186,7 @@ export function UserProfileModal({
               </div>
 
               <div className="user-profile-actions">
-                <button className="action-btn">
+                <button className="action-btn" onClick={handleOpenChat}>
                   <MessageCircle size={22} strokeWidth={1.5} />
                 </button>
                 <button className="action-btn">
