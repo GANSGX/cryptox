@@ -145,8 +145,8 @@
 }
 
 .profile-avatar {
-  width: 180px;
-  height: 180px;
+  width: 220px;
+  height: 220px;
   border-radius: 50%;
   overflow: hidden;
   position: relative;
@@ -154,12 +154,18 @@
   transition: all 0.22s cubic-bezier(0.4, 0, 0.2, 1);
 
   background: linear-gradient(135deg, #5227FF, #B19EEF);
-  box-shadow: 0 10px 30px rgba(82, 39, 255, 0.4);
+  box-shadow:
+    0 0 40px var(--avatar-glow, rgba(82, 39, 255, 0.5)),
+    0 0 80px var(--avatar-glow, rgba(82, 39, 255, 0.3)),
+    0 10px 40px rgba(0, 0, 0, 0.3);
 }
 
 .profile-avatar:hover {
   transform: scale(1.03);
-  box-shadow: 0 14px 40px rgba(82, 39, 255, 0.5);
+  box-shadow:
+    0 0 50px var(--avatar-glow, rgba(82, 39, 255, 0.6)),
+    0 0 100px var(--avatar-glow, rgba(82, 39, 255, 0.4)),
+    0 14px 50px rgba(0, 0, 0, 0.4);
 }
 
 .profile-avatar img {
@@ -692,26 +698,35 @@
   left: 0;
   width: 100vw;
   height: 100vh;
-  background: rgba(0, 0, 0, 0.7);
-  backdrop-filter: blur(8px);
+  background: rgba(0, 0, 0, 0);
+  backdrop-filter: blur(0px);
   z-index: 2000;
   display: flex;
   align-items: center;
   justify-content: center;
-  animation: fadeIn 0.2s ease;
+  opacity: 0;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: opacity, backdrop-filter;
+}
+
+.date-picker-overlay.visible {
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(8px);
+  opacity: 1;
 }
 
 .date-picker-modal {
   position: fixed;
   top: 50%;
   left: 50%;
-  transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%) scale(0.92) translateZ(0);
   width: auto;
   min-width: 580px;
   max-width: 90vw;
   z-index: 2001;
   border-radius: 14px;
   overflow: hidden;
+  opacity: 0;
 
   background: rgba(24, 24, 32, 0.97);
   backdrop-filter: blur(40px) saturate(150%);
@@ -719,7 +734,16 @@
   border: 1px solid rgba(255, 255, 255, 0.1);
   box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7);
 
-  animation: scaleIn 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: opacity, transform;
+
+  /* GPU acceleration */
+  backface-visibility: hidden;
+}
+
+.date-picker-modal.ready {
+  transform: translate(-50%, -50%) scale(1) translateZ(0);
+  opacity: 1;
 }
 
 @keyframes fadeIn {

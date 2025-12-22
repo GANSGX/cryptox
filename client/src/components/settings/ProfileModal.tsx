@@ -14,6 +14,65 @@ import { useAuthStore } from "@/store/authStore";
 import { apiService } from "@/services/api.service";
 import "./ProfileModal.css";
 
+// Extract dominant color from image
+const extractDominantColor = (imgElement: HTMLImageElement): string => {
+  try {
+    const canvas = document.createElement("canvas");
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return "rgba(82, 39, 255, 0.5)";
+
+    // Use smaller size for better performance
+    const size = 100;
+    canvas.width = size;
+    canvas.height = size;
+    ctx.drawImage(imgElement, 0, 0, size, size);
+
+    const imageData = ctx.getImageData(0, 0, size, size);
+    const data = imageData.data;
+
+    let r = 0,
+      g = 0,
+      b = 0;
+    let count = 0;
+
+    // Sample every 10th pixel for performance
+    for (let i = 0; i < data.length; i += 40) {
+      const alpha = data[i + 3];
+      // Skip transparent pixels
+      if (alpha > 128) {
+        r += data[i];
+        g += data[i + 1];
+        b += data[i + 2];
+        count++;
+      }
+    }
+
+    if (count === 0) return "rgba(82, 39, 255, 0.5)";
+
+    r = Math.floor(r / count);
+    g = Math.floor(g / count);
+    b = Math.floor(b / count);
+
+    // Increase saturation for more vibrant glow
+    const max = Math.max(r, g, b);
+    const min = Math.min(r, g, b);
+    const saturation = max === 0 ? 0 : (max - min) / max;
+
+    if (saturation < 0.3) {
+      // Boost colors if too desaturated
+      const boost = 1.5;
+      r = Math.min(255, Math.floor(r * boost));
+      g = Math.min(255, Math.floor(g * boost));
+      b = Math.min(255, Math.floor(b * boost));
+    }
+
+    return `rgba(${r}, ${g}, ${b}, 0.5)`;
+  } catch (error) {
+    console.warn("Failed to extract color from avatar:", error);
+    return "rgba(82, 39, 255, 0.5)";
+  }
+};
+
 interface ProfileModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -70,15 +129,25 @@ export function ProfileModal({ isOpen, onClose }: ProfileModalProps) {
   // Photo gallery
   const [photos, setPhotos] = useState<ProfilePhoto[]>([]);
   const [currentPhotoIndex, setCurrentPhotoIndex] = useState(0);
+  const [avatarGlowColor, setAvatarGlowColor] = useState(
+    "rgba(82, 39, 255, 0.5)",
+  );
 
   // Focus states
   const [statusFocused, setStatusFocused] = useState(false);
 
   // Birthday picker
   const [showDatePicker, setShowDatePicker] = useState(false);
+  const [datePickerMounted, setDatePickerMounted] = useState(false);
+  const [datePickerReady, setDatePickerReady] = useState(false);
   const [selectedDay, setSelectedDay] = useState(1);
   const [selectedMonth, setSelectedMonth] = useState(0);
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
+
+  // Temporary picker values (for cancel functionality)
+  const [tempDay, setTempDay] = useState(1);
+  const [tempMonth, setTempMonth] = useState(0);
+  const [tempYear, setTempYear] = useState(new Date().getFullYear());
 
   // Dropdown states
   const [statusPrivacyOpen, setStatusPrivacyOpen] = useState(false);
@@ -352,12 +421,9 @@ export function ProfileModal({ isOpen, onClose }: ProfileModalProps) {
   const handleSave = async () => {
     setIsSaving(true);
     try {
-      // Format birthday as YYYY-MM-DD
-      const birthdayValue = `${selectedYear}-${String(selectedMonth + 1).padStart(2, "0")}-${String(selectedDay).padStart(2, "0")}`;
-
       const response = await apiService.updateProfile({
         status: status || undefined,
-        birthday: birthdayValue || undefined,
+        birthday: birthday || undefined,
         status_privacy: statusPrivacy,
         online_privacy: onlinePrivacy,
         typing_privacy: typingPrivacy,
@@ -393,20 +459,77 @@ export function ProfileModal({ isOpen, onClose }: ProfileModalProps) {
     return years;
   };
 
-  // Auto-scroll to selected items when picker opens
+  // Initialize temp values when picker opens
   useEffect(() => {
     if (showDatePicker) {
-      setTimeout(() => {
-        const wheels = document.querySelectorAll(".wheel");
-        wheels.forEach((wheel) => {
-          const selected = wheel.querySelector(".selected");
-          if (selected) {
-            selected.scrollIntoView({ block: "center", behavior: "smooth" });
-          }
+      setDatePickerMounted(true);
+      setDatePickerReady(false);
+      setTempDay(selectedDay);
+      setTempMonth(selectedMonth);
+      setTempYear(selectedYear);
+
+      // Wait for DOM to render, scroll instantly, then show
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          const wheels = document.querySelectorAll(".wheel");
+          wheels.forEach((wheel, index) => {
+            const items = Array.from(
+              wheel.querySelectorAll<HTMLElement>(".wheel-item:not(.spacer)"),
+            );
+
+            let targetItem: HTMLElement | null = null;
+
+            if (index === 0) {
+              // Day wheel
+              targetItem = items[selectedDay - 1];
+            } else if (index === 1) {
+              // Month wheel
+              targetItem = items[selectedMonth];
+            } else if (index === 2) {
+              // Year wheel
+              const years = generateYears();
+              const yearIndex = years.findIndex((y) => y === selectedYear);
+              if (yearIndex !== -1) {
+                targetItem = items[yearIndex];
+              }
+            }
+
+            if (targetItem) {
+              const wheelElement = wheel as HTMLElement;
+              const itemTop = targetItem.offsetTop;
+              const itemHeight = targetItem.offsetHeight;
+              const itemCenter = itemTop + itemHeight / 2;
+              const wheelHalfHeight = wheelElement.clientHeight / 2;
+              const targetScroll = itemCenter - wheelHalfHeight;
+
+              wheelElement.scrollTo({
+                top: targetScroll,
+                behavior: "auto",
+              });
+            }
+          });
+
+          // Show modal after scroll is done
+          requestAnimationFrame(() => {
+            setDatePickerReady(true);
+          });
         });
-      }, 100);
+      });
+    } else if (datePickerMounted) {
+      // Animate out
+      setDatePickerReady(false);
+      const timer = setTimeout(() => {
+        setDatePickerMounted(false);
+      }, 250);
+      return () => clearTimeout(timer);
     }
-  }, [showDatePicker]);
+  }, [
+    showDatePicker,
+    selectedDay,
+    selectedMonth,
+    selectedYear,
+    datePickerMounted,
+  ]);
 
   // Snap to nearest item
   const snapToNearestItem = (wheelElement: HTMLElement) => {
@@ -592,15 +715,15 @@ export function ProfileModal({ isOpen, onClose }: ProfileModalProps) {
               behavior: "smooth",
             });
 
-            // Update selected value after scroll
+            // Update temp value after scroll
             clearTimeout(wheelTimeout);
             wheelTimeout = setTimeout(() => {
               if (index === 0) {
-                updateSelectedFromScroll(wheelElement, setSelectedDay);
+                updateSelectedFromScroll(wheelElement, setTempDay);
               } else if (index === 1) {
-                updateSelectedFromScroll(wheelElement, setSelectedMonth);
+                updateSelectedFromScroll(wheelElement, setTempMonth);
               } else if (index === 2) {
-                updateSelectedFromScroll(wheelElement, setSelectedYear);
+                updateSelectedFromScroll(wheelElement, setTempYear);
               }
             }, 200);
           };
@@ -613,17 +736,17 @@ export function ProfileModal({ isOpen, onClose }: ProfileModalProps) {
             clearTimeout(wheelTimeout);
           });
 
-          // Update selected value on scroll end (for drag)
+          // Update temp value on scroll end (for drag)
           let scrollTimeout: NodeJS.Timeout;
           const handleScroll = () => {
             clearTimeout(scrollTimeout);
             scrollTimeout = setTimeout(() => {
               if (index === 0) {
-                updateSelectedFromScroll(wheelElement, setSelectedDay);
+                updateSelectedFromScroll(wheelElement, setTempDay);
               } else if (index === 1) {
-                updateSelectedFromScroll(wheelElement, setSelectedMonth);
+                updateSelectedFromScroll(wheelElement, setTempMonth);
               } else if (index === 2) {
-                updateSelectedFromScroll(wheelElement, setSelectedYear);
+                updateSelectedFromScroll(wheelElement, setTempYear);
               }
             }, 150);
           };
@@ -661,16 +784,36 @@ export function ProfileModal({ isOpen, onClose }: ProfileModalProps) {
           <div className="profile-header">
             <div className="profile-avatar-gallery">
               <div className="avatar-wrapper">
-                <div className="profile-avatar" onClick={handleAvatarClick}>
+                <div
+                  className="profile-avatar"
+                  onClick={handleAvatarClick}
+                  style={
+                    {
+                      "--avatar-glow": avatarGlowColor,
+                    } as React.CSSProperties
+                  }
+                >
                   {photos.length > 0 && photos[currentPhotoIndex] ? (
                     <img
                       src={`http://localhost:3001${photos[currentPhotoIndex].photo_path}`}
                       alt="Avatar"
+                      crossOrigin="anonymous"
+                      onLoad={(e) => {
+                        const img = e.currentTarget;
+                        const color = extractDominantColor(img);
+                        setAvatarGlowColor(color);
+                      }}
                     />
                   ) : user?.avatar_path ? (
                     <img
                       src={`http://localhost:3001${user.avatar_path}`}
                       alt="Avatar"
+                      crossOrigin="anonymous"
+                      onLoad={(e) => {
+                        const img = e.currentTarget;
+                        const color = extractDominantColor(img);
+                        setAvatarGlowColor(color);
+                      }}
                     />
                   ) : (
                     <span>{user?.username.charAt(0).toUpperCase()}</span>
@@ -933,13 +1076,15 @@ export function ProfileModal({ isOpen, onClose }: ProfileModalProps) {
       </div>
 
       {/* Date Picker Wheel */}
-      {showDatePicker && (
+      {datePickerMounted && (
         <>
           <div
-            className="date-picker-overlay"
+            className={`date-picker-overlay ${datePickerReady ? "visible" : ""}`}
             onClick={() => setShowDatePicker(false)}
           />
-          <div className="date-picker-modal">
+          <div
+            className={`date-picker-modal ${datePickerReady ? "ready" : ""}`}
+          >
             <div className="date-picker-header">
               <button
                 className="date-picker-btn cancel"
@@ -951,8 +1096,12 @@ export function ProfileModal({ isOpen, onClose }: ProfileModalProps) {
               <button
                 className="date-picker-btn done"
                 onClick={() => {
+                  // Apply temp values to selected
+                  setSelectedDay(tempDay);
+                  setSelectedMonth(tempMonth);
+                  setSelectedYear(tempYear);
                   setBirthday(
-                    `${selectedYear}-${String(selectedMonth + 1).padStart(2, "0")}-${String(selectedDay).padStart(2, "0")}`,
+                    `${tempYear}-${String(tempMonth + 1).padStart(2, "0")}-${String(tempDay).padStart(2, "0")}`,
                   );
                   setShowDatePicker(false);
                 }}
@@ -970,8 +1119,8 @@ export function ProfileModal({ isOpen, onClose }: ProfileModalProps) {
                   {Array.from({ length: 31 }, (_, i) => i + 1).map((day) => (
                     <div
                       key={day}
-                      className={`wheel-item ${selectedDay === day ? "selected" : ""}`}
-                      onClick={() => setSelectedDay(day)}
+                      className={`wheel-item ${tempDay === day ? "selected" : ""}`}
+                      onClick={() => setTempDay(day)}
                     >
                       {day}
                     </div>
@@ -988,8 +1137,8 @@ export function ProfileModal({ isOpen, onClose }: ProfileModalProps) {
                   {months.map((month, index) => (
                     <div
                       key={index}
-                      className={`wheel-item ${selectedMonth === index ? "selected" : ""}`}
-                      onClick={() => setSelectedMonth(index)}
+                      className={`wheel-item ${tempMonth === index ? "selected" : ""}`}
+                      onClick={() => setTempMonth(index)}
                     >
                       {month}
                     </div>
@@ -1006,8 +1155,8 @@ export function ProfileModal({ isOpen, onClose }: ProfileModalProps) {
                   {generateYears().map((year) => (
                     <div
                       key={year}
-                      className={`wheel-item ${selectedYear === year ? "selected" : ""}`}
-                      onClick={() => setSelectedYear(year)}
+                      className={`wheel-item ${tempYear === year ? "selected" : ""}`}
+                      onClick={() => setTempYear(year)}
                     >
                       {year}
                     </div>
