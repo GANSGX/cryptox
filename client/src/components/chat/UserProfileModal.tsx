@@ -108,6 +108,7 @@ export function UserProfileModal({
   const moreMenuItems: ContextMenuItem[] = [
     {
       label: "Block User",
+      icon: "ban",
       danger: true,
       onClick: () => {
         console.log("Block user:", username);
@@ -189,11 +190,13 @@ export function UserProfileModal({
                 </button>
               </div>
 
-              {profile?.status && (
-                <div className="status-section">
+              <div className="status-section">
+                {profile?.status ? (
                   <p className="status-text">{profile.status}</p>
-                </div>
-              )}
+                ) : (
+                  <p className="status-empty">No status set</p>
+                )}
+              </div>
 
               <div className="media-list">
                 {mediaItems.map((item, index) => (

@@ -179,34 +179,40 @@
 .user-profile-actions {
   display: flex;
   justify-content: center;
-  gap: 20px;
+  gap: 16px;
   padding: 0 24px 24px 24px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.06);
 }
 
 .action-btn {
-  width: 48px;
-  height: 48px;
+  width: 52px;
+  height: 52px;
   border-radius: 50%;
   border: none;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
 
-  background: rgba(255, 255, 255, 0.06);
-  color: rgba(255, 255, 255, 0.7);
+  background: linear-gradient(135deg, rgba(60, 60, 80, 0.22), rgba(50, 50, 70, 0.18));
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.75);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 }
 
 .action-btn:hover {
-  background: rgba(255, 255, 255, 0.1);
+  background: linear-gradient(135deg, rgba(75, 75, 95, 0.32), rgba(65, 65, 85, 0.28));
+  border-color: rgba(255, 255, 255, 0.14);
   color: rgba(255, 255, 255, 0.95);
-  transform: scale(1.05);
+  transform: translateY(-2px) scale(1.04);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
 }
 
 .action-btn:active {
-  transform: scale(0.95);
+  transform: translateY(0) scale(0.96);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
 }
 
 /* Status Section */
@@ -220,6 +226,13 @@
   font-size: 14px;
   color: rgba(255, 255, 255, 0.75);
   line-height: 1.5;
+}
+
+.status-empty {
+  margin: 0;
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.3);
+  font-style: italic;
 }
 
 /* Media List - iOS Settings style */

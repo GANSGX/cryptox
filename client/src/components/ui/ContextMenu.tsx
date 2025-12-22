@@ -1,12 +1,12 @@
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-import { Pencil, Trash2 } from "lucide-react";
+import { Pencil, Trash2, Ban } from "lucide-react";
 import "./ContextMenu.css";
 
 export interface ContextMenuItem {
   label: string;
   onClick: () => void;
-  icon?: "edit" | "delete";
+  icon?: "edit" | "delete" | "ban";
   danger?: boolean;
   disabled?: boolean;
 }
@@ -21,6 +21,7 @@ interface ContextMenuProps {
 const IconMap = {
   edit: Pencil,
   delete: Trash2,
+  ban: Ban,
 };
 
 export function ContextMenu({ x, y, items, onClose }: ContextMenuProps) {
