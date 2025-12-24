@@ -36,6 +36,7 @@ export function MessageInput({
   const [recordMode, setRecordMode] = useState<"voice" | "video">("voice");
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const hoverTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const photoInputRef = useRef<HTMLInputElement>(null);
   const videoInputRef = useRef<HTMLInputElement>(null);
@@ -81,6 +82,15 @@ export function MessageInput({
       }
     };
   }, [message, activeChat, user, startTyping, stopTyping]);
+
+  // Cleanup hover timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (hoverTimeoutRef.current) {
+        clearTimeout(hoverTimeoutRef.current);
+      }
+    };
+  }, []);
 
   const handleSend = async () => {
     if (!message.trim() || !user) return;
@@ -140,6 +150,33 @@ export function MessageInput({
     fileInputRef.current?.click();
   };
 
+  // Show menu immediately
+  const handleShowMenu = () => {
+    if (hoverTimeoutRef.current) {
+      clearTimeout(hoverTimeoutRef.current);
+      hoverTimeoutRef.current = null;
+    }
+    setShowHoverMenu(true);
+  };
+
+  // Hide menu with delay (200ms) to allow moving mouse to menu
+  const handleHideMenu = () => {
+    if (hoverTimeoutRef.current) {
+      clearTimeout(hoverTimeoutRef.current);
+    }
+    hoverTimeoutRef.current = setTimeout(() => {
+      setShowHoverMenu(false);
+    }, 200);
+  };
+
+  // Cancel hide when mouse enters menu
+  const handleMenuEnter = () => {
+    if (hoverTimeoutRef.current) {
+      clearTimeout(hoverTimeoutRef.current);
+      hoverTimeoutRef.current = null;
+    }
+  };
+
   return (
     <div className="message-input-wrapper">
       {/* Hidden File Inputs */}
@@ -187,8 +224,8 @@ export function MessageInput({
       {showHoverMenu && (
         <div
           className="attach-menu"
-          onMouseEnter={() => setShowHoverMenu(true)}
-          onMouseLeave={() => setShowHoverMenu(false)}
+          onMouseEnter={handleMenuEnter}
+          onMouseLeave={handleHideMenu}
         >
           <button
             className="attach-menu-item"
@@ -249,8 +286,8 @@ export function MessageInput({
             ref={attachButtonRef}
             className="action-button attach-button"
             onClick={handleAttachClick}
-            onMouseEnter={() => setShowHoverMenu(true)}
-            onMouseLeave={() => setShowHoverMenu(false)}
+            onMouseEnter={handleShowMenu}
+            onMouseLeave={handleHideMenu}
             title="Attach file"
           >
             <Paperclip size={20} />
