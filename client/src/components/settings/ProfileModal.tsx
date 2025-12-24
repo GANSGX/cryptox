@@ -9,7 +9,7 @@ import {
   ChevronDown,
   Star,
 } from "lucide-react";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { useAuthStore } from "@/store/authStore";
 import { apiService } from "@/services/api.service";
 import "./ProfileModal.css";
@@ -114,7 +114,6 @@ export function ProfileModal({ isOpen, onClose }: ProfileModalProps) {
   const { user, updateUserAvatar } = useAuthStore();
   const [isMounted, setIsMounted] = useState(false);
   const [isAnimated, setIsAnimated] = useState(false);
-  const [isSaving, setIsSaving] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Profile data
@@ -126,12 +125,16 @@ export function ProfileModal({ isOpen, onClose }: ProfileModalProps) {
   const [onlinePrivacy, setOnlinePrivacy] = useState<PrivacyOption>("everyone");
   const [typingPrivacy, setTypingPrivacy] = useState<PrivacyOption>("everyone");
 
+  // Track if data is loaded (to prevent auto-save on first load)
+  const [isDataLoaded, setIsDataLoaded] = useState(false);
+
   // Photo gallery
   const [photos, setPhotos] = useState<ProfilePhoto[]>([]);
   const [currentPhotoIndex, setCurrentPhotoIndex] = useState(0);
   const [avatarGlowColor, setAvatarGlowColor] = useState(
     "rgba(82, 39, 255, 0.5)",
   );
+  const [isPhotoTransitioning, setIsPhotoTransitioning] = useState(false);
 
   // Focus states
   const [statusFocused, setStatusFocused] = useState(false);
@@ -161,7 +164,11 @@ export function ProfileModal({ isOpen, onClose }: ProfileModalProps) {
 
   useEffect(() => {
     if (isOpen) {
+      setIsDataLoaded(false);
       loadProfileData();
+    } else {
+      // Reset when closing
+      setIsDataLoaded(false);
     }
   }, [isOpen]);
 
@@ -323,6 +330,9 @@ export function ProfileModal({ isOpen, onClose }: ProfileModalProps) {
         setPhotos(photosResponse.data.photos);
         setCurrentPhotoIndex(0);
       }
+
+      // Mark data as loaded to enable auto-save
+      setIsDataLoaded(true);
     } catch (error) {
       console.error("Failed to load profile data:", error);
     }
@@ -354,11 +364,21 @@ export function ProfileModal({ isOpen, onClose }: ProfileModalProps) {
   };
 
   const handlePreviousPhoto = () => {
-    setCurrentPhotoIndex((prev) => (prev > 0 ? prev - 1 : photos.length - 1));
+    if (isPhotoTransitioning) return;
+    setIsPhotoTransitioning(true);
+    setTimeout(() => {
+      setCurrentPhotoIndex((prev) => (prev > 0 ? prev - 1 : photos.length - 1));
+      setTimeout(() => setIsPhotoTransitioning(false), 10);
+    }, 125);
   };
 
   const handleNextPhoto = () => {
-    setCurrentPhotoIndex((prev) => (prev < photos.length - 1 ? prev + 1 : 0));
+    if (isPhotoTransitioning) return;
+    setIsPhotoTransitioning(true);
+    setTimeout(() => {
+      setCurrentPhotoIndex((prev) => (prev < photos.length - 1 ? prev + 1 : 0));
+      setTimeout(() => setIsPhotoTransitioning(false), 10);
+    }, 125);
   };
 
   const handleDeletePhoto = async () => {
@@ -418,30 +438,71 @@ export function ProfileModal({ isOpen, onClose }: ProfileModalProps) {
     }
   };
 
-  const handleSave = async () => {
-    setIsSaving(true);
-    try {
-      const response = await apiService.updateProfile({
-        status: status || undefined,
-        birthday: birthday || undefined,
-        status_privacy: statusPrivacy,
-        online_privacy: onlinePrivacy,
-        typing_privacy: typingPrivacy,
-      });
+  // Auto-save profile (can save specific fields or all)
+  const autoSaveProfile = useCallback(
+    async (fields?: {
+      status?: string;
+      birthday?: string;
+      status_privacy?: PrivacyOption;
+      online_privacy?: PrivacyOption;
+      typing_privacy?: PrivacyOption;
+    }) => {
+      if (!isDataLoaded) return; // Don't save on initial load
 
-      if (response.success) {
-        onClose();
-      } else {
-        console.error("Failed to update profile:", response.error);
-        alert(response.error || "Failed to update profile");
+      try {
+        const dataToSave = fields || {
+          status: status || undefined,
+          birthday: birthday || undefined,
+          status_privacy: statusPrivacy,
+          online_privacy: onlinePrivacy,
+          typing_privacy: typingPrivacy,
+        };
+
+        const response = await apiService.updateProfile(dataToSave);
+
+        if (!response.success) {
+          console.error("Failed to update profile:", response.error);
+        }
+      } catch (error) {
+        console.error("Error updating profile:", error);
       }
-    } catch (error) {
-      console.error("Error updating profile:", error);
-      alert("Failed to update profile");
-    } finally {
-      setIsSaving(false);
-    }
-  };
+    },
+    [
+      isDataLoaded,
+      status,
+      birthday,
+      statusPrivacy,
+      onlinePrivacy,
+      typingPrivacy,
+    ],
+  );
+
+  // Auto-save status with debounce (800ms like Telegram)
+  useEffect(() => {
+    if (!isDataLoaded) return;
+
+    const timeoutId = setTimeout(() => {
+      autoSaveProfile({ status });
+    }, 800);
+
+    return () => clearTimeout(timeoutId);
+  }, [status, isDataLoaded, autoSaveProfile]);
+
+  // Auto-save privacy settings immediately
+  useEffect(() => {
+    if (!isDataLoaded) return;
+    autoSaveProfile({ status_privacy: statusPrivacy });
+  }, [statusPrivacy, isDataLoaded, autoSaveProfile]);
+
+  useEffect(() => {
+    if (!isDataLoaded) return;
+    autoSaveProfile({ online_privacy: onlinePrivacy });
+  }, [onlinePrivacy, isDataLoaded, autoSaveProfile]);
+
+  useEffect(() => {
+    if (!isDataLoaded) return;
+    autoSaveProfile({ typing_privacy: typingPrivacy });
+  }, [typingPrivacy, isDataLoaded, autoSaveProfile]);
 
   // Format birthday for display
   const formatBirthday = () => {
@@ -795,6 +856,7 @@ export function ProfileModal({ isOpen, onClose }: ProfileModalProps) {
                 >
                   {photos.length > 0 && photos[currentPhotoIndex] ? (
                     <img
+                      className={isPhotoTransitioning ? "transitioning" : ""}
                       src={`http://localhost:3001${photos[currentPhotoIndex].photo_path}`}
                       alt="Avatar"
                       crossOrigin="anonymous"
@@ -806,6 +868,7 @@ export function ProfileModal({ isOpen, onClose }: ProfileModalProps) {
                     />
                   ) : user?.avatar_path ? (
                     <img
+                      className={isPhotoTransitioning ? "transitioning" : ""}
                       src={`http://localhost:3001${user.avatar_path}`}
                       alt="Avatar"
                       crossOrigin="anonymous"
@@ -1052,27 +1115,6 @@ export function ProfileModal({ isOpen, onClose }: ProfileModalProps) {
             </div>
           </div>
         </div>
-
-        {/* Save Button */}
-        <div className="profile-footer">
-          <button
-            className={`save-btn ${isSaving ? "saving" : ""}`}
-            onClick={handleSave}
-            disabled={isSaving}
-          >
-            {isSaving ? (
-              <>
-                <div className="spinner" />
-                Saving...
-              </>
-            ) : (
-              <>
-                <Check size={18} strokeWidth={2} />
-                Save Changes
-              </>
-            )}
-          </button>
-        </div>
       </div>
 
       {/* Date Picker Wheel */}
@@ -1095,15 +1137,19 @@ export function ProfileModal({ isOpen, onClose }: ProfileModalProps) {
               <h3 className="date-picker-title">Date of Birth</h3>
               <button
                 className="date-picker-btn done"
-                onClick={() => {
+                onClick={async () => {
                   // Apply temp values to selected
                   setSelectedDay(tempDay);
                   setSelectedMonth(tempMonth);
                   setSelectedYear(tempYear);
-                  setBirthday(
-                    `${tempYear}-${String(tempMonth + 1).padStart(2, "0")}-${String(tempDay).padStart(2, "0")}`,
-                  );
+                  const newBirthday = `${tempYear}-${String(tempMonth + 1).padStart(2, "0")}-${String(tempDay).padStart(2, "0")}`;
+                  setBirthday(newBirthday);
                   setShowDatePicker(false);
+
+                  // Auto-save birthday
+                  if (isDataLoaded) {
+                    await autoSaveProfile({ birthday: newBirthday });
+                  }
                 }}
               >
                 Done
