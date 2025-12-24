@@ -24,7 +24,7 @@ export async function messagesRoutes(fastify: FastifyInstance) {
       preHandler: authMiddleware,
     },
     async (request, reply) => {
-      let { recipient_username, encrypted_content, message_type } =
+      let { recipient_username, encrypted_content, message_type, media_id } =
         request.body;
       const sender_username = request.user!.username;
 
@@ -73,6 +73,7 @@ export async function messagesRoutes(fastify: FastifyInstance) {
         recipient_username,
         encrypted_content,
         message_type,
+        media_id,
       });
 
       // Отправка через Socket.io (если получатель online)
@@ -84,6 +85,7 @@ export async function messagesRoutes(fastify: FastifyInstance) {
         recipient_username: message.recipient_username, // Добавлено для клиента
         encrypted_content: message.encrypted_content,
         message_type: message.message_type,
+        media_id: message.media_id,
         created_at: message.created_at.toISOString(),
         delivered_at: null, // Новое сообщение еще не доставлено
         read_at: null, // Новое сообщение еще не прочитано

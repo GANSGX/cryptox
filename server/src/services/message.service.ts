@@ -25,8 +25,9 @@ export class MessageService {
         sender_username,
         recipient_username,
         encrypted_content,
-        message_type
-      ) VALUES ($1, $2, $3, $4, $5)
+        message_type,
+        media_id
+      ) VALUES ($1, $2, $3, $4, $5, $6)
       RETURNING *`,
       [
         chatId,
@@ -34,6 +35,7 @@ export class MessageService {
         data.recipient_username.toLowerCase(),
         data.encrypted_content,
         data.message_type || "text",
+        data.media_id || null,
       ],
     );
 

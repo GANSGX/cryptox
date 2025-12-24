@@ -17,6 +17,7 @@ import { messagesRoutes } from "./routes/messages.routes.js";
 import { sessionsRoutes } from "./routes/sessions.routes";
 import { keysRoutes } from "./routes/keys.routes.js";
 import { profilePhotosRoutes } from "./routes/profile-photos.routes.js";
+import { mediaRoutes } from "./routes/media.routes.js";
 import {
   errorHandler,
   notFoundHandler,
@@ -260,6 +261,7 @@ await fastify.register(messagesRoutes, { prefix: "/api" });
 await fastify.register(sessionsRoutes, { prefix: "/api" });
 await fastify.register(keysRoutes, { prefix: "/api" });
 await fastify.register(profilePhotosRoutes, { prefix: "/api" });
+await fastify.register(mediaRoutes, { prefix: "/api" });
 
 // Error handlers (enhanced - no information disclosure)
 fastify.setErrorHandler(enhancedErrorHandler);
