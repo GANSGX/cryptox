@@ -5,8 +5,8 @@ import {
   Paperclip,
   Image,
   FileText,
-  User,
-  MapPin,
+  Film,
+  Music2,
   X,
   Check,
 } from "lucide-react";
@@ -32,10 +32,16 @@ export function MessageInput({
   const { user } = useAuthStore();
   const { sendMessage, startTyping, stopTyping } = useChatStore();
   const [message, setMessage] = useState("");
-  const [showAttachMenu, setShowAttachMenu] = useState(false);
+  const [showHoverMenu, setShowHoverMenu] = useState(false);
   const [recordMode, setRecordMode] = useState<"voice" | "video">("voice");
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const photoInputRef = useRef<HTMLInputElement>(null);
+  const videoInputRef = useRef<HTMLInputElement>(null);
+  const documentInputRef = useRef<HTMLInputElement>(null);
+  const audioInputRef = useRef<HTMLInputElement>(null);
+  const attachButtonRef = useRef<HTMLButtonElement>(null);
 
   // Загрузить текст редактируемого сообщения
   useEffect(() => {
@@ -114,62 +120,125 @@ export function MessageInput({
     setRecordMode((prev) => (prev === "voice" ? "video" : "voice"));
   };
 
+  // Handle file selection
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
+
+    // TODO: Implement file upload logic
+    console.log("Selected files:", files);
+    alert(
+      `Selected ${files.length} file(s). Upload functionality will be implemented soon.`,
+    );
+
+    // Reset input
+    e.target.value = "";
+  };
+
+  // Open file input for any file type (on click)
+  const handleAttachClick = () => {
+    fileInputRef.current?.click();
+  };
+
   return (
     <div className="message-input-wrapper">
-      {/* Attach Menu */}
-      {showAttachMenu && (
-        <>
-          <div
-            className="attach-menu-overlay"
-            onClick={() => setShowAttachMenu(false)}
-          />
-          <div className="attach-menu">
-            <button
-              className="attach-menu-item"
-              onClick={() => {
-                setShowAttachMenu(false);
-              }}
-            >
-              <div className="attach-icon media">
-                <Image size={20} />
-              </div>
-              <span>Photo or Video</span>
-            </button>
-            <button
-              className="attach-menu-item"
-              onClick={() => {
-                setShowAttachMenu(false);
-              }}
-            >
-              <div className="attach-icon file">
-                <FileText size={20} />
-              </div>
-              <span>Document</span>
-            </button>
-            <button
-              className="attach-menu-item"
-              onClick={() => {
-                setShowAttachMenu(false);
-              }}
-            >
-              <div className="attach-icon contact">
-                <User size={20} />
-              </div>
-              <span>Contact</span>
-            </button>
-            <button
-              className="attach-menu-item"
-              onClick={() => {
-                setShowAttachMenu(false);
-              }}
-            >
-              <div className="attach-icon location">
-                <MapPin size={20} />
-              </div>
-              <span>Location</span>
-            </button>
-          </div>
-        </>
+      {/* Hidden File Inputs */}
+      <input
+        ref={fileInputRef}
+        type="file"
+        multiple
+        style={{ display: "none" }}
+        onChange={handleFileChange}
+      />
+      <input
+        ref={photoInputRef}
+        type="file"
+        accept="image/*"
+        multiple
+        style={{ display: "none" }}
+        onChange={handleFileChange}
+      />
+      <input
+        ref={videoInputRef}
+        type="file"
+        accept="video/*"
+        multiple
+        style={{ display: "none" }}
+        onChange={handleFileChange}
+      />
+      <input
+        ref={documentInputRef}
+        type="file"
+        accept=".pdf,.doc,.docx,.txt,.zip,.rar"
+        multiple
+        style={{ display: "none" }}
+        onChange={handleFileChange}
+      />
+      <input
+        ref={audioInputRef}
+        type="file"
+        accept="audio/*"
+        multiple
+        style={{ display: "none" }}
+        onChange={handleFileChange}
+      />
+
+      {/* Attach Menu - Shows on Hover */}
+      {showHoverMenu && (
+        <div
+          className="attach-menu"
+          onMouseEnter={() => setShowHoverMenu(true)}
+          onMouseLeave={() => setShowHoverMenu(false)}
+        >
+          <button
+            className="attach-menu-item"
+            onClick={() => {
+              photoInputRef.current?.click();
+              setShowHoverMenu(false);
+            }}
+          >
+            <div className="attach-icon photo">
+              <Image size={20} />
+            </div>
+            <span>Photo</span>
+          </button>
+          <button
+            className="attach-menu-item"
+            onClick={() => {
+              videoInputRef.current?.click();
+              setShowHoverMenu(false);
+            }}
+          >
+            <div className="attach-icon video">
+              <Film size={20} />
+            </div>
+            <span>Video</span>
+          </button>
+          <button
+            className="attach-menu-item"
+            onClick={() => {
+              documentInputRef.current?.click();
+              setShowHoverMenu(false);
+            }}
+          >
+            <div className="attach-icon document">
+              <FileText size={20} />
+            </div>
+            <span>Document</span>
+          </button>
+          <button
+            className="attach-menu-item"
+            onClick={() => {
+              audioInputRef.current?.click();
+              setShowHoverMenu(false);
+            }}
+          >
+            <div className="attach-icon audio">
+              <Music2 size={20} />
+            </div>
+            <span>Audio</span>
+          </button>
+        </div>
       )}
 
       {/* Main Input Container */}
@@ -177,9 +246,12 @@ export function MessageInput({
         {/* Attach Button - только в обычном режиме */}
         {!editingMessage && (
           <button
+            ref={attachButtonRef}
             className="action-button attach-button"
-            onClick={() => setShowAttachMenu(!showAttachMenu)}
-            title="Attach"
+            onClick={handleAttachClick}
+            onMouseEnter={() => setShowHoverMenu(true)}
+            onMouseLeave={() => setShowHoverMenu(false)}
+            title="Attach file"
           >
             <Paperclip size={20} />
           </button>
