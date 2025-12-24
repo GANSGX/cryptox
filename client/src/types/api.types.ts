@@ -52,6 +52,7 @@ export interface SendMessageRequest {
   recipient_username: string;
   encrypted_content: string;
   message_type?: "text" | "image" | "video" | "file" | "audio";
+  media_id?: string;
 }
 
 export interface SendMessageResponse {

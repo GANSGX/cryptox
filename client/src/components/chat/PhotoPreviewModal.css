@@ -1,0 +1,284 @@
+/* ========================================
+   PHOTO PREVIEW MODAL - TELEGRAM STYLE
+   ======================================== */
+
+/* Overlay */
+.photo-preview-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0);
+  backdrop-filter: blur(0px);
+  z-index: 1999;
+  opacity: 0;
+  transition: all 0.25s ease;
+  pointer-events: none;
+}
+
+.photo-preview-overlay.visible {
+  background: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(8px);
+  opacity: 1;
+  pointer-events: all;
+}
+
+/* Modal Container */
+.photo-preview-modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0.92);
+  width: 90%;
+  max-width: 600px;
+  max-height: 90vh;
+  z-index: 2000;
+  opacity: 0;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  pointer-events: none;
+  display: flex;
+  flex-direction: column;
+  border-radius: 16px;
+
+  background: linear-gradient(
+    135deg,
+    rgba(28, 28, 38, 0.95),
+    rgba(24, 24, 34, 0.92),
+    rgba(28, 28, 38, 0.95)
+  );
+  backdrop-filter: blur(60px) saturate(180%);
+  -webkit-backdrop-filter: blur(60px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.9);
+}
+
+.photo-preview-modal.open {
+  transform: translate(-50%, -50%) scale(1);
+  opacity: 1;
+  pointer-events: all;
+}
+
+/* Close Button */
+.photo-preview-close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  z-index: 10;
+
+  background: rgba(0, 0, 0, 0.5);
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.photo-preview-close:hover {
+  background: rgba(0, 0, 0, 0.7);
+  color: rgba(255, 255, 255, 1);
+  transform: scale(1.05);
+}
+
+.photo-preview-close:active {
+  transform: scale(0.95);
+}
+
+/* Preview Image */
+.photo-preview-image-container {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 24px 24px 24px;
+  overflow: hidden;
+}
+
+.photo-preview-image {
+  max-width: 100%;
+  max-height: 400px;
+  object-fit: contain;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+}
+
+/* File Info */
+.photo-preview-info {
+  padding: 16px 24px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  text-align: center;
+}
+
+.photo-preview-filename {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-primary);
+  margin: 0 0 4px 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.photo-preview-filesize {
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+/* Action Buttons */
+.photo-preview-actions {
+  padding: 16px 24px 24px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.photo-preview-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 18px;
+  border-radius: 12px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+
+  background: linear-gradient(
+    135deg,
+    rgba(40, 40, 60, 0.4),
+    rgba(30, 30, 50, 0.35)
+  );
+  border: 1.5px solid rgba(255, 255, 255, 0.1);
+  box-shadow:
+    0 4px 12px rgba(0, 0, 0, 0.2),
+    inset 0 1px 2px rgba(255, 255, 255, 0.05);
+}
+
+.photo-preview-btn:hover:not(:disabled) {
+  background: linear-gradient(
+    135deg,
+    rgba(50, 50, 70, 0.5),
+    rgba(40, 40, 60, 0.45)
+  );
+  border-color: rgba(255, 255, 255, 0.15);
+  transform: translateY(-2px);
+  box-shadow:
+    0 6px 18px rgba(0, 0, 0, 0.3),
+    inset 0 1px 2px rgba(255, 255, 255, 0.08);
+}
+
+.photo-preview-btn:active:not(:disabled) {
+  transform: translateY(0) scale(0.98);
+}
+
+.photo-preview-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.photo-preview-btn svg {
+  flex-shrink: 0;
+  color: var(--text-primary);
+}
+
+.btn-text {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  flex: 1;
+}
+
+.btn-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-primary);
+  letter-spacing: -0.01em;
+}
+
+.btn-subtitle {
+  font-size: 12px;
+  color: var(--text-secondary);
+  font-weight: 400;
+}
+
+/* Send as Photo - Purple accent */
+.photo-preview-btn.send-as-photo {
+  border-color: rgba(130, 90, 200, 0.25);
+}
+
+.photo-preview-btn.send-as-photo svg {
+  color: rgba(200, 170, 255, 0.95);
+}
+
+.photo-preview-btn.send-as-photo:hover:not(:disabled) {
+  border-color: rgba(145, 105, 215, 0.35);
+  box-shadow:
+    0 6px 20px rgba(130, 90, 200, 0.3),
+    inset 0 1px 2px rgba(255, 255, 255, 0.1);
+}
+
+/* Send as File - Orange accent */
+.photo-preview-btn.send-as-file {
+  border-color: rgba(200, 120, 70, 0.25);
+}
+
+.photo-preview-btn.send-as-file svg {
+  color: rgba(255, 195, 140, 0.95);
+}
+
+.photo-preview-btn.send-as-file:hover:not(:disabled) {
+  border-color: rgba(215, 135, 85, 0.35);
+  box-shadow:
+    0 6px 20px rgba(200, 120, 70, 0.3),
+    inset 0 1px 2px rgba(255, 255, 255, 0.1);
+}
+
+/* Progress Indicator */
+.photo-preview-progress {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(8px);
+  border-radius: 16px;
+  z-index: 100;
+}
+
+.photo-preview-progress p {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.spinner-large {
+  width: 40px;
+  height: 40px;
+  border: 3px solid rgba(255, 255, 255, 0.2);
+  border-top-color: rgba(255, 255, 255, 0.9);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

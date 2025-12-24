@@ -4,6 +4,7 @@ export interface Message {
   recipient_username: string;
   encrypted_content: string;
   message_type: "text" | "image" | "video" | "file" | "audio";
+  media_id?: string | null;
   created_at: string;
   delivered_at: string | null;
   read_at: string | null;

@@ -17,6 +17,7 @@ import type {
 const API_URL = "/api";
 
 class ApiService {
+  public readonly API_URL = API_URL;
   private token: string | null = null;
 
   /**

@@ -14,7 +14,9 @@ import { useState, KeyboardEvent, useRef, useEffect } from "react";
 import { useChatStore } from "@/store/chatStore";
 import { useAuthStore } from "@/store/authStore";
 import { cryptoService } from "@/services/crypto.service";
+import { MediaService } from "@/services/media.service";
 import type { Message } from "@/types/message.types";
+import { PhotoPreviewModal } from "./PhotoPreviewModal";
 
 interface MessageInputProps {
   activeChat: string;
@@ -34,6 +36,8 @@ export function MessageInput({
   const [message, setMessage] = useState("");
   const [showHoverMenu, setShowHoverMenu] = useState(false);
   const [recordMode, setRecordMode] = useState<"voice" | "video">("voice");
+  const [photoPreview, setPhotoPreview] = useState<File | null>(null);
+  const [showPhotoPreview, setShowPhotoPreview] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const hoverTimeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -130,12 +134,41 @@ export function MessageInput({
     setRecordMode((prev) => (prev === "voice" ? "video" : "voice"));
   };
 
-  // Handle file selection
+  // Handle photo selection
+  const handlePhotoChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
+
+    const file = files[0];
+
+    // Validate file type
+    if (!file.type.startsWith("image/")) {
+      alert("Please select an image file");
+      e.target.value = "";
+      return;
+    }
+
+    // Validate file size (max 10MB)
+    if (file.size > 10 * 1024 * 1024) {
+      alert("File too large (max 10MB)");
+      e.target.value = "";
+      return;
+    }
+
+    // Show preview modal
+    setPhotoPreview(file);
+    setShowPhotoPreview(true);
+
+    // Reset input
+    e.target.value = "";
+  };
+
+  // Handle other file types
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (!files || files.length === 0) return;
 
-    // TODO: Implement file upload logic
+    // TODO: Implement file upload logic for video, audio, documents
     console.log("Selected files:", files);
     alert(
       `Selected ${files.length} file(s). Upload functionality will be implemented soon.`,
@@ -177,6 +210,40 @@ export function MessageInput({
     }
   };
 
+  // Send photo
+  const handleSendPhoto = async (file: File, mode: "photo" | "file") => {
+    if (!user) return;
+
+    try {
+      // Upload photo
+      const result = await MediaService.uploadPhoto(file, mode);
+
+      // Encrypt a simple caption or empty string
+      const caption = `[${mode === "photo" ? "Photo" : "File"}]`;
+      const encryptedCaption = await cryptoService.encryptMessageForChat(
+        caption,
+        activeChat,
+        user.username,
+      );
+
+      // Send message with media_id
+      await sendMessage(
+        activeChat,
+        encryptedCaption,
+        user.username,
+        mode === "photo" ? "image" : "file",
+        result.media_id,
+      );
+
+      // Close preview
+      setShowPhotoPreview(false);
+      setPhotoPreview(null);
+    } catch (error) {
+      console.error("Failed to send photo:", error);
+      throw error;
+    }
+  };
+
   return (
     <div className="message-input-wrapper">
       {/* Hidden File Inputs */}
@@ -191,9 +258,8 @@ export function MessageInput({
         ref={photoInputRef}
         type="file"
         accept="image/*"
-        multiple
         style={{ display: "none" }}
-        onChange={handleFileChange}
+        onChange={handlePhotoChange}
       />
       <input
         ref={videoInputRef}
@@ -346,6 +412,19 @@ export function MessageInput({
           </button>
         )}
       </div>
+
+      {/* Photo Preview Modal */}
+      {photoPreview && (
+        <PhotoPreviewModal
+          file={photoPreview}
+          isOpen={showPhotoPreview}
+          onClose={() => {
+            setShowPhotoPreview(false);
+            setPhotoPreview(null);
+          }}
+          onSend={handleSendPhoto}
+        />
+      )}
     </div>
   );
 }

@@ -28,6 +28,8 @@ interface ChatState {
     recipientUsername: string,
     message: string,
     myUsername: string,
+    messageType?: "text" | "image" | "video" | "file" | "audio",
+    mediaId?: string,
   ) => Promise<void>;
   addMessage: (message: Message, myUsername: string) => void;
   updateContact: (contact: Contact) => void;
@@ -181,6 +183,8 @@ export const useChatStore = create<ChatState>()(
         recipientUsername: string,
         message: string,
         myUsername: string,
+        messageType: "text" | "image" | "video" | "file" | "audio" = "text",
+        mediaId?: string,
       ) => {
         try {
           // Шифруем сообщение
@@ -193,7 +197,8 @@ export const useChatStore = create<ChatState>()(
           const response = await apiService.sendMessage({
             recipient_username: recipientUsername,
             encrypted_content: encryptedContent,
-            message_type: "text",
+            message_type: messageType,
+            media_id: mediaId,
           });
 
           if (!response.success || !response.data) {
@@ -207,14 +212,15 @@ export const useChatStore = create<ChatState>()(
             sender_username: myUsername,
             recipient_username: recipientUsername,
             encrypted_content: message, // Храним расшифрованное для отображения
-            message_type: "text",
+            message_type: messageType,
+            media_id: mediaId || null,
             created_at: response.data.created_at,
             delivered_at: null, // Еще не доставлено
             read_at: null,
           };
 
           console.log(
-            `📤 [sendMessage] Adding MY message to store: id=${newMessage.id.slice(0, 8)}..., to=${recipientUsername}, delivered_at=${newMessage.delivered_at}, read_at=${newMessage.read_at}`,
+            `📤 [sendMessage] Adding MY message to store: id=${newMessage.id.slice(0, 8)}..., to=${recipientUsername}, type=${messageType}, media_id=${mediaId || "none"}`,
           );
 
           get().addMessage(newMessage, myUsername);
