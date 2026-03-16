@@ -68,39 +68,37 @@ export function SecuritySettings() {
       <h3 className="settings-section-title">Security Settings</h3>
 
       {/* Active Sessions */}
-      <div className="settings-block">
-        <div className="settings-block-header">
-          <h4>Active Sessions</h4>
-          <div style={{ fontSize: "12px", color: "var(--text-secondary)" }}>
-            Updates in real-time
-          </div>
-        </div>
+      <div className="security-header">
+        <h4 className="security-main-title">Active Sessions</h4>
+        <p className="security-subtitle">Updates in real-time</p>
+      </div>
 
-        <div className="settings-block-content">
-          {error && <div className="security-error">{error}</div>}
+      <div>
+        {error && <div className="security-error">{error}</div>}
 
-          {isLoading ? (
-            <div className="security-loading">Loading sessions...</div>
-          ) : sessions.length === 0 ? (
-            <div className="security-empty">No active sessions</div>
-          ) : (
-            <>
-              {/* Разделение на группы */}
-              {(() => {
-                const currentSession = sessions.find((s) => s.is_current);
-                const primarySession = sessions.find((s) => s.is_primary);
-                const otherSessions = sessions.filter(
-                  (s) => !s.is_current && !s.is_primary,
-                );
+        {isLoading ? (
+          <div className="security-loading">Loading sessions...</div>
+        ) : sessions.length === 0 ? (
+          <div className="security-empty">No active sessions</div>
+        ) : (
+          <>
+            {/* Разделение на группы */}
+            {(() => {
+              const currentSession = sessions.find((s) => s.is_current);
+              const primarySession = sessions.find((s) => s.is_primary);
+              const otherSessions = sessions.filter(
+                (s) => !s.is_current && !s.is_primary,
+              );
 
-                return (
-                  <>
-                    {/* ГЛАВНОЕ УСТРОЙСТВО (если оно же текущее - показываем одну карточку) */}
-                    {primarySession && primarySession.is_current && (
-                      <div className="sessions-group">
-                        <h5 className="sessions-group-title">
-                          Primary Device (Current Session)
-                        </h5>
+              return (
+                <>
+                  {/* ГЛАВНОЕ УСТРОЙСТВО (если оно же текущее - показываем одну карточку) */}
+                  {primarySession && primarySession.is_current && (
+                    <div className="sessions-group">
+                      <h5 className="sessions-group-title">
+                        Primary Device (Current Session)
+                      </h5>
+                      <div className="sessions-single">
                         <div className="session-item primary current">
                           <div className="session-icon">
                             {getDeviceIcon(
@@ -126,19 +124,24 @@ export function SecuritySettings() {
                               <span className="session-separator">•</span>
                               <span>{primarySession.ip_address}</span>
                             </div>
-                            <div className="session-time">
+                            <div
+                              className="session-details"
+                              style={{ marginTop: "2px" }}
+                            >
                               Last active:{" "}
                               {formatTimeAgo(primarySession.seconds_ago)}
                             </div>
                           </div>
                         </div>
                       </div>
-                    )}
+                    </div>
+                  )}
 
-                    {/* ГЛАВНОЕ УСТРОЙСТВО (если оно НЕ текущее) */}
-                    {primarySession && !primarySession.is_current && (
-                      <div className="sessions-group">
-                        <h5 className="sessions-group-title">Primary Device</h5>
+                  {/* ГЛАВНОЕ УСТРОЙСТВО (если оно НЕ текущее) */}
+                  {primarySession && !primarySession.is_current && (
+                    <div className="sessions-group">
+                      <h5 className="sessions-group-title">Primary Device</h5>
+                      <div className="sessions-single">
                         <div className="session-item primary">
                           <div className="session-icon">
                             {getDeviceIcon(
@@ -163,21 +166,24 @@ export function SecuritySettings() {
                               <span className="session-separator">•</span>
                               <span>{primarySession.ip_address}</span>
                             </div>
-                            <div className="session-time">
+                            <div
+                              className="session-details"
+                              style={{ marginTop: "2px" }}
+                            >
                               Last active:{" "}
                               {formatTimeAgo(primarySession.seconds_ago)}
                             </div>
                           </div>
                         </div>
                       </div>
-                    )}
+                    </div>
+                  )}
 
-                    {/* ТЕКУЩАЯ СЕССИЯ (только если она НЕ primary) */}
-                    {currentSession && !currentSession.is_primary && (
-                      <div className="sessions-group">
-                        <h5 className="sessions-group-title">
-                          Current Session
-                        </h5>
+                  {/* ТЕКУЩАЯ СЕССИЯ (только если она НЕ primary) */}
+                  {currentSession && !currentSession.is_primary && (
+                    <div className="sessions-group">
+                      <h5 className="sessions-group-title">Current Session</h5>
+                      <div className="sessions-single">
                         <div className="session-item current">
                           <div className="session-icon">
                             {getDeviceIcon(
@@ -200,22 +206,33 @@ export function SecuritySettings() {
                               <span className="session-separator">•</span>
                               <span>{currentSession.ip_address}</span>
                             </div>
-                            <div className="session-time">
+                            <div
+                              className="session-details"
+                              style={{ marginTop: "2px" }}
+                            >
                               Last active:{" "}
                               {formatTimeAgo(currentSession.seconds_ago)}
                             </div>
                           </div>
                         </div>
                       </div>
-                    )}
+                    </div>
+                  )}
 
-                    {/* ОСТАЛЬНЫЕ СЕССИИ */}
-                    {otherSessions.length > 0 && (
-                      <div className="sessions-group">
-                        <h5 className="sessions-group-title">Other Sessions</h5>
-                        <div className="sessions-list">
-                          {otherSessions.map((session) => (
-                            <div key={session.id} className="session-item">
+                  {/* ОСТАЛЬНЫЕ СЕССИИ */}
+                  {otherSessions.length > 0 && (
+                    <div className="sessions-group">
+                      <h5 className="sessions-group-title">Other Sessions</h5>
+                      <div
+                        style={{
+                          display: "flex",
+                          flexDirection: "column",
+                          gap: "16px",
+                        }}
+                      >
+                        {otherSessions.map((session) => (
+                          <div className="sessions-single" key={session.id}>
+                            <div className="session-item">
                               <div className="session-icon">
                                 {getDeviceIcon(
                                   (session.device_info?.type as string) ||
@@ -236,7 +253,10 @@ export function SecuritySettings() {
                                   <span className="session-separator">•</span>
                                   <span>{session.ip_address}</span>
                                 </div>
-                                <div className="session-time">
+                                <div
+                                  className="session-details"
+                                  style={{ marginTop: "2px" }}
+                                >
                                   Last active:{" "}
                                   {formatTimeAgo(session.seconds_ago)}
                                 </div>
@@ -250,30 +270,32 @@ export function SecuritySettings() {
                                 <Trash2 size={18} />
                               </button>
                             </div>
-                          ))}
-                        </div>
+                          </div>
+                        ))}
                       </div>
-                    )}
+                    </div>
+                  )}
 
-                    {/* КНОПКА ВЫХОДА СО ВСЕХ ДРУГИХ УСТРОЙСТВ */}
-                    {(otherSessions.length > 0 ||
-                      (primarySession && !primarySession.is_current)) && (
-                      <div className="sessions-actions">
-                        <button
-                          className="settings-btn settings-btn-danger"
-                          onClick={handleDeleteOtherSessions}
-                        >
-                          <LogOut size={16} />
-                          Sign Out All Other Devices
-                        </button>
-                      </div>
-                    )}
-                  </>
-                );
-              })()}
-            </>
-          )}
-        </div>
+                  {/* КНОПКА ВЫХОДА СО ВСЕХ ДРУГИХ УСТРОЙСТВ */}
+                  {otherSessions.length > 0 && (
+                    <div
+                      className="sessions-actions"
+                      style={{ marginBottom: "16px" }}
+                    >
+                      <button
+                        className="settings-btn-danger"
+                        onClick={handleDeleteOtherSessions}
+                      >
+                        <LogOut size={16} />
+                        Sign Out All Other Devices
+                      </button>
+                    </div>
+                  )}
+                </>
+              );
+            })()}
+          </>
+        )}
       </div>
     </div>
   );

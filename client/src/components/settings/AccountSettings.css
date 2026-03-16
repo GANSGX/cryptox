@@ -1,319 +1,176 @@
 /* ========================================
-   ACCOUNT SETTINGS
+   ACCOUNT SETTINGS - TRUE GLASSMORPHISM & HOVER
    ======================================== */
 .account-settings {
-  max-width: 700px;
+  max-width: 680px;
+  margin: 0 auto;
+  padding: 40px 32px; 
 }
 
 .settings-section-title {
-  font-size: 30px;
-  font-weight: 700;
-  color: var(--text-primary);
-  margin: 0 0 20px 0;
-  letter-spacing: -0.5px;
-  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  font-size: 32px; font-weight: 700; color: #fff;
+  margin: 0 0 24px 16px; letter-spacing: -0.5px;
 }
 
 /* ========================================
-   SETTINGS BLOCK
+   ЯВНОЕ СТЕКЛО (GLASSMORPHISM)
    ======================================== */
 .settings-block {
-  /* TRUE Liquid Glass - полупрозрачный блок */
-  background: rgba(255, 255, 255, 0.04);
-  backdrop-filter: blur(40px) saturate(180%);
-  -webkit-backdrop-filter: blur(40px) saturate(180%);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 22px;
-  padding: 28px;
-  margin-bottom: 24px;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  position: relative;
+  /* Светло-прозрачный фон для эффекта матового стекла */
+  background: rgba(255, 255, 255, 0.08); /* Чуть светлее чтобы стекло читалось */
+  backdrop-filter: blur(40px) saturate(200%);
+  -webkit-backdrop-filter: blur(40px) saturate(200%);
+  
+  /* Тончайшая ровная окантовка (БЕЗ ЖИРНЫХ ВЕРХНИХ ПОЛОС!) */
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 16px; 
+  margin-bottom: 32px;
   overflow: hidden;
-  box-shadow:
-    0 4px 16px rgba(0, 0, 0, 0.1),
-    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  
+  /* Только внешняя тень, БЕЗ inset (чтобы не было эффекта крышки) */
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+    
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease;
 }
 
-/* Тонкий highlight сверху */
-.settings-block::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 5%;
-  right: 5%;
-  height: 1px;
-  background: linear-gradient(
-    90deg,
-    transparent 0%,
-    rgba(255, 255, 255, 0.2) 50%,
-    transparent 100%
-  );
-}
-
+/* Анимация при наведении: только подъем и усиление внешней тени */
 .settings-block:hover {
-  border-color: rgba(255, 255, 255, 0.18);
-  background: rgba(255, 255, 255, 0.06);
-  backdrop-filter: blur(50px) saturate(200%);
-  -webkit-backdrop-filter: blur(50px) saturate(200%);
-  transform: translateY(-3px);
-  box-shadow:
-    0 12px 32px rgba(0, 0, 0, 0.18),
-    inset 0 1px 0 rgba(255, 255, 255, 0.12);
+  transform: translateY(-4px);
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.6);
+  background: rgba(255, 255, 255, 0.1);
+}
+
+/* Шапка блока (если есть). Без подчеркиваний. */
+.settings-block-header {
+  padding: 16px 20px 8px;
+  background: transparent; border-bottom: none;
 }
 
 .settings-block-header h4 {
-  font-size: 19px;
-  font-weight: 700;
-  color: var(--text-primary);
-  margin: 0 0 18px 0;
-  letter-spacing: -0.3px;
+  font-size: 13px; font-weight: 600; color: rgba(255, 255, 255, 0.5);
+  text-transform: uppercase; margin: 0; letter-spacing: 0.5px;
 }
 
-.settings-block-content {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
+.settings-block-content { display: flex; flex-direction: column; }
+
+/* ========================================
+   Ряды (Ячейки списка)
+   ======================================== */
+.settings-info-row, .settings-email-row {
+  display: flex; 
+  justify-content: flex-start; /* ВАЖНО: Никнейм рядом с Label */
+  align-items: center; 
+  gap: 16px; /* Расстояние между Label и никнеймом */
+  padding: 16px 20px; background: transparent; position: relative;
+  transition: background 0.2s ease;
+}
+
+/* Hover-эффект для рядов (Удален по просьбе пользователя) */
+.settings-info-row:hover, .settings-email-row:hover {
+  background: transparent;
+}
+
+/* Разделители только для контактных данных (Email), если там несколько рядов */
+.settings-email-row::after {
+  content: ''; position: absolute; bottom: 0; left: 20px; right: 20px;
+  height: 1px; background: rgba(255, 255, 255, 0.1); 
+}
+.settings-block-content > div:last-child::after { display: none; }
+
+.settings-label { font-size: 17px; color: rgba(255, 255, 255, 0.5); font-weight: 500; }
+.settings-value { font-size: 17px; color: #fff; font-weight: 500; }
+
+/* У кнопки внутри обычного ряда (Password) прижимаем к правому краю */
+.settings-info-row .settings-btn {
+  margin-left: auto; /* Толкает кнопку вправо, если она есть */
 }
 
 /* ========================================
-   INFO ROW
+   Иконка Email
    ======================================== */
-.settings-info-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 12px 0;
-}
+.settings-email-info { display: flex; align-items: center; gap: 16px; }
 
-.settings-label {
-  font-size: 14px;
-  color: var(--text-secondary);
-}
-
-.settings-value {
-  font-size: 15px;
-  font-weight: 500;
-  color: var(--text-primary);
-}
-
-/* ========================================
-   EMAIL ROW
-   ======================================== */
-.settings-email-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 16px;
-}
-
-.settings-email-info {
-  display: flex;
-  gap: 12px;
-  align-items: flex-start;
-}
-
+/* ОЧИЩЕНО: Просто SVG без фонов */
 .settings-email-icon {
-  color: var(--text-secondary);
-  margin-top: 2px;
+  width: 24px; height: 24px;
+  background: transparent; border: none; box-shadow: none; border-radius: 0;
+  color: rgba(255, 255, 255, 0.8); font-size: 24px;
+  display: flex; align-items: center; justify-content: center;
 }
 
-.settings-email-address {
-  font-size: 16px;
-  font-weight: 500;
-  color: var(--text-primary);
-  margin-bottom: 6px;
-}
+.settings-email-address { font-size: 17px; font-weight: 600; color: #fff; }
 
-.settings-email-status {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 13px;
-  font-weight: 500;
+.settings-email-status { 
+  font-size: 14px; color: rgba(255, 255, 255, 0.6); display: flex; align-items: center; gap: 6px; margin-top: 4px;
 }
+.settings-email-status.verified { color: #30D158; }
+.settings-email-status.unverified { color: #FF9F0A; }
 
-.settings-email-status.verified {
-  color: var(--success);
-}
-
-.settings-email-status.unverified {
-  color: var(--warning);
-}
-
-.settings-email-actions {
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
+.settings-email-actions { 
+  display: flex; gap: 8px; 
+  margin-left: auto; /* Прижимаем кнопки Email к правому краю */
 }
 
 /* ========================================
-   BUTTONS
+   Кнопки внутри блоков
    ======================================== */
+.settings-actions { padding: 16px 20px; width: 100%; box-sizing: border-box; display: flex; }
+
 .settings-btn {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 12px 20px;
-  border-radius: 12px;
-  font-size: 14px;
-  font-weight: 600;
-  border: none;
-  cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  white-space: nowrap;
-  position: relative;
-  overflow: hidden;
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  padding: 12px 24px; border-radius: 12px; border: none;
+  font-size: 16px; font-weight: 600; cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* Shimmer effect for buttons */
-.settings-btn::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(
-    90deg,
-    transparent 0%,
-    rgba(255, 255, 255, 0.2) 50%,
-    transparent 100%
-  );
-  transition: left 0.5s ease;
-}
+.settings-btn:active { transform: scale(0.95); }
 
-.settings-btn:hover::before {
-  left: 100%;
+/* Primary Кнопка */
+.settings-btn-primary { 
+  background: white; color: #000;
+  width: 100%; box-shadow: 0 4px 15px rgba(255, 255, 255, 0.1);
 }
-
-.settings-btn-primary {
-  /* Полупрозрачная primary button с оранжевым тоном */
-  background: rgba(255, 120, 60, 0.18);
-  backdrop-filter: blur(30px) saturate(180%) brightness(1.1);
-  -webkit-backdrop-filter: blur(30px) saturate(180%) brightness(1.1);
-  color: white;
-  border: 1px solid rgba(255, 120, 60, 0.5);
-  box-shadow:
-    0 4px 20px rgba(255, 120, 60, 0.25),
-    inset 0 1px 0 rgba(255, 255, 255, 0.15);
-}
-
 .settings-btn-primary:hover {
-  background: rgba(255, 120, 60, 0.28);
-  backdrop-filter: blur(40px) saturate(200%) brightness(1.15);
-  -webkit-backdrop-filter: blur(40px) saturate(200%) brightness(1.15);
-  transform: translateY(-3px);
-  box-shadow:
-    0 8px 28px rgba(255, 120, 60, 0.35),
-    inset 0 1px 0 rgba(255, 255, 255, 0.2);
-  border-color: rgba(255, 120, 60, 0.6);
+  background: #f0f0f0;
+  box-shadow: 0 8px 25px rgba(255, 255, 255, 0.2);
+  transform: translateY(-2px);
 }
 
+/* Secondary (Малые кнопки) */
 .settings-btn-secondary {
-  /* Полупрозрачная secondary button */
-  background: rgba(255, 255, 255, 0.06);
-  backdrop-filter: blur(30px);
-  -webkit-backdrop-filter: blur(30px);
-  color: var(--text-primary);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  box-shadow:
-    0 2px 12px rgba(0, 0, 0, 0.15),
-    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  padding: 8px 16px; font-size: 14px; border-radius: 10px;
+  background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #fff;
+  height: max-content;
 }
 
 .settings-btn-secondary:hover {
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(40px);
-  -webkit-backdrop-filter: blur(40px);
-  border-color: rgba(255, 255, 255, 0.25);
-  transform: translateY(-3px);
-  box-shadow:
-    0 6px 20px rgba(0, 0, 0, 0.2),
-    inset 0 1px 0 rgba(255, 255, 255, 0.12);
-}
-
-.settings-btn:active {
-  transform: translateY(0);
+  background: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.3);
+  transform: translateY(-2px);
 }
 
 /* ========================================
-   INFO BANNER
+   Banner / Примечание
    ======================================== */
 .settings-info-banner {
-  display: flex;
-  gap: 18px;
-  padding: 20px;
-  /* Полупрозрачный warning banner */
-  background: rgba(255, 183, 77, 0.12);
-  backdrop-filter: blur(30px) saturate(150%);
-  -webkit-backdrop-filter: blur(30px) saturate(150%);
-  border: 1px solid rgba(255, 183, 77, 0.4);
-  border-radius: 18px;
-  margin-top: 16px;
-  box-shadow:
-    0 4px 20px rgba(255, 183, 77, 0.15),
-    inset 0 1px 0 rgba(255, 255, 255, 0.1);
-  position: relative;
-  overflow: hidden;
+  margin: 16px 20px; padding: 16px;
+  background: rgba(255, 159, 10, 0.1);
+  border: 1px solid rgba(255, 159, 10, 0.2);
+  border-radius: 14px;
+  display: flex; gap: 16px;
 }
-
-.settings-info-banner::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 5%;
-  right: 5%;
-  height: 1px;
-  background: linear-gradient(
-    90deg,
-    transparent 0%,
-    rgba(255, 183, 77, 0.4) 50%,
-    transparent 100%
-  );
-}
-
-.settings-info-banner-icon {
-  font-size: 24px;
-  flex-shrink: 0;
-}
-
-.settings-info-banner-content {
-  flex: 1;
-}
-
-.settings-info-banner-content strong {
-  display: block;
-  font-size: 15px;
-  color: var(--text-primary);
-  margin-bottom: 8px;
-}
-
-.settings-info-banner-content ul {
-  margin: 0;
-  padding-left: 20px;
-  color: var(--text-secondary);
-  font-size: 14px;
-  line-height: 1.6;
-}
-
-.settings-info-banner-content li {
-  margin-bottom: 4px;
-}
+.settings-info-banner-icon { font-size: 24px; color: #FF9F0A; }
+.settings-info-banner-content { flex: 1; }
+.settings-info-banner-content ul { padding-left: 20px; color: rgba(255, 255, 255, 0.8); font-size: 14px; margin: 0; line-height: 1.5; }
 
 /* ========================================
    RESPONSIVE
    ======================================== */
-@media (max-width: 768px) {
-  .settings-email-row {
-    flex-direction: column;
-  }
-
-  .settings-email-actions {
-    width: 100%;
-  }
-
-  .settings-btn {
-    flex: 1;
-    justify-content: center;
-  }
+@media (max-width: 600px) {
+  .account-settings { padding: 24px 16px; }
+  .settings-section-title { margin-left: 0; }
+  .settings-email-row { flex-direction: column; align-items: flex-start; gap: 16px; }
+  .settings-email-actions { margin-left: 0; align-self: flex-start; width: 100%; display: grid; grid-template-columns: 1fr 1fr; }
+  .settings-email-actions .settings-btn { width: 100%; }
 }

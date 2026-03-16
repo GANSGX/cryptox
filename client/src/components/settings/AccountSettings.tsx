@@ -1,33 +1,35 @@
-import { useState } from 'react'
-import { Mail, CheckCircle, XCircle, Edit2, Key } from 'lucide-react'
-import { useAuthStore } from '@/store/authStore'
-import { ChangeEmailModal } from './ChangeEmailModal'
-import { VerifyEmailModal } from './VerifyEmailModal'
-import { ChangePasswordModal } from './ChangePasswordModal'
-import './AccountSettings.css'
+import { useState } from "react";
+import { Mail, CheckCircle, XCircle, Edit2, Key } from "lucide-react";
+import { useAuthStore } from "@/store/authStore";
+import { ChangeEmailModal } from "./ChangeEmailModal";
+import { VerifyEmailModal } from "./VerifyEmailModal";
+import { ChangePasswordModal } from "./ChangePasswordModal";
+import "./AccountSettings.css";
 
 export function AccountSettings() {
-  const { user, checkAuth } = useAuthStore()
-  const [showChangeEmail, setShowChangeEmail] = useState(false)
-  const [showVerifyEmail, setShowVerifyEmail] = useState(false)
-  const [showChangePassword, setShowChangePassword] = useState(false)
+  const { user, checkAuth } = useAuthStore();
+  const [showChangeEmail, setShowChangeEmail] = useState(false);
+  const [showVerifyEmail, setShowVerifyEmail] = useState(false);
+  const [showChangePassword, setShowChangePassword] = useState(false);
 
-  const isEmailVerified = user?.email_verified || false
+  const isEmailVerified = user?.email_verified || false;
 
   const handleEmailChanged = () => {
     // Обновляем данные пользователя после смены email
-    checkAuth()
-  }
+    checkAuth();
+  };
 
   const handleEmailVerified = () => {
     // Обновляем данные пользователя после верификации
-    checkAuth()
-  }
+    checkAuth();
+  };
 
   const handlePasswordChanged = () => {
     // Показываем уведомление об успешной смене пароля
-    alert('Password changed successfully! All other devices have been signed out.')
-  }
+    alert(
+      "Password changed successfully! All other devices have been signed out.",
+    );
+  };
 
   return (
     <div className="account-settings">
@@ -57,7 +59,9 @@ export function AccountSettings() {
               <Mail size={20} className="settings-email-icon" />
               <div>
                 <div className="settings-email-address">{user?.email}</div>
-                <div className={`settings-email-status ${isEmailVerified ? 'verified' : 'unverified'}`}>
+                <div
+                  className={`settings-email-status ${isEmailVerified ? "verified" : "unverified"}`}
+                >
                   {isEmailVerified ? (
                     <>
                       <CheckCircle size={16} />
@@ -91,7 +95,6 @@ export function AccountSettings() {
               </button>
             </div>
           </div>
-
         </div>
       </div>
 
@@ -101,10 +104,10 @@ export function AccountSettings() {
           <h4>Password</h4>
         </div>
         <div className="settings-block-content">
-          <div className="settings-info-row">
-            <span className="settings-label">Manage your account password</span>
-          </div>
-          <div className="settings-actions" style={{ marginTop: '16px' }}>
+          <div className="settings-info-row" style={{ borderBottom: "none" }}>
+            <span className="settings-label" style={{ fontSize: "15px" }}>
+              Manage your account password
+            </span>
             <button
               className="settings-btn settings-btn-secondary"
               onClick={() => setShowChangePassword(true)}
@@ -137,5 +140,5 @@ export function AccountSettings() {
         onSuccess={handlePasswordChanged}
       />
     </div>
-  )
+  );
 }

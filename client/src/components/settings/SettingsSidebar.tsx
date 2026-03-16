@@ -31,6 +31,7 @@ export function SettingsSidebar({
 
   return (
     <div className="settings-sidebar">
+      <h2 className="settings-sidebar-title">Settings</h2>
       {sections.map((section) => {
         const Icon = section.icon;
         return (
