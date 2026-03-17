@@ -1,33 +1,36 @@
 /* ========================================
-   CHANGE EMAIL MODAL (Authentic iOS Alert)
+   CHANGE EMAIL MODAL (iOS 26 Black Glass)
    ======================================== */
 .change-email-overlay {
   position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
   background: rgba(0, 0, 0, 0); z-index: 700; pointer-events: none;
-  transition: background 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
+  transition: background 0.4s cubic-bezier(0.16, 1, 0.3, 1), backdrop-filter 0.4s;
 }
 
 .change-email-overlay.visible {
-  background: rgba(0, 0, 0, 0.65); /* Темнее для выделения модалки */
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   pointer-events: auto;
 }
 
 .change-email-modal {
   position: fixed; top: 50%; left: 50%;
   transform: translate(-50%, -50%) scale(0.95);
-  width: 90%; max-width: 400px; /* Более узкая, как алерт в iOS */
+  width: 90%; max-width: 440px;
   
-  /* Истинное стекло как в iOS Alert Mode */
-  background: rgba(40, 40, 40, 0.85); 
-  backdrop-filter: blur(50px) saturate(200%);
-  -webkit-backdrop-filter: blur(50px) saturate(200%);
+  /* Black Glass Mode */
+  background: rgba(10, 10, 12, 0.7); 
+  backdrop-filter: blur(40px) saturate(150%);
+  -webkit-backdrop-filter: blur(40px) saturate(150%);
   
-  border-radius: 14px; /* Стандартный iOS Alert */
-  border: 0.5px solid rgba(255, 255, 255, 0.15);
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+  border-radius: 24px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 40px 100px rgba(0, 0, 0, 0.8);
   
   z-index: 701; opacity: 0;
-  transition: opacity 0.3s cubic-bezier(0.25, 0.8, 0.25, 1), transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.05);
+  transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1), transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+  overflow: hidden;
 }
 
 .change-email-modal.open {
@@ -35,71 +38,119 @@
 }
 
 .change-email-header {
-  padding: 20px 16px 12px; text-align: center;
+  padding: 32px 24px 16px; text-align: center;
   position: relative;
 }
 
 .change-email-header h2 {
-  font-size: 17px; font-weight: 600; color: #fff; margin: 0;
+  font-size: 20px; font-weight: 600; color: #fff; margin: 0;
   letter-spacing: -0.4px;
 }
 
 .change-email-close {
-  display: none; /* Убираем вообще крестик, у нас будет кнопка Cancel внизу как в iOS */
+  position: absolute;
+  top: 24px; right: 24px;
+  width: auto; height: auto; padding: 4px;
+  background: transparent; border: none;
+  display: flex; align-items: center; justify-content: center;
+  color: rgba(255, 255, 255, 0.4); font-size: 24px;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  z-index: 10;
 }
 
-.change-email-content { padding: 0 16px 20px; }
+.change-email-close:hover {
+  color: #fff;
+  transform: scale(1.1);
+}
 
-.change-email-form { display: flex; flex-direction: column; gap: 16px; }
+.change-email-close:active {
+  transform: scale(0.9);
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.change-email-content { padding: 0 32px 32px; }
+
+.change-email-form { display: flex; flex-direction: column; gap: 20px; }
 
 /* Info text inside modal */
-.change-email-step-info h3 { font-size: 15px; font-weight: 500; color: #fff; margin: 0 0 4px 0; text-align: center; display: none; }
-.change-email-step-info p { font-size: 13px; color: rgba(235, 235, 245, 0.6); margin: 0 0 16px; text-align: center; line-height: 1.38; }
+.change-email-step-info h3 { font-size: 16px; font-weight: 500; color: #fff; margin: 0 0 4px 0; text-align: center; }
+.change-email-step-info p { font-size: 14px; color: rgba(255, 255, 255, 0.5); margin: 0 0 16px; text-align: center; line-height: 1.4; }
 .change-email-step-info strong { color: #fff; font-weight: 600; }
 
-/* Inputs styled as iOS textfields */
-.change-email-form input {
-  background: rgba(255, 255, 255, 0.1); /* Белый полупрозрачный */
-  border: 0.5px solid rgba(255, 255, 255, 0.2);
-  border-radius: 8px; padding: 10px 12px;
-  font-size: 17px; color: #fff; width: 100%; box-sizing: border-box;
+/* Form Labels */
+.form-label {
+  font-size: 13px; font-weight: 500; color: rgba(255, 255, 255, 0.5);
+  margin-bottom: 8px; display: block; text-transform: uppercase; letter-spacing: 0.5px;
 }
 
-.change-email-form input::placeholder { color: rgba(235, 235, 245, 0.3); }
-.change-email-form input:focus { outline: none; border-color: rgba(255,255,255,0.4); background: rgba(255,255,255,0.15); }
+/* Inputs styled as Glass textfields */
+.change-email-form input {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px; padding: 14px 16px;
+  font-size: 16px; color: #fff; width: 100%; box-sizing: border-box;
+  transition: all 0.2s ease;
+}
+
+.change-email-form input::placeholder { color: rgba(255, 255, 255, 0.3); }
+.change-email-form input:focus { 
+  outline: none; 
+  border-color: rgba(255, 255, 255, 0.3); 
+  background: rgba(255, 255, 255, 0.08); 
+  box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.05);
+}
 
 /* Current email display */
 .change-email-current {
   display: flex; flex-direction: column; align-items: center; gap: 4px;
   margin-bottom: 8px;
+  padding: 16px;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
 }
-.change-email-label { font-size: 12px; color: rgba(235, 235, 245, 0.6); text-transform: uppercase; }
-.change-email-value { font-size: 15px; font-weight: 500; color: #fff; }
+.change-email-label { font-size: 12px; color: rgba(255, 255, 255, 0.5); text-transform: uppercase; letter-spacing: 0.5px; }
+.change-email-value { font-size: 16px; font-weight: 600; color: #fff; }
 
-.change-email-error { color: #FF453A; font-size: 13px; text-align: center; }
+.change-email-error { 
+  color: #FF453A; font-size: 14px; text-align: center;
+  background: rgba(255, 69, 58, 0.1); padding: 10px; border-radius: 10px;
+  border: 1px solid rgba(255, 69, 58, 0.2);
+}
 
-/* Action Buttons (iOS Alert Style) */
+/* Action Buttons (Modern Pill Style) */
 .change-email-actions { 
-  display: flex; flex-direction: column; margin-top: 16px; 
-  /* Имитация сепараторов iOS Алерта */
-  border-top: 0.5px solid rgba(84, 84, 88, 0.65);
-  margin-left: -16px; margin-right: -16px; margin-bottom: -20px;
+  display: flex; gap: 12px; margin-top: 12px; 
 }
 
 .change-email-actions .settings-btn {
-  background: transparent; border: none; color: #0A84FF; font-size: 17px; font-weight: 400;
-  padding: 12px; cursor: pointer; text-align: center;
+  flex: 1; padding: 14px; border-radius: 12px;
+  font-size: 16px; font-weight: 600; cursor: pointer;
+  transition: all 0.2s ease; border: none;
 }
 
-.change-email-actions .settings-btn:active { background: rgba(255, 255, 255, 0.1); }
+.settings-btn-secondary {
+  background: rgba(255, 255, 255, 0.05);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+.settings-btn-secondary:hover { background: rgba(255, 255, 255, 0.1); transform: translateY(-2px); }
+.settings-btn-secondary:active { transform: scale(0.96); }
 
 .settings-btn-primary { 
-  font-weight: 600; /* Primary действие жирнее */
-  border-bottom: 0.5px solid rgba(84, 84, 88, 0.65); /* Разделитель между кнопками */
+  background: linear-gradient(135deg, #fff, #e0e0e0);
+  color: #000;
+  box-shadow: 0 4px 12px rgba(255, 255, 255, 0.15);
 }
-
-/* Если кнопки в ряд (как в некоторых алертах), то flex-direction: row, для простоты оставим column */
+.settings-btn-primary:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(255, 255, 255, 0.25);
+}
+.settings-btn-primary:active:not(:disabled) { transform: scale(0.96); }
+.settings-btn-primary:disabled { opacity: 0.5; cursor: not-allowed; background: rgba(255, 255, 255, 0.2); color: rgba(255, 255, 255, 0.5); box-shadow: none; }
 
 @media (max-width: 480px) {
-  .change-email-modal { width: 85%; }
+  .change-email-modal { width: 95%; max-width: 95%; }
+  .change-email-actions { flex-direction: column-reverse; }
 }

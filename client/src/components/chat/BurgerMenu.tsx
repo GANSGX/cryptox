@@ -55,10 +55,6 @@ export function BurgerMenu({ isOpen, onClose }: BurgerMenuProps) {
       <div className={`burger-menu ${isAnimated ? "open" : ""}`}>
         {/* Header - Profile + Close Button */}
         <div className="burger-menu-header">
-          <button className="close-button" onClick={onClose}>
-            <X size={24} />
-          </button>
-
           <div className="burger-menu-profile">
             <div className="profile-avatar">
               {user?.avatar_path ? (
@@ -75,6 +71,10 @@ export function BurgerMenu({ isOpen, onClose }: BurgerMenuProps) {
               <p>{user?.email}</p>
             </div>
           </div>
+
+          <button className="close-button" onClick={onClose}>
+            <X size={20} />
+          </button>
         </div>
 
         {/* Menu Items */}
@@ -90,11 +90,9 @@ export function BurgerMenu({ isOpen, onClose }: BurgerMenuProps) {
         </div>
 
         {/* Logout Button */}
-        <div style={{ padding: "0 0 8px 0" }}>
-          <div className="menu-item danger" onClick={handleLogout}>
-            <LogOut size={20} />
-            <span>Logout</span>
-          </div>
+        <div className="menu-item danger" onClick={handleLogout}>
+          <LogOut size={20} />
+          <span>Logout</span>
         </div>
 
         {/* Footer */}

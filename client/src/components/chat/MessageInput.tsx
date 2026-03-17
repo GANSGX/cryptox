@@ -179,8 +179,9 @@ export function MessageInput({
   };
 
   // Open file input for any file type (on click)
+  // Временно открываем фото, пока не готовы другие типы
   const handleAttachClick = () => {
-    fileInputRef.current?.click();
+    photoInputRef.current?.click();
   };
 
   // Show menu immediately
