@@ -249,17 +249,16 @@
    ======================================== */
 .sidebar {
   width: 360px;
-  background: rgba(20, 20, 30, 0.7);
-  backdrop-filter: blur(20px);
-  border-right: 1px solid rgba(255, 255, 255, 0.08);
+  background: #0B0B0E; /* Чуть менее черный, чтобы элементы не сливались, но оставался Black Glass */
+  border-right: 1px solid rgba(255, 255, 255, 0.05); /* Очень тонкий разделитель */
   display: flex;
   flex-direction: column;
   overflow: hidden;
 }
 
 .sidebar-header {
-  padding: 16px 20px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 24px 12px 16px; /* Отступы по бокам 12px (как у карточек чатов), чтобы поиск был с ними одной ширины */
+  /* Убираем border-bottom для бесшовного дизайна */
 }
 
 .sidebar-header h2 {
@@ -271,43 +270,56 @@
 
 .search-input {
   width: 100%;
-  padding: 10px 16px 10px 40px;
-  border-radius: 10px;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  color: var(--text-primary);
-  font-size: 14px;
-  transition: all 0.2s ease;
+  padding: 12px 16px 12px 42px;
+  border-radius: 12px; /* Менее круглая капсула */
+  background: rgba(255, 255, 255, 0.04);
+  backdrop-filter: blur(20px) saturate(120%);
+  -webkit-backdrop-filter: blur(20px) saturate(120%);
+  border: 1px solid rgba(255, 255, 255, 0.08); /* Граница стекла */
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05); /* Внутренний блик сверху */
+  color: #fff;
+  font-size: 15px;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
   outline: none;
 }
 
 .search-input:focus {
   background: rgba(255, 255, 255, 0.08);
-  border-color: rgba(255, 120, 60, 0.5);
+  border-color: rgba(255, 255, 255, 0.2);
+  box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.03), inset 0 1px 0 rgba(255, 255, 255, 0.1);
 }
 
 .chat-list {
   flex: 1;
   overflow-y: auto;
+  padding: 0 12px 12px 12px; /* Отступы по краям для плавающих карточек */
+  display: flex;
+  flex-direction: column;
+  gap: 4px; /* Расстояние между карточками */
 }
 
 .chat-item {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 12px 20px;
+  gap: 16px; 
+  padding: 12px; /* Более аккуратный внутренний отступ */
+  border-radius: 16px; /* Скругления карточки */
   cursor: pointer;
-  transition: background 0.2s ease;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  border: 1px solid transparent; /* Подготовка под рамку активного чата */
 }
 
 .chat-item:hover {
-  background: rgba(255, 255, 255, 0.05);
+  background: rgba(255, 255, 255, 0.03);
+  border-color: rgba(255, 255, 255, 0.02);
 }
 
 .chat-item.active {
-  background: rgba(255, 120, 60, 0.15);
-  border-left: 3px solid #ff783c;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.02)); /* Градиент стекла */
+  backdrop-filter: blur(40px) saturate(150%);
+  -webkit-backdrop-filter: blur(40px) saturate(150%);
+  border: 1px solid rgba(255, 255, 255, 0.1); /* Четкая стеклянная граница */
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.15); /* Внешняя тень и внутренний блик сверху */
 }
 
 .chat-avatar {
@@ -323,6 +335,15 @@
   color: white;
   flex-shrink: 0;
   overflow: hidden;
+}
+
+.chat-avatar.saved {
+  background: linear-gradient(135deg, rgba(82, 39, 255, 0.4), rgba(177, 158, 239, 0.2)); /* Глубокий премиальный фиолетово-неоновый градиент */
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(177, 158, 239, 0.3); /* Яркая тонкая грань */
+  box-shadow: inset 0 2px 4px rgba(255, 255, 255, 0.1);
+  color: #E2D9FF; /* Светлый ледяной фиолетовый для самой иконки */
 }
 
 .chat-avatar img {
@@ -388,18 +409,19 @@
 }
 
 .unread-badge {
-  min-width: 20px;
-  height: 20px;
+  min-width: 22px;
+  height: 22px;
   padding: 0 6px;
-  background: var(--accent-color, #0088cc);
-  color: white;
-  border-radius: 10px;
+  background: #fff; /* Белый бейджик для контраста в темной теме */
+  color: #000;
+  border-radius: 11px;
   font-size: 11px;
-  font-weight: 600;
+  font-weight: 700;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
+  box-shadow: 0 4px 12px rgba(255, 255, 255, 0.2); /* Свечение */
 }
 
 /* ========================================

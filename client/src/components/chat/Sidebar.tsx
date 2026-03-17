@@ -55,18 +55,18 @@ export function Sidebar({ activeChat, onChatSelect }: SidebarProps) {
     <div className="sidebar">
       {/* Header */}
       <div className="sidebar-header">
-        <h2>Chats</h2>
-
         {/* Search */}
         <div style={{ position: "relative" }}>
           <Search
             size={18}
             style={{
               position: "absolute",
-              left: "12px",
+              left: "14px",
               top: "50%",
               transform: "translateY(-50%)",
-              color: "var(--text-tertiary)",
+              color: "rgba(255, 255, 255, 0.4)",
+              zIndex: 10 /* Чтобы иконка точно была поверх инпута */,
+              pointerEvents: "none" /* Не мешать кликам по инпуту */,
             }}
           />
           <input
