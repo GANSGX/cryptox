@@ -431,19 +431,44 @@
   flex: 1;
   display: flex;
   flex-direction: column;
-  background: rgba(10, 10, 15, 0.5);
-  backdrop-filter: blur(20px);
-  position: relative; /* Для позиционирования floating-date-header */
+  background: #050507; /* Почти черный фон окна чата */
+  position: relative;
 }
 
 .chat-header {
-  padding: 16px 24px;
-  background: rgba(20, 20, 30, 0.8);
-  backdrop-filter: blur(20px);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 12px 16px;
+  background: rgba(15, 15, 18, 0.65); /* Более прозрачный */
+  backdrop-filter: blur(60px) saturate(180%);
+  -webkit-backdrop-filter: blur(60px) saturate(180%);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
   display: flex;
   align-items: center;
   gap: 12px;
+}
+
+.chat-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.chat-header-btn {
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  background: transparent;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: rgba(255, 255, 255, 0.4);
+  transition: all 0.2s ease;
+}
+
+.chat-header-btn:hover {
+  background: rgba(255, 255, 255, 0.06);
+  color: rgba(255, 255, 255, 0.8);
 }
 
 .chat-header h3 {
@@ -483,38 +508,35 @@
 .message-bubble {
   padding: 10px 14px;
   border-radius: 18px;
-  /* Liquid glass: полупрозрачный градиент с blur */
-  background: linear-gradient(
-    135deg,
-    rgba(255, 255, 255, 0.09),
-    rgba(255, 255, 255, 0.06),
-    rgba(255, 255, 255, 0.08)
-  );
-  backdrop-filter: blur(12px) saturate(140%);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  color: var(--text-primary);
+  /* Стеклянный полупрозрачный баббл для входящих */
+  background: rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(20px) saturate(150%);
+  -webkit-backdrop-filter: blur(20px) saturate(150%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: #fff;
   font-size: 14.5px;
   line-height: 1.5;
   word-wrap: break-word;
   box-shadow:
-    0 2px 8px rgba(0, 0, 0, 0.15),
-    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+    0 2px 8px rgba(0, 0, 0, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.04); /* Приглушенное свечение */
 }
 
 .message.own .message-bubble {
-  /* Liquid glass: темно-оранжевый градиент с blur */
+  /* Фиолетово-синий градиент для исходящих */
   background: linear-gradient(
     135deg,
-    rgba(140, 50, 20, 0.75),
-    rgba(170, 70, 30, 0.7),
-    rgba(190, 85, 40, 0.75)
+    rgba(82, 39, 255, 0.75),
+    rgba(100, 60, 255, 0.65),
+    rgba(130, 90, 255, 0.7)
   );
   backdrop-filter: blur(16px) saturate(150%);
-  border: 1px solid rgba(200, 90, 40, 0.3);
+  -webkit-backdrop-filter: blur(16px) saturate(150%);
+  border: 1px solid rgba(130, 90, 255, 0.3);
   color: #ffffff;
   box-shadow:
-    0 2px 8px rgba(0, 0, 0, 0.3),
-    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    0 2px 10px rgba(82, 39, 255, 0.15), /* Приглушенное свечение */
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
 }
 
 .message-time {
@@ -566,17 +588,17 @@
 
 /* Editing mode - подсветка редактируемого сообщения */
 .message.editing-mode .message-bubble {
-  border: 2px solid rgba(255, 120, 60, 0.6);
-  box-shadow: 0 0 20px rgba(255, 120, 60, 0.3);
+  border: 2px solid rgba(82, 39, 255, 0.6);
+  box-shadow: 0 0 20px rgba(82, 39, 255, 0.3);
   animation: pulse-edit 1.5s ease-in-out infinite;
 }
 
 @keyframes pulse-edit {
   0%, 100% {
-    box-shadow: 0 0 20px rgba(255, 120, 60, 0.3);
+    box-shadow: 0 0 20px rgba(82, 39, 255, 0.3);
   }
   50% {
-    box-shadow: 0 0 30px rgba(255, 120, 60, 0.5);
+    box-shadow: 0 0 30px rgba(82, 39, 255, 0.5);
   }
 }
 
@@ -630,44 +652,23 @@
 .date-separator-text {
   padding: 7px 18px;
   border-radius: 20px;
-  min-width: 140px; /* Фиксированная ширина для всех дат */
+  min-width: 140px;
   text-align: center;
-  /* Liquid glass: градиент + blur */
-  background: linear-gradient(
-    135deg,
-    rgba(99, 102, 241, 0.15),
-    rgba(139, 92, 246, 0.12),
-    rgba(168, 85, 247, 0.15)
-  );
-  backdrop-filter: blur(20px) saturate(180%);
-  border: 1px solid rgba(139, 92, 246, 0.3);
-  color: rgba(196, 181, 253, 0.95);
+  /* Мягкая стеклянная плашка — заметная, но спокойная */
+  background: rgba(255, 255, 255, 0.07);
+  backdrop-filter: blur(30px) saturate(150%);
+  -webkit-backdrop-filter: blur(30px) saturate(150%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.6);
   font-size: 12.5px;
   font-weight: 600;
   text-transform: capitalize;
   letter-spacing: 0.5px;
-  box-shadow:
-    0 4px 20px rgba(139, 92, 246, 0.15),
-    0 2px 8px rgba(0, 0, 0, 0.2),
-    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05); /* Тонкий внутренний блик сверху */
   white-space: nowrap;
-  transition: all 0.3s ease;
 }
 
-.date-separator-text:hover {
-  background: linear-gradient(
-    135deg,
-    rgba(99, 102, 241, 0.22),
-    rgba(139, 92, 246, 0.18),
-    rgba(168, 85, 247, 0.22)
-  );
-  border-color: rgba(139, 92, 246, 0.45);
-  transform: translateY(-2px);
-  box-shadow:
-    0 6px 28px rgba(139, 92, 246, 0.25),
-    0 3px 12px rgba(0, 0, 0, 0.3),
-    inset 0 1px 0 rgba(255, 255, 255, 0.15);
-}
+/* hover эффект для date-separator убран */
 
 /* ========================================
    FLOATING DATE HEADER (как в Telegram)
@@ -691,19 +692,20 @@
 }
 
 .floating-date-text {
-  /* Идентичные стили с .date-separator-text */
+  /* Стеклянный дизайн вместо оранжевого */
   padding: 8px 18px;
   border-radius: 20px;
-  background: linear-gradient(135deg, rgba(255, 120, 60, 0.15), rgba(255, 90, 40, 0.1));
-  backdrop-filter: blur(16px);
-  border: 1.5px solid rgba(255, 120, 60, 0.3);
-  color: var(--text-primary);
+  background: rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(20px) saturate(150%);
+  -webkit-backdrop-filter: blur(20px) saturate(150%);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.8);
   font-size: 14px;
   font-weight: 600;
   text-transform: capitalize;
   letter-spacing: 0.3px;
-  box-shadow: 0 4px 20px rgba(255, 120, 60, 0.15),
-              0 2px 8px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3),
+              inset 0 1px 0 rgba(255, 255, 255, 0.1);
   white-space: nowrap;
   display: inline-block;
 }
@@ -752,7 +754,7 @@
   width: 44px;
   height: 44px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #ff783c, #ff5a3c);
+  background: linear-gradient(135deg, #5227FF, #7B5AFF);
   border: none;
   display: flex;
   align-items: center;
@@ -764,7 +766,7 @@
 
 .send-button:hover {
   transform: scale(1.05);
-  box-shadow: 0 4px 12px rgba(255, 120, 60, 0.4);
+  box-shadow: 0 4px 12px rgba(82, 39, 255, 0.4);
 }
 
 .send-button:active {
@@ -914,10 +916,10 @@
 
 .input-field-wrapper:focus-within {
   background: rgba(255, 255, 255, 0.07);
-  border-color: rgba(255, 120, 60, 0.35);
+  border-color: rgba(130, 90, 255, 0.35); /* Фиолетовый акцент вместо оранжевого */
   box-shadow: 
-    0 0 0 4px rgba(255, 120, 60, 0.1),
-    0 8px 32px 0 rgba(255, 120, 60, 0.2),
+    0 0 0 4px rgba(82, 39, 255, 0.1),
+    0 8px 32px 0 rgba(82, 39, 255, 0.15),
     inset 0 1px 2px 0 rgba(255, 255, 255, 0.12);
 }
 
@@ -960,7 +962,7 @@
   width: 36px;
   height: 36px;
   border-radius: 18px;
-  background: linear-gradient(135deg, #ff783c, #ff5a3c);
+  background: linear-gradient(135deg, #5227FF, #7B5AFF); /* Фиолетовый градиент */
   border: none;
   display: flex;
   align-items: center;
@@ -970,12 +972,12 @@
   color: white;
   margin-right: 4px;
   flex-shrink: 0;
-  box-shadow: 0 4px 12px rgba(255, 120, 60, 0.35);
+  box-shadow: 0 4px 12px rgba(82, 39, 255, 0.35);
 }
 
 .send-button-inline:hover {
   transform: scale(1.1);
-  box-shadow: 0 6px 16px rgba(255, 120, 60, 0.45);
+  box-shadow: 0 6px 16px rgba(82, 39, 255, 0.45);
 }
 
 .send-button-inline:active {

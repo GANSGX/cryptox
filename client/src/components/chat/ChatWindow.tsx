@@ -1,5 +1,11 @@
 import { useEffect, useRef, Fragment, useState, useCallback } from "react";
-import { MessageCircle } from "lucide-react";
+import {
+  MessageCircle,
+  Search,
+  Phone,
+  Monitor,
+  MoreVertical,
+} from "lucide-react";
 import { MessageInput } from "./MessageInput";
 import { MessageStatus } from "./MessageStatus";
 import { DateSeparator } from "./DateSeparator";
@@ -203,9 +209,26 @@ export function ChatWindow({ activeChat }: ChatWindowProps) {
             activeChat.charAt(0).toUpperCase()
           )}
         </div>
-        <div>
+        <div style={{ flex: 1 }}>
           <h3>{activeChat}</h3>
           <p>{isTyping ? "typing..." : "online"}</p>
+        </div>
+        <div
+          className="chat-header-actions"
+          onClick={(e) => e.stopPropagation()}
+        >
+          <button className="chat-header-btn" title="Search">
+            <Search size={20} />
+          </button>
+          <button className="chat-header-btn" title="Call">
+            <Phone size={20} />
+          </button>
+          <button className="chat-header-btn" title="Screen share">
+            <Monitor size={20} />
+          </button>
+          <button className="chat-header-btn" title="More">
+            <MoreVertical size={20} />
+          </button>
         </div>
       </div>
 

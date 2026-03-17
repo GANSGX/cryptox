@@ -140,17 +140,6 @@ export function UserProfileModal({
     },
   ];
 
-  const mediaItems = [
-    { icon: ImageIcon, label: "Photos", count: 0 },
-    { icon: Video, label: "Videos", count: 0 },
-    { icon: File, label: "Files", count: 0 },
-    { icon: Music, label: "Music", count: 0 },
-    { icon: Link, label: "Links", count: 0 },
-    { icon: Mic, label: "Voice", count: 0 },
-    { icon: FileImage, label: "GIFs", count: 0 },
-    { icon: Users, label: "Groups in Common", count: 0 },
-  ];
-
   if (!isMounted || !username) return null;
 
   return (
@@ -213,26 +202,95 @@ export function UserProfileModal({
               </div>
 
               <div className="media-list">
-                {mediaItems.map((item, index) => (
-                  <button key={index} className="media-row">
-                    <div className="media-row-left">
-                      <item.icon
-                        size={22}
-                        strokeWidth={1.5}
-                        className="media-row-icon"
-                      />
-                      <span className="media-row-label">{item.label}</span>
-                    </div>
-                    <div className="media-row-right">
-                      <span className="media-row-count">{item.count}</span>
-                      <ChevronRight
-                        size={18}
-                        strokeWidth={1.5}
-                        className="media-row-chevron"
-                      />
-                    </div>
-                  </button>
-                ))}
+                {/* Media Section */}
+                <div className="media-section">
+                  <span className="media-section-title">Media</span>
+                  <div className="media-section-card">
+                    {[
+                      { icon: ImageIcon, label: "Photos", count: 0 },
+                      { icon: Video, label: "Videos", count: 0 },
+                      { icon: FileImage, label: "GIFs", count: 0 },
+                    ].map((item, index) => (
+                      <button key={index} className="media-row">
+                        <div className="media-row-left">
+                          <item.icon
+                            size={20}
+                            strokeWidth={1.5}
+                            className="media-row-icon"
+                          />
+                          <span className="media-row-label">{item.label}</span>
+                        </div>
+                        <div className="media-row-right">
+                          <span className="media-row-count">{item.count}</span>
+                          <ChevronRight
+                            size={16}
+                            strokeWidth={1.5}
+                            className="media-row-chevron"
+                          />
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Files Section */}
+                <div className="media-section">
+                  <span className="media-section-title">Documents</span>
+                  <div className="media-section-card">
+                    {[
+                      { icon: File, label: "Files", count: 0 },
+                      { icon: Music, label: "Music", count: 0 },
+                      { icon: Mic, label: "Voice", count: 0 },
+                      { icon: Link, label: "Links", count: 0 },
+                    ].map((item, index) => (
+                      <button key={index} className="media-row">
+                        <div className="media-row-left">
+                          <item.icon
+                            size={20}
+                            strokeWidth={1.5}
+                            className="media-row-icon"
+                          />
+                          <span className="media-row-label">{item.label}</span>
+                        </div>
+                        <div className="media-row-right">
+                          <span className="media-row-count">{item.count}</span>
+                          <ChevronRight
+                            size={16}
+                            strokeWidth={1.5}
+                            className="media-row-chevron"
+                          />
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Social Section */}
+                <div className="media-section">
+                  <span className="media-section-title">Social</span>
+                  <div className="media-section-card">
+                    <button className="media-row">
+                      <div className="media-row-left">
+                        <Users
+                          size={20}
+                          strokeWidth={1.5}
+                          className="media-row-icon"
+                        />
+                        <span className="media-row-label">
+                          Groups in Common
+                        </span>
+                      </div>
+                      <div className="media-row-right">
+                        <span className="media-row-count">0</span>
+                        <ChevronRight
+                          size={16}
+                          strokeWidth={1.5}
+                          className="media-row-chevron"
+                        />
+                      </div>
+                    </button>
+                  </div>
+                </div>
               </div>
             </>
           )}
