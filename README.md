@@ -1,11 +1,28 @@
-# 🔐 CRYPTOX
+<div align="center">
 
-[![CI](https://github.com/your-username/cryptox/workflows/CI/badge.svg)](https://github.com/your-username/cryptox/actions)
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
-[![Node](https://img.shields.io/badge/node-%3E%3D20.0.0-brightgreen)](https://nodejs.org)
-[![pnpm](https://img.shields.io/badge/pnpm-%3E%3D8.0.0-orange)](https://pnpm.io)
+<h1>🔐 CRYPTOX</h1>
 
-Безопасный мессенджер с удобством Telegram и защитой Signal.
+<p>
+  <b>Безопасный мессенджер с удобством Telegram и защитой Signal.</b>
+</p>
+
+<p>
+  <img src="https://img.shields.io/badge/node-%3E%3D20.0.0-339933?style=for-the-badge&logo=nodedotjs&logoColor=white" alt="Node.js" />
+  <img src="https://img.shields.io/badge/pnpm-%3E%3D8.0.0-F69220?style=for-the-badge&logo=pnpm&logoColor=white" alt="pnpm" />
+  <img src="https://img.shields.io/badge/License-MIT-blue?style=for-the-badge" alt="License" />
+</p>
+
+<p>
+  <img src="https://img.shields.io/badge/React_19-20232A?style=for-the-badge&logo=react&logoColor=61DAFB" />
+  <img src="https://img.shields.io/badge/Fastify-000000?style=for-the-badge&logo=fastify&logoColor=white" />
+  <img src="https://img.shields.io/badge/Socket.io-010101?style=for-the-badge&logo=socketdotio&logoColor=white" />
+  <img src="https://img.shields.io/badge/PostgreSQL-316192?style=for-the-badge&logo=postgresql&logoColor=white" />
+  <img src="https://img.shields.io/badge/Redis-DC382D?style=for-the-badge&logo=redis&logoColor=white" />
+</p>
+
+</div>
+
+---
 
 ## ✨ Особенности
 
@@ -17,12 +34,13 @@
 - 🛡️ **Многослойная защита** (Defense in Depth)
 - 💻 **Desktop + Browser** поддержка
 
+---
+
 ## 🚀 Быстрый старт
 
 ### Требования
-
-- Node.js 20+
-- pnpm 8+
+- Node.js `20+`
+- pnpm `8+`
 - Docker & Docker Compose
 - Git
 
@@ -30,7 +48,7 @@
 
 ```bash
 # 1. Клонировать репозиторий
-git clone <repo-url>
+git clone https://github.com/GANSGX/cryptox.git
 cd cryptox
 
 # 2. Установить зависимости
@@ -42,7 +60,7 @@ docker-compose up -d
 # 4. Настроить переменные окружения
 cp server/.env.example server/.env
 cp client/.env.example client/.env
-# Отредактируй .env файлы
+# Отредактируй .env файлы под свои нужды
 
 # 5. Запустить миграции БД
 cd server && pnpm migrate && cd ..
@@ -55,313 +73,150 @@ pnpm dev:all
 # Server: http://localhost:3000
 ```
 
+---
+
 ## 📁 Структура проекта
 
-```
+```bash
 cryptox/
 ├── client/          # Frontend (React + Vite)
 ├── server/          # Backend (Fastify + Socket.io)
 ├── tests/           # E2E тесты
-├── docs/            # Документация
-├── .github/         # GitHub Actions workflows
-├── .husky/          # Pre-commit/pre-push hooks
+├── docs/            # Документация по проекту
+├── .github/         # GitHub Actions workflows (CI/CD)
+├── .husky/          # Pre-commit / Pre-push hooks
 ├── docker-compose.yml
 └── TODO.md          # Детальный список задач (156 задач)
 ```
 
-## 🛠️ Разработка
+---
 
-### Команды
+## 🔧 Инженерный Стек
 
-```bash
-# Запуск всего проекта (с hot reload!)
-pnpm dev:all
+### 🌐 Frontend
+<p align="left">
+  <img src="https://img.shields.io/badge/React_19-20232A?style=for-the-badge&logo=react&logoColor=61DAFB" />
+  <img src="https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white" />
+  <img src="https://img.shields.io/badge/Vite-646CFF?style=for-the-badge&logo=vite&logoColor=white" />
+  <img src="https://img.shields.io/badge/Zustand-433E49?style=for-the-badge&logo=gnometerminal&logoColor=white" />
+  <img src="https://img.shields.io/badge/i18next-26A69A?style=for-the-badge&logo=i18next&logoColor=white" />
+</p>
+<i>+ FingerprintJS (device fingerprinting) & TweetNaCl (crypto)</i>
 
-# Только client
-cd client && pnpm dev
+### ⚙️ Backend
+<p align="left">
+  <img src="https://img.shields.io/badge/Node.js_20-43853D?style=for-the-badge&logo=node.js&logoColor=white" />
+  <img src="https://img.shields.io/badge/Fastify_5.6-000000?style=for-the-badge&logo=fastify&logoColor=white" />
+  <img src="https://img.shields.io/badge/Socket.io_4.8-010101?style=for-the-badge&logo=socketdotio&logoColor=white" />
+  <img src="https://img.shields.io/badge/PostgreSQL_16-316192?style=for-the-badge&logo=postgresql&logoColor=white" />
+  <img src="https://img.shields.io/badge/Redis_7-DC382D?style=for-the-badge&logo=redis&logoColor=white" />
+  <img src="https://img.shields.io/badge/JWT-000000?style=for-the-badge&logo=json-web-tokens&logoColor=white" />
+</p>
+<i>+ Argon2 (password hashing) & Resend (emails)</i>
 
-# Только server
-cd server && pnpm dev
+### 🛠 DevOps & Testing
+<p align="left">
+  <img src="https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white" />
+  <img src="https://img.shields.io/badge/GitHub_Actions-2088FF?style=for-the-badge&logo=github-actions&logoColor=white" />
+  <img src="https://img.shields.io/badge/Nginx-009639?style=for-the-badge&logo=nginx&logoColor=white" />
+  <img src="https://img.shields.io/badge/Vitest-FCC72B?style=for-the-badge&logo=vitest&logoColor=black" />
+  <img src="https://img.shields.io/badge/Playwright-2EAD33?style=for-the-badge&logo=playwright&logoColor=white" />
+</p>
 
-# Тесты
-pnpm test              # Все тесты
-pnpm test:watch        # Watch mode
-pnpm test:coverage     # С coverage
+---
 
-# Линтинг
-pnpm lint              # ESLint
-pnpm type-check        # TypeScript
+## 🛡️ Архитектура Безопасности (Defense in Depth)
 
-# Production build
-pnpm build
+Проект построен на многослойной системе защиты, начиная от физического уровня и заканчивая криптографическим хардкором.
 
-# Остановить все порты (если что-то зависло)
-pnpm kill-ports
-```
-
-### Hot Reload
-
-После `pnpm dev:all` все изменения применяются автоматически:
-- ⚡ Изменения в server → автоперезагрузка (~1 сек)
-- 🔥 Изменения в client → HMR (без перезагрузки страницы, ~50ms)
-- ✅ Не нужно перезапускать вручную!
-
-## 📚 Документация
-
-- [📋 TODO List](./TODO.md) - Детальный список задач (156 задач, прогресс 30%)
-- [📝 ТЗ v3.0](./ДИПЛОМНАЯ%20РАБОТА%20V.3.0.md) - Техническое задание (Real-time Edition)
-- [🔒 Security](./defend.md) - Архитектура безопасности (Defense in Depth)
-- [🌿 Git Workflow](./docs/GIT-WORKFLOW.md) - Работа с ветками и PR
-- [🧪 Testing Guide](./docs/TESTING.md) - Стратегия тестирования
-- [💻 Development Guide](./docs/DEVELOPMENT.md) - Полный гайд по разработке
-- [🚀 Quick Start](./docs/QUICK-START.md) - Быстрый старт
-- [📊 GitHub Projects](./docs/GITHUB-PROJECTS.md) - Управление задачами
-
-## 🌿 Git Workflow
-
-Проект использует **Git Flow**:
-
-```
-main              # Production (стабильная)
-├── develop       # Разработка (активная)
-    ├── feature/task-name
-    ├── bugfix/issue-name
-    └── hotfix/critical-fix
-```
-
-### Как работать с задачами
-
-```bash
-# 1. Переключиться на develop
-git checkout develop
-git pull origin develop
-
-# 2. Создать feature ветку
-git checkout -b feature/my-task
-
-# 3. Работать над задачей
-# ... изменения ...
-
-# 4. Коммит (автоматически запустятся проверки)
-git add .
-git commit -m "feat: описание"
-
-# 5. Push и создать PR
-git push origin feature/my-task
-```
-
-См. [Git Workflow Guide](./docs/GIT-WORKFLOW.md) для подробностей.
-
-## 🧪 Тестирование
-
-### Запуск тестов
-
-```bash
-# Watch mode (для разработки)
-pnpm test:watch
-
-# Все тесты один раз
-pnpm test
-
-# С покрытием кода
-pnpm test:coverage
-
-# E2E тесты
-pnpm test:e2e
-```
-
-### Покрытие
-
-**Цель: 70%+ code coverage**
-
-```bash
-pnpm test:coverage
-```
-
-См. [Testing Guide](./docs/TESTING.md) для подробностей.
-
-## 🔧 Tech Stack
-
-### Frontend
-- React 19 + TypeScript
-- Vite (dev + build)
-- Zustand (state management)
-- Socket.io Client (WebSocket)
-- TweetNaCl (crypto, будет заменён на @signalapp/libsignal-client)
-- FingerprintJS (device fingerprinting)
-- i18next (интернационализация)
-
-### Backend
-- Node.js 20 + TypeScript
-- Fastify 5.6+ (HTTP framework, быстрее Express)
-- Socket.io 4.8+ (WebSocket для real-time)
-- PostgreSQL 16 (основная БД)
-- Redis 7 (кэш, rate limiting, sessions)
-- Argon2 (password hashing, memory-hard)
-- JWT (авторизация)
-- Resend (email сервис)
-- Winston (логирование)
-
-### Testing
-- Vitest (unit + integration)
-- Playwright (E2E)
-- @testing-library/react (React компоненты)
-- testcontainers (integration тесты с реальной БД)
-
-### DevOps
-- Docker Compose (PostgreSQL, Redis)
-- GitHub Actions (CI/CD)
-- Husky (pre-commit/pre-push hooks)
-- Nginx (production reverse proxy)
-
-## 🛡️ Безопасность
-
-### Многослойная защита (Defense in Depth)
-
-```
+```text
 Layer 7: Physical Security (Дата-центр, биометрия)
 Layer 6: Infrastructure (Firewall, DDoS protection)
 Layer 5: Database Encryption (PostgreSQL TDE)
 Layer 4: App-level Encryption (Double Encryption)
 Layer 3: Crypto Hardening (Argon2id 256MB)
-Layer 2: Rate Limiting (5 попыток логина/час)
-Layer 1: Client Security (Device fingerprinting, Primary Device Approval)
+Layer 2: Rate Limiting (5 попыток логина / час)
+Layer 1: Client Security (Device fingerprinting, Primary Device)
 ```
 
-### Ключевые фичи
-
-- 🔐 E2E шифрование (Signal Protocol архитектура, TweetNaCl implementation)
-- 🔑 Argon2id для паролей (256MB RAM, memory-hard, GPU-resistant)
-- 🔒 Double encryption для Master Key (Password Key + Server Key)
-- 🚫 Rate limiting (защита от брутфорса)
-- 📱 Device fingerprinting (FingerprintJS)
-- ✅ Primary Device Approval для новых устройств
-- 🕐 27 миллионов лет на брутфорс 12-символьного пароля (даже на суперкомпьютере)
-
-**Компромисс:**
-- ⚠️ Не 100% Zero-Knowledge (сервер хранит зашифрованные данные)
-- ✅ Но даже если БД украли → без SERVER_PEPPER и пароля пользователя = бесполезна
-
-См. [Security Architecture](./defend.md) для подробностей.
-
-## 🤖 CI/CD
-
-### GitHub Actions
-
-При каждом push автоматически:
-- ✅ ESLint проверка
-- ✅ TypeScript type checking
-- ✅ Unit тесты
-- ✅ Integration тесты
-- ✅ E2E тесты (планируется)
-- ✅ Build проверка
-
-### Pre-commit Hooks
-
-При каждом коммите автоматически:
-- ✅ Lint изменённых файлов (ESLint + Prettier)
-- ✅ Type check (client + server)
-
-**Если что-то не прошло → коммит отменяется!**
-
-### Pre-push Hooks
-
-При каждом push автоматически:
-- ✅ Lint всего кода
-- ✅ Type check
-- ✅ Тесты (когда будут написаны)
-
-**Если что-то не прошло → push отменяется!**
-
-## 📋 Roadmap
-
-### ✅ Phase 1: Автоматизация (2 недели) - **DONE**
-- [x] Docker hot reload
-- [x] Pre-commit hooks (Husky)
-- [x] Pre-push hooks
-- [x] GitHub Actions CI/CD
-- [x] Детальный TODO.md (156 задач)
-- [x] ТЗ v3.0 (Real-time Edition)
-
-### 🔄 Phase 2: Messaging Features (2 недели) - **IN PROGRESS**
-- [x] Отправка/получение сообщений (real-time)
-- [x] Typing indicators
-- [x] Read receipts
-- [ ] Редактирование сообщений (30 минут)
-- [ ] Удаление сообщений ("у себя" / "у всех")
-- [ ] Реакции (эмодзи)
-- [ ] Пересылка, цитирование
-
-### ⏳ Phase 3: Групповые чаты (2 недели)
-- [ ] Backend routes (/api/groups)
-- [ ] UI для создания группы
-- [ ] Управление участниками
-- [ ] Отправка сообщений в группу
-
-### ⏳ Phase 4: Media (2 недели)
-- [ ] Upload фото (Sharp compression)
-- [ ] Upload видео (FFmpeg)
-- [ ] Upload документов
-- [ ] Голосовые сообщения (WebM Opus)
-
-### ⏳ Phase 5: Звонки (2 недели)
-- [ ] WebRTC аудио звонки (P2P)
-- [ ] WebRTC видео звонки
-- [ ] STUN/TURN сервера
-
-### ⏳ Phase 6: Production Готовность (2 недели)
-- [ ] 70%+ code coverage
-- [ ] Production docker-compose
-- [ ] Nginx + SSL
-- [ ] Security audit
-- [ ] Performance testing
-- [ ] API документация (Swagger)
-
-**ИТОГО:** 12 недель до полного MVP
-
-## 👥 Для разработчиков
-
-### Первый раз в проекте?
-
-1. Прочитай [Development Guide](./docs/DEVELOPMENT.md)
-2. Изучи [Git Workflow](./docs/GIT-WORKFLOW.md)
-3. Посмотри [Testing Guide](./docs/TESTING.md)
-4. Запусти проект локально
-5. Выбери задачу из [TODO.md](./TODO.md)
-6. Создай feature ветку и вперёд! 🚀
-
-### Нужна помощь?
-
-- 📚 [Документация](./docs/)
-- 🐛 [Issues](https://github.com/your-repo/issues)
-- 💬 Discord: [ссылка]
-
-## 📈 Прогресс
-
-**Общий прогресс MVP:** 30% (47/156 задач)
-
-| Модуль | Прогресс |
-|--------|----------|
-| Аутентификация | 75% ✅ |
-| Multi-device | 80% ✅ |
-| 1-on-1 Чаты | 33% 🔄 |
-| Групповые чаты | 0% ⏳ |
-| Media | 0% ⏳ |
-| Звонки WebRTC | 0% ⏳ |
-| UI/UX | 60% ✅ |
-| Безопасность | 62% ✅ |
-| DevOps | 40% 🔄 |
-| Тестирование | 0% ⏳ |
-| Документация | 40% 🔄 |
-
-См. [TODO.md](./TODO.md) для детального списка задач.
-
-## 📝 Лицензия
-
-MIT
+**Ключевые фичи:**
+- 🔐 **E2E шифрование** (Signal Protocol архитектура, TweetNaCl).
+- 🔑 **Argon2id для паролей** (256MB RAM, memory-hard, защита от GPU брутфорса).
+- 🔒 **Double encryption** для Master Key (Password Key + Server Key).
+- 🕐 Требуется **27+ миллионов лет** на брутфорс 12-символьного пароля (даже на суперкомпьютере).
 
 ---
 
-**Последнее обновление:** 2025-11-21
+## 💻 Разработка & Скрипты
 
-Made with ❤️ and 🔐
+После запуска `pnpm dev:all` работает `Hot Reload`:
+- ⚡ **Backend**: автоперезагрузка (~1 сек)
+- 🔥 **Frontend**: HMR (без перезагрузки страницы, ~50ms)
+
+```bash
+# Тесты
+pnpm test              # Все тесты
+pnpm test:watch        # Watch mode
+pnpm test:coverage     # Code Coverage (Цель: 70%+)
+
+# Линтинг & Типы
+pnpm lint              # ESLint
+pnpm type-check        # TypeScript validation
+
+# Сборка
+pnpm build
+```
+
+---
+
+## 🤖 CI / CD Пайплайн
+
+В проекте настроены строгие проверки через **Husky** и **GitHub Actions**:
+- `pre-commit`: Автоматический линтинг и проверка типов измененных файлов.
+- `pre-push`: Полный прогон `Type check` и тестов.
+- `CI workflow`: При каждом push на GitHub автоматически запускаются сборка, линтинг, тесты (Unit + Integration + E2E).
+
+*(Любое нарушение прерывает коммит или пуш, обеспечивая чистую кодовую базу).*
+
+---
+
+## 🌿 Git Workflow
+
+Проект использует классический **Git Flow**:
+
+```text
+main              # Production (стабильная)
+├── develop       # Разработка (активная, сюда идут все слияния)
+    ├── feature/task-name
+    ├── bugfix/issue-name
+    └── hotfix/critical-fix
+```
+
+👉 *Все подробности в [Git Workflow Guide](./docs/GIT-WORKFLOW.md).*
+
+---
+
+## 📈 Roadmap & Прогресс
+
+**Общий прогресс MVP:** `30%` (47/156 задач). Подробнее в `TODO.md`.
+
+- [x] **Phase 1: Автоматизация** *(CI/CD, Docker, Архитектура)*
+- [ ] **Phase 2: Messaging** *(Real-time, Read receipts, Typing)* -> **IN PROGRESS**
+- [ ] **Phase 3: Группы** *(Создание чатов, роли, Server-side crypto)*
+- [ ] **Phase 4: Медиа** *(Uploads, Sharp, FFmpeg, Voice)*
+- [ ] **Phase 5: Звонки** *(WebRTC P2P аудио/видео)*
+- [ ] **Phase 6: Production** *(Nginx, SSL, Security audit, Swagger)*
+
+---
+
+## 📚 Ресурсы
+
+- [📋 Полный TODO List](./TODO.md)
+- [📝 ТЗ v3.0](./ДИПЛОМНАЯ%20РАБОТА%20V.3.0.md)
+- [🔒 Архитектура Безопасности](./defend.md)
+
+---
+<div align="center">
+  <p><b>Made with ❤️ and 🔐 by Vadim</b></p>
+  <p>MIT License © 2025</p>
+</div>
