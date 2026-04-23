@@ -1,4 +1,4 @@
-import { X, Image, FileText } from "lucide-react";
+import { X, Image, FileText } from "@phosphor-icons/react";
 import { useState, useEffect } from "react";
 import "./PhotoPreviewModal.css";
 

@@ -1,4 +1,4 @@
-import { Shield, Monitor, Trash2, LogOut } from "lucide-react";
+import { ShieldCheck, Desktop, Trash, SignOut } from "@phosphor-icons/react";
 import { apiService } from "@/services/api.service";
 import { useSessions } from "@/hooks/useSessions";
 import "./SecuritySettings.css";
@@ -55,11 +55,11 @@ export function SecuritySettings() {
   const getDeviceIcon = (type: string) => {
     switch (type.toLowerCase()) {
       case "desktop":
-        return <Monitor size={20} />;
+        return <Desktop size={20} />;
       case "mobile":
-        return <Shield size={20} />;
+        return <ShieldCheck size={20} />;
       default:
-        return <Monitor size={20} />;
+        return <Desktop size={20} />;
     }
   };
 
@@ -267,7 +267,7 @@ export function SecuritySettings() {
                                 onClick={() => handleDeleteSession(session.id)}
                                 title="Terminate session"
                               >
-                                <Trash2 size={18} />
+                                <Trash size={18} />
                               </button>
                             </div>
                           </div>
@@ -286,7 +286,7 @@ export function SecuritySettings() {
                         className="settings-btn-danger"
                         onClick={handleDeleteOtherSessions}
                       >
-                        <LogOut size={16} />
+                        <SignOut size={16} />
                         Sign Out All Other Devices
                       </button>
                     </div>

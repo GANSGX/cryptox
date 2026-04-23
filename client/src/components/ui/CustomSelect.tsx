@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { ChevronDown } from "lucide-react";
+import { CaretDown } from "@phosphor-icons/react";
 import "./CustomSelect.css";
 
 interface CustomSelectProps {
@@ -50,7 +50,7 @@ export function CustomSelect({
         <span className="custom-select-value">
           {selectedOption?.label || placeholder || "Select..."}
         </span>
-        <ChevronDown
+        <CaretDown
           size={18}
           className={`custom-select-arrow ${isOpen ? "open" : ""}`}
         />

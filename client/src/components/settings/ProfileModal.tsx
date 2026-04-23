@@ -2,13 +2,13 @@ import {
   X,
   Calendar,
   Camera,
-  ChevronLeft,
-  ChevronRight,
-  Trash2,
+  CaretLeft,
+  CaretRight,
+  Trash,
   Check,
-  ChevronDown,
+  CaretDown,
   Star,
-} from "lucide-react";
+} from "@phosphor-icons/react";
 import { useState, useEffect, useRef, useCallback } from "react";
 import { useAuthStore } from "@/store/authStore";
 import { apiService } from "@/services/api.service";
@@ -837,7 +837,7 @@ export function ProfileModal({ isOpen, onClose }: ProfileModalProps) {
 
       <div className={`profile-modal ${isAnimated ? "open" : ""}`}>
         <button className="profile-close-btn" onClick={onClose}>
-          <X size={22} strokeWidth={2} />
+          <X size={22} />
         </button>
 
         <div className="profile-modal-content">
@@ -882,7 +882,7 @@ export function ProfileModal({ isOpen, onClose }: ProfileModalProps) {
                     <span>{user?.username.charAt(0).toUpperCase()}</span>
                   )}
                   <div className="avatar-overlay">
-                    <Camera size={24} strokeWidth={2} />
+                    <Camera size={24} />
                   </div>
                 </div>
 
@@ -892,13 +892,13 @@ export function ProfileModal({ isOpen, onClose }: ProfileModalProps) {
                       className="gallery-nav gallery-nav-left"
                       onClick={handlePreviousPhoto}
                     >
-                      <ChevronLeft size={18} strokeWidth={2.5} />
+                      <CaretLeft size={18} />
                     </button>
                     <button
                       className="gallery-nav gallery-nav-right"
                       onClick={handleNextPhoto}
                     >
-                      <ChevronRight size={18} strokeWidth={2.5} />
+                      <CaretRight size={18} />
                     </button>
                   </>
                 )}
@@ -913,7 +913,7 @@ export function ProfileModal({ isOpen, onClose }: ProfileModalProps) {
                   <div className="gallery-buttons">
                     {photos[currentPhotoIndex]?.is_primary ? (
                       <div className="primary-indicator">
-                        <Star size={14} strokeWidth={2} fill="currentColor" />
+                        <Star size={14} fill="currentColor" />
                         <span>Main Photo</span>
                       </div>
                     ) : (
@@ -922,7 +922,7 @@ export function ProfileModal({ isOpen, onClose }: ProfileModalProps) {
                         onClick={handleSetPrimary}
                         title="Set as main photo"
                       >
-                        <Star size={16} strokeWidth={2} />
+                        <Star size={16} />
                         <span>Set as Main</span>
                       </button>
                     )}
@@ -931,7 +931,7 @@ export function ProfileModal({ isOpen, onClose }: ProfileModalProps) {
                       onClick={handleDeletePhoto}
                       title="Delete photo"
                     >
-                      <Trash2 size={16} strokeWidth={2} />
+                      <Trash size={16} />
                       <span>Delete</span>
                     </button>
                   </div>
@@ -975,7 +975,7 @@ export function ProfileModal({ isOpen, onClose }: ProfileModalProps) {
           {/* Birthday Picker Button */}
           <div className="input-group">
             <label className="input-label">
-              <Calendar size={15} strokeWidth={2} />
+              <Calendar size={15} />
               <span className="label-text">Date of Birth</span>
             </label>
             <button
@@ -983,7 +983,7 @@ export function ProfileModal({ isOpen, onClose }: ProfileModalProps) {
               onClick={() => setShowDatePicker(true)}
             >
               <span className="birthday-value">{formatBirthday()}</span>
-              <ChevronRight size={18} strokeWidth={2} />
+              <CaretRight size={18} />
             </button>
           </div>
 
@@ -1004,9 +1004,8 @@ export function ProfileModal({ isOpen, onClose }: ProfileModalProps) {
                         ?.label
                     }
                   </span>
-                  <ChevronDown
+                  <CaretDown
                     size={16}
-                    strokeWidth={2}
                     className={statusPrivacyOpen ? "rotated" : ""}
                   />
                 </button>
@@ -1022,9 +1021,7 @@ export function ProfileModal({ isOpen, onClose }: ProfileModalProps) {
                         }}
                       >
                         {opt.label}
-                        {statusPrivacy === opt.value && (
-                          <Check size={16} strokeWidth={2.5} />
-                        )}
+                        {statusPrivacy === opt.value && <Check size={16} />}
                       </button>
                     ))}
                   </div>
@@ -1045,9 +1042,8 @@ export function ProfileModal({ isOpen, onClose }: ProfileModalProps) {
                         ?.label
                     }
                   </span>
-                  <ChevronDown
+                  <CaretDown
                     size={16}
-                    strokeWidth={2}
                     className={onlinePrivacyOpen ? "rotated" : ""}
                   />
                 </button>
@@ -1063,9 +1059,7 @@ export function ProfileModal({ isOpen, onClose }: ProfileModalProps) {
                         }}
                       >
                         {opt.label}
-                        {onlinePrivacy === opt.value && (
-                          <Check size={16} strokeWidth={2.5} />
-                        )}
+                        {onlinePrivacy === opt.value && <Check size={16} />}
                       </button>
                     ))}
                   </div>
@@ -1086,9 +1080,8 @@ export function ProfileModal({ isOpen, onClose }: ProfileModalProps) {
                         ?.label
                     }
                   </span>
-                  <ChevronDown
+                  <CaretDown
                     size={16}
-                    strokeWidth={2}
                     className={typingPrivacyOpen ? "rotated" : ""}
                   />
                 </button>
@@ -1104,9 +1097,7 @@ export function ProfileModal({ isOpen, onClose }: ProfileModalProps) {
                         }}
                       >
                         {opt.label}
-                        {typingPrivacy === opt.value && (
-                          <Check size={16} strokeWidth={2.5} />
-                        )}
+                        {typingPrivacy === opt.value && <Check size={16} />}
                       </button>
                     ))}
                   </div>

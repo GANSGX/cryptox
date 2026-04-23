@@ -1,15 +1,15 @@
 import {
-  Send,
-  Mic,
-  Video,
+  PaperPlaneTilt,
+  Microphone,
+  VideoCamera,
   Paperclip,
   Image,
   FileText,
-  Film,
-  Music2,
+  FilmStrip,
+  MusicNote,
   X,
   Check,
-} from "lucide-react";
+} from "@phosphor-icons/react";
 import { useState, KeyboardEvent, useRef, useEffect } from "react";
 import { useChatStore } from "@/store/chatStore";
 import { useAuthStore } from "@/store/authStore";
@@ -314,7 +314,7 @@ export function MessageInput({
             }}
           >
             <div className="attach-icon video">
-              <Film size={20} />
+              <FilmStrip size={20} />
             </div>
             <span>Video</span>
           </button>
@@ -338,7 +338,7 @@ export function MessageInput({
             }}
           >
             <div className="attach-icon audio">
-              <Music2 size={20} />
+              <MusicNote size={20} />
             </div>
             <span>Audio</span>
           </button>
@@ -397,7 +397,7 @@ export function MessageInput({
           {/* Обычный режим - Send кнопка */}
           {!editingMessage && message.trim() && (
             <button className="send-button-inline" onClick={handleSend}>
-              <Send size={20} />
+              <PaperPlaneTilt size={20} />
             </button>
           )}
         </div>
@@ -409,7 +409,11 @@ export function MessageInput({
             onClick={toggleRecordMode}
             title={recordMode === "voice" ? "Voice Message" : "Video Message"}
           >
-            {recordMode === "voice" ? <Mic size={20} /> : <Video size={20} />}
+            {recordMode === "voice" ? (
+              <Microphone size={20} />
+            ) : (
+              <VideoCamera size={20} />
+            )}
           </button>
         )}
       </div>

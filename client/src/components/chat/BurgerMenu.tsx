@@ -1,4 +1,4 @@
-import { User, Settings, LogOut, X } from "lucide-react";
+import { User, Gear, SignOut, X } from "@phosphor-icons/react";
 import { useAuthStore } from "@/store/authStore";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
@@ -84,14 +84,14 @@ export function BurgerMenu({ isOpen, onClose }: BurgerMenuProps) {
             <span>Profile</span>
           </div>
           <div className="menu-item" onClick={() => setShowSettings(true)}>
-            <Settings size={20} />
+            <Gear size={20} />
             <span>Settings</span>
           </div>
         </div>
 
         {/* Logout Button */}
         <div className="menu-item danger" onClick={handleLogout}>
-          <LogOut size={20} />
+          <SignOut size={20} />
           <span>Logout</span>
         </div>
 

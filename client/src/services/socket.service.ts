@@ -11,7 +11,8 @@ class SocketService {
       return;
     }
 
-    this.socket = io("http://localhost:3001", {
+    const serverUrl = `http://${window.location.hostname}:3001`;
+    this.socket = io(serverUrl, {
       auth: {
         token,
       },
@@ -42,7 +43,8 @@ class SocketService {
       this.disconnect();
     }
 
-    this.socket = io("http://localhost:3001", {
+    const serverUrl = `http://${window.location.hostname}:3001`;
+    this.socket = io(serverUrl, {
       auth: {
         pending_session_id,
       },

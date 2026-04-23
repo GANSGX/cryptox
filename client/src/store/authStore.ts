@@ -93,6 +93,11 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       // Подключаем Socket.io
       socketService.connect(token);
 
+      // Очищаем старые session keys и кеш сообщений
+      // (гарантирует свежую генерацию ключей и загрузку сообщений с сервера)
+      cryptoService.clearSessionKeys();
+      localStorage.removeItem("chat-storage");
+
       // Инициализируем Signal Protocol
       await cryptoService.initializeSignal(user.username);
 

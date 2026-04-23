@@ -1,19 +1,19 @@
 import {
   X,
-  MessageCircle,
+  ChatCircle,
   Phone,
   Bell,
-  MoreVertical,
+  DotsThreeVertical,
   Image as ImageIcon,
-  Video,
+  VideoCamera,
   File,
-  Music,
+  MusicNote,
   Link,
-  Mic,
+  Microphone,
   FileImage,
   Users,
-  ChevronRight,
-} from "lucide-react";
+  CaretRight,
+} from "@phosphor-icons/react";
 import { useState, useEffect, useRef } from "react";
 import { apiService } from "@/services/api.service";
 import { ContextMenu, type ContextMenuItem } from "@/components/ui/ContextMenu";
@@ -151,7 +151,7 @@ export function UserProfileModal({
 
       <div className={`user-profile-modal ${isAnimated ? "open" : ""}`}>
         <button className="user-profile-close-btn" onClick={onClose}>
-          <X size={22} strokeWidth={2} />
+          <X size={22} />
         </button>
 
         <div className="user-profile-modal-content">
@@ -176,7 +176,7 @@ export function UserProfileModal({
 
               <div className="user-profile-actions">
                 <button className="action-btn" onClick={handleOpenChat}>
-                  <MessageCircle size={22} strokeWidth={1.5} />
+                  <ChatCircle size={22} />
                 </button>
                 <button className="action-btn">
                   <Bell size={22} strokeWidth={1.5} />
@@ -189,7 +189,7 @@ export function UserProfileModal({
                   className="action-btn"
                   onClick={handleMoreClick}
                 >
-                  <MoreVertical size={22} strokeWidth={1.5} />
+                  <DotsThreeVertical size={22} />
                 </button>
               </div>
 
@@ -208,25 +208,17 @@ export function UserProfileModal({
                   <div className="media-section-card">
                     {[
                       { icon: ImageIcon, label: "Photos", count: 0 },
-                      { icon: Video, label: "Videos", count: 0 },
+                      { icon: VideoCamera, label: "Videos", count: 0 },
                       { icon: FileImage, label: "GIFs", count: 0 },
                     ].map((item, index) => (
                       <button key={index} className="media-row">
                         <div className="media-row-left">
-                          <item.icon
-                            size={20}
-                            strokeWidth={1.5}
-                            className="media-row-icon"
-                          />
+                          <item.icon size={20} className="media-row-icon" />
                           <span className="media-row-label">{item.label}</span>
                         </div>
                         <div className="media-row-right">
                           <span className="media-row-count">{item.count}</span>
-                          <ChevronRight
-                            size={16}
-                            strokeWidth={1.5}
-                            className="media-row-chevron"
-                          />
+                          <CaretRight size={16} className="media-row-chevron" />
                         </div>
                       </button>
                     ))}
@@ -239,26 +231,18 @@ export function UserProfileModal({
                   <div className="media-section-card">
                     {[
                       { icon: File, label: "Files", count: 0 },
-                      { icon: Music, label: "Music", count: 0 },
-                      { icon: Mic, label: "Voice", count: 0 },
+                      { icon: MusicNote, label: "Music", count: 0 },
+                      { icon: Microphone, label: "Voice", count: 0 },
                       { icon: Link, label: "Links", count: 0 },
                     ].map((item, index) => (
                       <button key={index} className="media-row">
                         <div className="media-row-left">
-                          <item.icon
-                            size={20}
-                            strokeWidth={1.5}
-                            className="media-row-icon"
-                          />
+                          <item.icon size={20} className="media-row-icon" />
                           <span className="media-row-label">{item.label}</span>
                         </div>
                         <div className="media-row-right">
                           <span className="media-row-count">{item.count}</span>
-                          <ChevronRight
-                            size={16}
-                            strokeWidth={1.5}
-                            className="media-row-chevron"
-                          />
+                          <CaretRight size={16} className="media-row-chevron" />
                         </div>
                       </button>
                     ))}
@@ -271,22 +255,14 @@ export function UserProfileModal({
                   <div className="media-section-card">
                     <button className="media-row">
                       <div className="media-row-left">
-                        <Users
-                          size={20}
-                          strokeWidth={1.5}
-                          className="media-row-icon"
-                        />
+                        <Users size={20} className="media-row-icon" />
                         <span className="media-row-label">
                           Groups in Common
                         </span>
                       </div>
                       <div className="media-row-right">
                         <span className="media-row-count">0</span>
-                        <ChevronRight
-                          size={16}
-                          strokeWidth={1.5}
-                          className="media-row-chevron"
-                        />
+                        <CaretRight size={16} className="media-row-chevron" />
                       </div>
                     </button>
                   </div>

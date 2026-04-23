@@ -1,11 +1,12 @@
 import { useEffect, useRef, Fragment, useState, useCallback } from "react";
 import {
-  MessageCircle,
-  Search,
+  ChatCircle,
+  MagnifyingGlass,
   Phone,
-  Monitor,
-  MoreVertical,
-} from "lucide-react";
+  Desktop,
+  DotsThreeVertical,
+  ArrowLeft,
+} from "@phosphor-icons/react";
 import { MessageInput } from "./MessageInput";
 import { MessageStatus } from "./MessageStatus";
 import { DateSeparator } from "./DateSeparator";
@@ -18,9 +19,11 @@ import type { Message } from "@/types/message.types";
 
 interface ChatWindowProps {
   activeChat: string | null;
+  hidden?: boolean;
+  onBack?: () => void;
 }
 
-export function ChatWindow({ activeChat }: ChatWindowProps) {
+export function ChatWindow({ activeChat, hidden, onBack }: ChatWindowProps) {
   const { user } = useAuthStore();
   const {
     messages,
@@ -176,10 +179,11 @@ export function ChatWindow({ activeChat }: ChatWindowProps) {
 
   // Пустое состояние - нет выбранного чата
   if (!activeChat) {
+    if (hidden) return null;
     return (
       <div className="chat-window">
         <div className="empty-state">
-          <MessageCircle size={64} />
+          <ChatCircle size={64} />
           <h3>Select a chat</h3>
           <p>Choose a conversation from the sidebar to start messaging</p>
         </div>
@@ -195,13 +199,24 @@ export function ChatWindow({ activeChat }: ChatWindowProps) {
   const avatarPath = contact?.avatar_path;
 
   return (
-    <div className="chat-window">
+    <div className={`chat-window${hidden ? " chat-window-hidden" : ""}`}>
       {/* Header */}
       <div
         className="chat-header"
         onClick={() => setShowUserProfile(true)}
         style={{ cursor: "pointer" }}
       >
+        {onBack && (
+          <button
+            className="chat-back-btn"
+            onClick={(e) => {
+              e.stopPropagation();
+              onBack();
+            }}
+          >
+            <ArrowLeft size={22} />
+          </button>
+        )}
         <div className="chat-avatar">
           {avatarPath ? (
             <img src={`http://localhost:3001${avatarPath}`} alt="Avatar" />
@@ -218,16 +233,16 @@ export function ChatWindow({ activeChat }: ChatWindowProps) {
           onClick={(e) => e.stopPropagation()}
         >
           <button className="chat-header-btn" title="Search">
-            <Search size={20} />
+            <MagnifyingGlass size={20} />
           </button>
           <button className="chat-header-btn" title="Call">
             <Phone size={20} />
           </button>
           <button className="chat-header-btn" title="Screen share">
-            <Monitor size={20} />
+            <Desktop size={20} />
           </button>
           <button className="chat-header-btn" title="More">
-            <MoreVertical size={20} />
+            <DotsThreeVertical size={20} />
           </button>
         </div>
       </div>

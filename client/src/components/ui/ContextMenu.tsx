@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-import { Pencil, Trash2, Ban } from "lucide-react";
+import { Pencil, Trash, ProhibitInset } from "@phosphor-icons/react";
 import "./ContextMenu.css";
 
 export interface ContextMenuItem {
@@ -20,8 +20,8 @@ interface ContextMenuProps {
 
 const IconMap = {
   edit: Pencil,
-  delete: Trash2,
-  ban: Ban,
+  delete: Trash,
+  ban: ProhibitInset,
 };
 
 export function ContextMenu({ x, y, items, onClose }: ContextMenuProps) {
@@ -157,7 +157,7 @@ export function ContextMenu({ x, y, items, onClose }: ContextMenuProps) {
           >
             {Icon && (
               <span className="context-menu-icon">
-                <Icon size={18} strokeWidth={2} />
+                <Icon size={18} />
               </span>
             )}
             <span className="context-menu-label">{item.label}</span>

@@ -8,6 +8,7 @@ export function errorHandler(
   request: FastifyRequest,
   reply: FastifyReply,
 ) {
+  console.error("🚨 GLOBAL ERROR HANDLER CAUGHT:", error);
   // Логируем ошибку
   request.log.error(
     {

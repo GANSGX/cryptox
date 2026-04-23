@@ -1,5 +1,11 @@
 import { useState } from "react";
-import { Mail, CheckCircle, XCircle, Edit2, Key } from "lucide-react";
+import {
+  Envelope,
+  CheckCircle,
+  XCircle,
+  PencilSimple,
+  Key,
+} from "@phosphor-icons/react";
 import { useAuthStore } from "@/store/authStore";
 import { ChangeEmailModal } from "./ChangeEmailModal";
 import { VerifyEmailModal } from "./VerifyEmailModal";
@@ -56,7 +62,7 @@ export function AccountSettings() {
         <div className="settings-block-content">
           <div className="settings-email-row">
             <div className="settings-email-info">
-              <Mail size={20} className="settings-email-icon" />
+              <Envelope size={20} className="settings-email-icon" />
               <div>
                 <div className="settings-email-address">{user?.email}</div>
                 <div
@@ -90,7 +96,7 @@ export function AccountSettings() {
                 className="settings-btn settings-btn-secondary"
                 onClick={() => setShowChangeEmail(true)}
               >
-                <Edit2 size={16} />
+                <PencilSimple size={16} />
                 Change Email
               </button>
             </div>

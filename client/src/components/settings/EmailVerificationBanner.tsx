@@ -1,69 +1,72 @@
-import { X, AlertCircle, Shield, Key, Mail } from 'lucide-react'
-import { useState, useEffect } from 'react'
-import { useAuthStore } from '@/store/authStore'
-import { VerifyEmailModal } from './VerifyEmailModal'
-import './EmailVerificationBanner.css'
+import { X, Warning, ShieldCheck, Key, Envelope } from "@phosphor-icons/react";
+import { useState, useEffect } from "react";
+import { useAuthStore } from "@/store/authStore";
+import { VerifyEmailModal } from "./VerifyEmailModal";
+import "./EmailVerificationBanner.css";
 
 export function EmailVerificationBanner() {
-  const { user } = useAuthStore()
-  const [isVisible, setIsVisible] = useState(false)
-  const [showVerifyModal, setShowVerifyModal] = useState(false)
+  const { user } = useAuthStore();
+  const [isVisible, setIsVisible] = useState(false);
+  const [showVerifyModal, setShowVerifyModal] = useState(false);
 
   useEffect(() => {
     // Показываем баннер только если email не подтверждён
     if (user && !user.email_verified) {
       // Проверяем localStorage - когда пользователь нажал "Напомнить позже"
-      const dismissedUntil = localStorage.getItem('email_verify_dismissed')
+      const dismissedUntil = localStorage.getItem("email_verify_dismissed");
 
       if (dismissedUntil) {
-        const dismissedTime = parseInt(dismissedUntil, 10)
-        const now = Date.now()
+        const dismissedTime = parseInt(dismissedUntil, 10);
+        const now = Date.now();
 
         // Если прошло меньше сессии - не показываем
         if (now < dismissedTime) {
-          return
+          return;
         }
       }
 
       // Показываем баннер
-      setIsVisible(true)
+      setIsVisible(true);
     }
-  }, [user])
+  }, [user]);
 
   if (!isVisible || !user || user.email_verified) {
-    return null
+    return null;
   }
 
   const handleVerifyEmail = () => {
-    setShowVerifyModal(true)
-  }
+    setShowVerifyModal(true);
+  };
 
   const handleRemindLater = () => {
     // Закрываем до конца сессии (до выхода из аккаунта)
     // При следующем логине баннер появится снова
-    setIsVisible(false)
+    setIsVisible(false);
     // Сохраняем timestamp на 24 часа (опционально)
-    localStorage.setItem('email_verify_dismissed', String(Date.now() + 86400000))
-  }
+    localStorage.setItem(
+      "email_verify_dismissed",
+      String(Date.now() + 86400000),
+    );
+  };
 
   const handleClose = () => {
-    handleRemindLater()
-  }
+    handleRemindLater();
+  };
 
   const handleVerifySuccess = () => {
-    setShowVerifyModal(false)
-    setIsVisible(false)
+    setShowVerifyModal(false);
+    setIsVisible(false);
     // Удаляем флаг dismissal
-    localStorage.removeItem('email_verify_dismissed')
-  }
+    localStorage.removeItem("email_verify_dismissed");
+  };
 
   return (
     <>
       <div className="email-banner-overlay" />
-      
+
       <div className="email-verification-banner">
         <div className="email-banner-header">
-          <AlertCircle size={24} className="email-banner-icon-warning" />
+          <Warning size={24} className="email-banner-icon-warning" />
           <h3>Confirm Your Email</h3>
           <button className="email-banner-close" onClick={handleClose}>
             <X size={20} />
@@ -72,28 +75,36 @@ export function EmailVerificationBanner() {
 
         <div className="email-banner-content">
           <p className="email-banner-description">
-            Your email <strong>{user.email}</strong> is not verified. 
-            Without verification, your account has limitations.
+            Your email <strong>{user.email}</strong> is not verified. Without
+            verification, your account has limitations.
           </p>
 
           <div className="email-banner-limitations">
             <h4>⚠️ Current Limitations:</h4>
             <ul>
               <li>
-                <Mail size={16} />
-                <span><strong>Messages:</strong> Maximum 10 per hour</span>
+                <Envelope size={16} />
+                <span>
+                  <strong>Messages:</strong> Maximum 10 per hour
+                </span>
               </li>
               <li>
-                <Shield size={16} />
-                <span><strong>Contacts:</strong> Maximum 5 new per day</span>
+                <ShieldCheck size={16} />
+                <span>
+                  <strong>Contacts:</strong> Maximum 5 new per day
+                </span>
               </li>
               <li>
                 <Key size={16} />
-                <span><strong>Password Recovery:</strong> Unavailable</span>
+                <span>
+                  <strong>Password Recovery:</strong> Unavailable
+                </span>
               </li>
               <li>
-                <Shield size={16} />
-                <span><strong>Two-Factor Authentication:</strong> Unavailable</span>
+                <ShieldCheck size={16} />
+                <span>
+                  <strong>Two-Factor Authentication:</strong> Unavailable
+                </span>
               </li>
             </ul>
           </div>
@@ -127,11 +138,11 @@ export function EmailVerificationBanner() {
       </div>
 
       {/* Verify Email Modal */}
-      <VerifyEmailModal 
+      <VerifyEmailModal
         isOpen={showVerifyModal}
         onClose={() => setShowVerifyModal(false)}
         onSuccess={handleVerifySuccess}
       />
     </>
-  )
+  );
 }

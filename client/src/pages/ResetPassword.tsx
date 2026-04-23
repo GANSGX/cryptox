@@ -10,7 +10,7 @@ export function ResetPassword() {
   const [searchParams] = useSearchParams();
   const token = searchParams.get("token");
 
-  const backgroundColors = useMemo(() => ["#5227FF", "#FF9FFC", "#B19EEF"], []);
+  const backgroundColors = useMemo(() => ["#000000", "#1a1a1a", "#0a0a0a"], []);
 
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");

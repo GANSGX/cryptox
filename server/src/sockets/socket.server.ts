@@ -25,6 +25,7 @@ export function initializeSocketServer(httpServer: HTTPServer) {
         if (
           origin.includes("localhost") ||
           origin.includes("127.0.0.1") ||
+          origin.includes("192.168.") ||
           origin.startsWith("file://")
         ) {
           callback(null, true);

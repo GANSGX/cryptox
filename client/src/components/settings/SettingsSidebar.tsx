@@ -1,11 +1,11 @@
 import {
   User,
-  Shield,
+  ShieldCheck,
   Lock,
   Bell,
   Palette,
-  type LucideIcon,
-} from "lucide-react";
+  type Icon,
+} from "@phosphor-icons/react";
 import type { SettingsSection } from "./SettingsModal";
 
 interface SettingsSidebarProps {
@@ -20,10 +20,10 @@ export function SettingsSidebar({
   const sections: {
     id: SettingsSection;
     label: string;
-    icon: LucideIcon;
+    icon: Icon;
   }[] = [
     { id: "account", label: "Account", icon: User },
-    { id: "security", label: "Security", icon: Shield },
+    { id: "security", label: "Security", icon: ShieldCheck },
     { id: "privacy", label: "Privacy", icon: Lock },
     { id: "notifications", label: "Notifications", icon: Bell },
     { id: "appearance", label: "Appearance", icon: Palette },

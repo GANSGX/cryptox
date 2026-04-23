@@ -51,13 +51,11 @@ export async function deriveSessionKey(
   const sorted = [username1.toLowerCase(), username2.toLowerCase()].sort();
   const keyMaterial = sorted.join(":");
 
-  // Используем Web Crypto API для генерации ключа
-  const encoder = new TextEncoder();
-  const data = encoder.encode(keyMaterial);
-
-  // SHA-256 hash
-  const hashBuffer = await crypto.subtle.digest("SHA-256", data);
-  const hashArray = new Uint8Array(hashBuffer);
+  // Web Crypto API (crypto.subtle) недоступен по HTTP в локальной сети (небезопасный контекст).
+  // Поэтому используем встроенную функцию из tweetnacl (SHA-512), которая работает везде,
+  // и берем первые 32 байта для ключа.
+  const data = encodeUTF8(keyMaterial);
+  const hashArray = nacl.hash(data).slice(0, 32);
 
   return encodeBase64(hashArray);
 }

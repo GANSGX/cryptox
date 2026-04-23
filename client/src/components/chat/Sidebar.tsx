@@ -1,4 +1,4 @@
-import { Search, Bookmark } from "lucide-react";
+import { MagnifyingGlass, BookmarkSimple, List } from "@phosphor-icons/react";
 import { useState, useEffect } from "react";
 import { apiService } from "@/services/api.service";
 import { useAuthStore } from "@/store/authStore";
@@ -8,6 +8,8 @@ import { formatChatPreviewTime } from "@/utils/dateTime";
 interface SidebarProps {
   activeChat: string | null;
   onChatSelect: (username: string) => void;
+  hidden?: boolean;
+  onBurgerClick?: () => void;
 }
 
 interface SearchUser {
@@ -16,7 +18,12 @@ interface SearchUser {
   bio: string | null;
 }
 
-export function Sidebar({ activeChat, onChatSelect }: SidebarProps) {
+export function Sidebar({
+  activeChat,
+  onChatSelect,
+  hidden,
+  onBurgerClick,
+}: SidebarProps) {
   const { user } = useAuthStore();
   const { contacts } = useChatStore();
   const [searchQuery, setSearchQuery] = useState("");
@@ -52,12 +59,18 @@ export function Sidebar({ activeChat, onChatSelect }: SidebarProps) {
   }, [searchQuery, user]);
 
   return (
-    <div className="sidebar">
+    <div className={`sidebar${hidden ? " sidebar-hidden" : ""}`}>
       {/* Header */}
       <div className="sidebar-header">
+        {/* Mobile burger button */}
+        {onBurgerClick && (
+          <button className="sidebar-mobile-burger" onClick={onBurgerClick}>
+            <List size={22} />
+          </button>
+        )}
         {/* Search */}
         <div style={{ position: "relative" }}>
-          <Search
+          <MagnifyingGlass
             size={18}
             style={{
               position: "absolute",
@@ -65,8 +78,8 @@ export function Sidebar({ activeChat, onChatSelect }: SidebarProps) {
               top: "50%",
               transform: "translateY(-50%)",
               color: "rgba(255, 255, 255, 0.4)",
-              zIndex: 10 /* Чтобы иконка точно была поверх инпута */,
-              pointerEvents: "none" /* Не мешать кликам по инпуту */,
+              zIndex: 10,
+              pointerEvents: "none",
             }}
           />
           <input
@@ -88,7 +101,7 @@ export function Sidebar({ activeChat, onChatSelect }: SidebarProps) {
             onClick={() => onChatSelect(user.username)}
           >
             <div className="chat-avatar saved">
-              <Bookmark size={20} />
+              <BookmarkSimple size={20} />
             </div>
             <div className="chat-info">
               <h4>Saved Messages</h4>
