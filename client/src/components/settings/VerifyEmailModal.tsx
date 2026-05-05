@@ -175,14 +175,15 @@ export function VerifyEmailModal({
             <div className="verify-email-actions">
               <button
                 type="button"
-                className="settings-btn settings-btn-secondary"
+                className="btn"
+                style={{ background: 'rgba(255,255,255,0.05)', color: 'white' }}
                 onClick={onClose}
               >
                 Cancel
               </button>
               <button
                 type="submit"
-                className="settings-btn settings-btn-primary"
+                className="btn btn-primary"
                 disabled={isLoading || !password}
               >
                 {isLoading ? "Sending..." : "Send Code"}
@@ -222,7 +223,8 @@ export function VerifyEmailModal({
 
             <button
               type="submit"
-              className="settings-btn settings-btn-primary verify-submit-btn"
+              className="btn btn-primary"
+              style={{ width: '100%', marginTop: '16px' }}
               disabled={isLoading || code.length !== 6}
             >
               {isLoading ? "Verifying..." : "Verify Email"}

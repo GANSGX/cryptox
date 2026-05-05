@@ -7,8 +7,9 @@
   left: 0;
   width: 100vw;
   height: 100vh;
-  background: rgba(0, 0, 0, 0);
-  backdrop-filter: blur(0px);
+  background: rgba(10, 10, 15, 0.6);
+  backdrop-filter: blur(16px) saturate(120%);
+  -webkit-backdrop-filter: blur(16px) saturate(120%);
   z-index: 700; /* Выше баннера верификации (601) */
   pointer-events: none;
   transition: background 0.3s ease, backdrop-filter 0.3s ease;
@@ -28,17 +29,51 @@
   transform: translate(-50%, -50%) scale(0.9);
   width: 90%;
   max-width: 440px;
-  background: rgba(20, 20, 30, 0.92);
-  backdrop-filter: blur(50px) saturate(180%);
-  -webkit-backdrop-filter: blur(50px) saturate(180%);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  border-radius: 20px;
+  background: rgba(25, 25, 35, 0.4);
+  backdrop-filter: blur(60px) saturate(220%) brightness(1.1);
+  -webkit-backdrop-filter: blur(60px) saturate(220%) brightness(1.1);
+  border: none;
+  border-radius: 28px;
   box-shadow:
-    0 20px 60px 0 rgba(0, 0, 0, 0.5),
-    inset 0 1px 2px 0 rgba(255, 255, 255, 0.08);
+    0 40px 80px rgba(0, 0, 0, 0.6),
+    inset 0 1px 2px rgba(255, 255, 255, 0.2),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.05);
   z-index: 701; /* Выше overlay */
   opacity: 0;
   transition: opacity 0.3s ease, transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.verify-email-modal::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1.4px;
+  background: linear-gradient(180deg,
+      rgba(255, 255, 255, 0.45) 0%,
+      rgba(255, 255, 255, 0.15) 20%,
+      rgba(255, 255, 255, 0)   40%,
+      rgba(255, 255, 255, 0)   60%,
+      rgba(255, 255, 255, 0.15) 80%,
+      rgba(255, 255, 255, 0.45) 100%);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Premium Inner Glow */
+.verify-email-modal::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle at 50% 0%, rgba(255, 120, 60, 0.15) 0%, rgba(255, 120, 60, 0.05) 30%, transparent 60%);
+  pointer-events: none;
+  z-index: 0;
 }
 
 .verify-email-modal.open {
@@ -55,6 +90,8 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+  position: relative;
+  z-index: 1;
 }
 
 .verify-email-header h2 {
@@ -65,24 +102,49 @@
 }
 
 .verify-email-close {
-  width: 36px;
-  height: 36px;
-  border-radius: 8px;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  width: 32px;
+  height: 32px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.01);
+  background-blend-mode: luminosity;
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  border: none;
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.1);
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: all 0.2s ease;
-  color: var(--text-secondary);
+  transition: all 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+  color: rgba(255, 255, 255, 0.5);
+  flex-shrink: 0;
+  position: relative;
+}
+
+.verify-email-close::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1.4px;
+  background: linear-gradient(180deg,
+      rgba(255, 255, 255, 0.45) 0%,
+      rgba(255, 255, 255, 0.15) 20%,
+      rgba(255, 255, 255, 0)   40%,
+      rgba(255, 255, 255, 0)   60%,
+      rgba(255, 255, 255, 0.15) 80%,
+      rgba(255, 255, 255, 0.45) 100%);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
 }
 
 .verify-email-close:hover {
-  background: rgba(255, 255, 255, 0.08);
-  border-color: rgba(255, 255, 255, 0.15);
-  color: var(--text-primary);
-  transform: rotate(90deg);
+  background: rgba(255, 255, 255, 0.04);
+  color: rgba(255, 255, 255, 0.9);
+  transform: translateY(-1px);
+  box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.14);
 }
 
 /* ========================================
@@ -90,6 +152,8 @@
    ======================================== */
 .verify-email-content {
   padding: 32px 24px 24px 24px;
+  position: relative;
+  z-index: 1;
 }
 
 .verify-email-form {
@@ -109,16 +173,6 @@
 .verify-email-icon {
   font-size: 48px;
   margin-bottom: 16px;
-  animation: pulse 2s ease-in-out infinite;
-}
-
-@keyframes pulse {
-  0%, 100% {
-    transform: scale(1);
-  }
-  50% {
-    transform: scale(1.05);
-  }
 }
 
 .verify-email-info h3 {
@@ -160,14 +214,8 @@
 }
 
 /* ========================================
-   SUBMIT BUTTON
+   SUBMIT BUTTON (REMOVED: USING AUTH.CSS BTN)
    ======================================== */
-.verify-submit-btn {
-  width: 100%;
-  justify-content: center;
-  padding: 14px;
-  font-size: 15px;
-}
 
 /* ========================================
    RESEND

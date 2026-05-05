@@ -123,13 +123,14 @@ export function EmailVerificationBanner() {
 
         <div className="email-banner-actions">
           <button
-            className="email-banner-btn email-banner-btn-secondary"
+            className="btn"
+            style={{ background: 'rgba(255,255,255,0.05)', color: 'white' }}
             onClick={handleRemindLater}
           >
             Remind Me Later
           </button>
           <button
-            className="email-banner-btn email-banner-btn-primary"
+            className="btn btn-primary"
             onClick={handleVerifyEmail}
           >
             Verify Email
